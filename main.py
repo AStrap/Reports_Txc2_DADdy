@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 
+import principal_classes.reports_computer as reports_computer
+
 import config
 import support_classes.data_manager as data_manager
 import support_classes.excel_manager as excel_manager
@@ -28,6 +30,13 @@ def main():
         os.mkdir("%s\\_reports" %(PATH_OUTPUT))
     except:
         pass
+    #--
+    
+    #-- stampa report per ogni classe
+    rc = reports_computer.Reports_computer(dm,em)
+    
+    for id_course in dm.get_courses():
+        rc.compute_print(id_course)
     #--
     
     return
