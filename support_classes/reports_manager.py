@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
+import os
+
+from win32com.client import Dispatch
+
 import config
 import utility.time_date as time_date
 
 import support_classes.reports_utility.info_users as info_users
+import support_classes.reports_utility.charts_sessions_days_distribution as charts_sessions_days_distribution
+import support_classes.reports_utility.chart_course_vision as chart_course_vision
 
 class Reports_manager:
 
+    PATH_OUTPUT = config.PATH_OUTPUT
     DATE_RANGE_STUDY = config.DATE_RANGE_STUDY
 
     def __init__(self, dm, em):
@@ -110,3 +117,60 @@ class Reports_manager:
             keywords.extend(tmp)
         
         return keywords
+    
+    #- GRAFICI ----------------------------------------------------------------
+    """
+        Stampa i grafici riguardo le sessioni distribuite per giorni e dalla 
+        data di pubblicazione di una lezione
+    """
+    def print_session_day_distribution(self, id_course, period, label_period):
+        
+        c_sessions_day_distribution = charts_sessions_days_distribution.Charts_sessions_days_distribution(self.dm, self.em)
+        worksheet = c_sessions_day_distribution.compute_print(id_course, label_period, period)
+        self.save_chart(id_course, worksheet, "day_distribution_%s" %(label_period))
+        
+        return
+    
+    """
+        Stampa grafico che indica la copertura di visione del corso: numero 
+        utenti per lezione
+    """
+    def print_course_vision(self, id_course, period, label_period):
+        
+        c_course_vision = chart_course_vision.Chart_course_vision(self.dm, self.em)
+        worksheet = c_course_vision.compute_print(id_course, label_period, period)
+        self.save_chart(id_course, worksheet, "course_vision_%s" %(label_period))
+        
+        return
+        
+    """
+        Salvataggio grafici come immagini
+    """
+    def save_chart(self, id_course, workbook_name, sub_path):
+        path = "%s\\%s-%s\\img" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        try:
+            os.mkdir(path)
+        except:
+            pass
+        path = "%s\\%s\\" %(path, sub_path)
+        try:
+            os.mkdir(path)
+        except:
+            pass
+        
+        app = Dispatch("Excel.Application")
+        workbook_file_name = "%s\\%s-%s\\%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course), workbook_name)
+        workbook = app.Workbooks.Open(Filename=workbook_file_name)
+        
+        #WARNING: The following line will cause the script to discard any unsaved changes in your workbook
+        app.DisplayAlerts = False
+        
+        i = 1
+        for sheet in workbook.Worksheets:
+            for chartObject in sheet.ChartObjects():
+                chartObject.Chart.Export("%s//chart"%(path) + str(i) + ".png")
+                i += 1
+        
+        workbook.Close(SaveChanges=False, Filename=workbook_file_name)
+    
+        return

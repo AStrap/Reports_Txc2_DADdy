@@ -187,9 +187,10 @@ class Data_loader:
         play=0; tot=0;
         lect_pr=0
 
+        ses_pr = 0
         for e in events:
             if play==1:
-                if e[2]>lect_pr and e[0]!="SK":
+                if e[2]>lect_pr and e[0]!="SK" and (e[1]-ses_pr)*2>=e[2]-lect_pr:
                     tot += e[2]-lect_pr
 
             if e[0]=="PL":
@@ -199,7 +200,8 @@ class Data_loader:
 
             if (e[0]!="SL" and e[0]!="DL") or e[2]!=0:
                 lect_pr = e[2]
-
+                
+            ses_pr = e[1]
         return tot
     
     """

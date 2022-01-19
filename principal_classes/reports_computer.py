@@ -29,7 +29,7 @@ class Reports_computer:
     def compute_print(self, id_course):
         
         #-- cartella immagini per i reports
-        path_imgs = "../%s-%s/report/img" %(id_course, self.dm.get_course_name(id_course))
+        self.path_imgs = "../%s-%s/img" %(id_course, self.dm.get_course_name(id_course))
         #--
         
         #-- file markdown report
@@ -107,11 +107,17 @@ class Reports_computer:
         md_file.write("**Numero totale di sessioni nel Periodo 1:** %s  \n" %(len(sessions)))
         md_file.write("**Numero medio di sessioni per studente nel Periodo 1:** %s  <br/> \n" %(str(round(len(sessions)/len(users), 2)) if len(users)>0 else 0))
         
-        #Grafico numero sessioni verso il tempo
-        #Grafico numero sessioni da pubblicazione
+        self.rm.print_session_day_distribution(id_course, first_period, "primo periodo")
+        md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
+        md_file.write("<img src=\"%s/day_distribution_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        
+        md_file.write("**Grafico con il numero di sessioni (verso data visualizzazione &#8722; data caricamento)** \n")
+        md_file.write("<img src=\"%s/day_distribution_primo periodo/chart2.png\"/> <br/> \n" %(self.path_imgs))
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
 
-        #Grafico distribuzione di copertura
+        self.rm.print_course_vision(id_course, first_period, "primo periodo")
+        md_file.write("**Grafico con la distribuzione della copertura** \n")
+        md_file.write("<img src=\"%s/course_vision_primo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
 
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
         return
@@ -144,11 +150,14 @@ class Reports_computer:
             md_file.write("**Numero totale di sessioni nel Periodo 2:** %s  \n" %(len(sessions)))
             md_file.write("**Numero medio di sessioni per studente nel Periodo 2:** %s  <br/> \n" %(str(round(len(sessions)/len(users), 2)) if len(users)>0 else 0))
             
-            #Grafico numero sessioni verso il tempo
-            #Grafico numero sessioni da pubblicazione
+            self.rm.print_session_day_distribution(id_course, second_period, "secondo periodo")
+            md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
+            md_file.write("<img src=\"%s/day_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
     
-            #Grafico distribuzione di copertura
+            self.rm.print_course_vision(id_course, second_period, "secondo periodo")
+            md_file.write("**Grafico con la distribuzione della copertura** \n")
+            md_file.write("<img src=\"%s/course_vision_secondo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
     
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
         return
