@@ -69,7 +69,6 @@ class Data_manager:
     def get_professor(self, id_course):
         return self.courses[id_course][1]
 
-
     """
         Return date esami di un corso specifico
     """
@@ -187,7 +186,7 @@ class Data_manager:
         for day in days:
             tmp = list()
             for s in self.get_sessions_by_course(id_course):
-                if s[1]==day:
+                if s[0]==day:
                     tmp.append(s)
             r_sessions.extend(tmp)
         return r_sessions
@@ -198,7 +197,7 @@ class Data_manager:
     def get_sessions_by_day(self, day):
         r_sessions = list()
         for s in self.sessions.values():
-            if s[1]==day:
+            if s[0]==day:
                 r_sessions.append(s)
         return r_sessions
 
@@ -240,7 +239,7 @@ class Data_manager:
         for day in days:
             tmp = list()
             for s in self.get_sessions_by_course_lecture(id_course, id_lecture):
-                if s[1]==day:
+                if s[0]==day:
                     tmp.append(s)
             r_sessions.extend(tmp)
         return r_sessions

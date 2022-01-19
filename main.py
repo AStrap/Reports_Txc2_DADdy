@@ -35,7 +35,8 @@ def main():
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm,em)
     
-    for id_course in dm.get_courses():
+    #for id_course in dm.get_courses():
+    for id_course in ["32812"]:
         rc.compute_print(id_course)
     #--
     

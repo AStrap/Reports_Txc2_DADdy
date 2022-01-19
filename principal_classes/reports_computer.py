@@ -21,7 +21,6 @@ class Reports_computer:
         #-- report manager: elaborazione informazione per report
         self.rm = reports_manager.Reports_manager(self.dm, self.em)
         #--
-        
         return
     
     """
@@ -29,10 +28,25 @@ class Reports_computer:
     """
     def compute_print(self, id_course):
         
+        #-- cartella immagini per i reports
+        path_imgs = "../%s-%s/report/img" %(id_course, self.dm.get_course_name(id_course))
+        #--
+        
         #-- file markdown report
         f = open("%s\\_reports\\%s-%s.md"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)), "w")
-        
         f.write("# Report per il corso %s \n" %(self.dm.get_course_name(id_course)))
+        
+        self.general_info(f, id_course)
+        
+        self.first_period_info(f, id_course)
+        
+        self.second_period_info(f, id_course)
+        
+        self.lectures_info(f, id_course)
+        
+        self.users_info(f, id_course)
+        
+        self.keywords_info(f, id_course)
         
         f.close()
         #--
@@ -45,3 +59,176 @@ class Reports_computer:
         
         return
         
+    """
+        Stampa informazioni generali riguardo il corso
+        
+        Parametri:
+            md_file: iowrapper
+                file markdown output
+                
+            id_course: string
+                
+    """
+    def general_info(self, md_file, id_course):
+        
+        first_date, last_date = self.rm.get_first_last_lecture_dates(id_course)
+        md_file.write("**Data primo caricamento video:** %s \n" %(self.edit_date(first_date)))
+        md_file.write("**Data ultimo caricamento video:** %s <br/> \n" %(self.edit_date(last_date)))
+        
+        md_file.write("**Numero totale video caricati:** %d <br/> \n" %(len(self.dm.get_lectures_by_course(id_course))))
+       
+        first_exam, second_exam = self.rm.get_first_second_exam_dates(id_course)
+        md_file.write("**Data primo appello d'esame:** %s \n" %(first_exam))        
+        md_file.write("**Data secondo appello d'esame:** %s <br/> \n" %(second_exam))
+        
+        md_file.write("**Numero di studenti che hanno almeno una sessione:** %d <br/> \n" %(len(self.dm.get_users_by_course(id_course))))
+        
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")             
+        return
+    
+    """
+        Stampa informazioni generali riguardo il periodo durante lo svolgimento 
+        del corso
+        
+        Parametri:
+            md_file: iowrapper
+                file markdown output
+                
+            id_course: string
+    """
+    def first_period_info(self, md_file, id_course):
+        
+        first_period = self.rm.get_periods(id_course)[0]
+        md_file.write("## Durante lo svolgimento del corso <br/> (Periodo 1: %s - %s ): \n" %(self.edit_date(first_period[0]), self.edit_date(first_period[1])))
+        
+        users = self.rm.users_period(first_period, id_course)
+        md_file.write("**Numero di studenti che hanno almeno una sessione nel Periodo 1:** %d \n" %(len(users)))
+        sessions = self.rm.sessions_period(first_period, id_course)
+        md_file.write("**Numero totale di sessioni nel Periodo 1:** %s  \n" %(len(sessions)))
+        md_file.write("**Numero medio di sessioni per studente nel Periodo 1:** %s  <br/> \n" %(str(round(len(sessions)/len(users), 2)) if len(users)>0 else 0))
+        
+        #Grafico numero sessioni verso il tempo
+        #Grafico numero sessioni da pubblicazione
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+
+        #Grafico distribuzione di copertura
+
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
+        return
+    
+    """
+        Stampa informazioni generali riguardo il periodo dopo lo svolgimento 
+        del corso
+        
+        Parametri:
+            md_file: iowrapper
+                file markdown output
+                
+            id_course: string
+    """
+    def second_period_info(self, md_file, id_course):
+        second_period = self.rm.get_periods(id_course)[1]
+        
+        if second_period[1] == "-":
+            
+            md_file.write("## Dopo il termine del corso <br/> (Periodo 2: %s - -- ): \n" %(self.edit_date(second_period[0])))
+            md_file.write("**Dati ancora non disponibili**")
+            
+        else:
+            
+            md_file.write("## Dopo il termine del corso <br/> (Periodo 2: %s - %s ): \n" %(self.edit_date(second_period[0]), self.edit_date(second_period[1])))
+            
+            users = self.rm.users_period(second_period, id_course)
+            md_file.write("**Numero di studenti che hanno almeno una sessione nel Periodo 2:** %d \n" %(len(users)))
+            sessions = self.rm.sessions_period(second_period, id_course)
+            md_file.write("**Numero totale di sessioni nel Periodo 2:** %s  \n" %(len(sessions)))
+            md_file.write("**Numero medio di sessioni per studente nel Periodo 2:** %s  <br/> \n" %(str(round(len(sessions)/len(users), 2)) if len(users)>0 else 0))
+            
+            #Grafico numero sessioni verso il tempo
+            #Grafico numero sessioni da pubblicazione
+            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+    
+            #Grafico distribuzione di copertura
+    
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
+        return
+    
+    """
+        Stampa informazioni generali riguardo le lezioni
+        
+        Parametri:
+            md_file: iowrapper
+                file markdown output
+                
+            id_course: string
+    """
+    def lectures_info(self, md_file, id_course):
+        md_file.write("## Dettagli sulle lezioni \n")
+        
+        i = 0
+        for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
+            
+            #grafico velocità
+            #grafico copertura
+            
+            if i%2 == 1:
+                md_file.write("<div style=\"page-break-after: always;\"></div>\n\n") 
+        if i%2 == 0:
+            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+        
+        return
+    
+    """
+        Stampa informazioni generali riguardo gli utenti
+        
+        Parametri:
+            md_file: iowrapper
+                file markdown output
+                
+            id_course: string
+    """
+    def users_info(self, md_file, id_course):
+        md_file.write("## Dettagli sugli utenti \n")
+        md_file.write("Visione media: media percentuale tra le percentuali di visione delle lezioni viste dall'utente \n")
+        md_file.write("Lezione pi&#249; vista: in termini di secondi di lezione visti dall'utente <br/> \n")
+        
+        md_file.write("| UTENTE | #SESSIONI | #LEZIONI | VISIONE MEDIA | LEZIONE PI&#217; VISTA | #EVENTI | #PAUSE | #BACKWARD | \n")
+        md_file.write("| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | \n")
+
+        for user_info in self.rm.get_users_info(id_course): 
+            md_file.write("| %s | %s | %s | %s | %s | %s | %s | %s | \n" %(user_info[0], user_info[1], user_info[2], user_info[3], user_info[4], user_info[5], user_info[6], user_info[7]))
+
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+        return
+    
+    
+    """
+        Stampa informazioni riguardo le keyword cercate
+        
+        Parametri:
+            md_file: iowrapper
+                file markdown output
+                
+            id_course: string
+    """
+    def keywords_info(self, md_file, id_course):
+        keywords = self.rm.get_keywords(id_course)
+        
+        md_file.write("## Dettagli sulle keyword cercate \n")
+        md_file.write("**Numero di ricerche effettuate:** %s \n" %(len(keywords)))
+        
+        md_file.write("**Keywords cercate:** \n")
+        md_file.write("| KEYWORD | LEZIONE | MINUTAGGIO LEZIONE | ID UTENTE | \n")
+        md_file.write("| ------- | ------- | ------- | ------- | \n")
+        for k in keywords:
+            md_file.write("| %s | %s | %s | %s | \n" %(k[0], k[1], k[2], k[3]))
+        return
+    
+    #--------------------------------------------------------------------------
+    
+    """
+        Modifica formato data YYYY-MM-DD -> DD-MM-YYYY
+    """
+    def edit_date(self, date):
+        y = date[:4]; m = date[5:7]; d = date[8:]
+        return "%s-%s-%s" %(d,m,y)

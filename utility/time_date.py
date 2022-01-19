@@ -36,6 +36,22 @@ def get_datetime(date):
     return r_date
 
 """
+    Conversione secondi - orario 
+    
+    Parametri:
+        secondi: int
+        
+    Return:
+        orario: string
+            orario in formato HH:MM:SS
+"""
+def seconds_hours(seconds):
+    
+    r_hours = datetime.timedelta(seconds=seconds)
+        
+    return str(r_hours)
+
+"""
     Confronto tra due date
     
     Parametri:
@@ -95,10 +111,10 @@ def add_days(date, n_days):
             lista giorni compresi nel periodo
              
 """
-def get_days_by_period(date_range_study):
+def get_days_by_period(period):
     r_days = list()
-    date_s = get_datetime(date_range_study[0])
-    date_e = get_datetime(date_range_study[1])
+    date_s = get_datetime(period[0])
+    date_e = get_datetime(period[1])
     
     while date_s <= date_e:
         r_days.append(str(date_s)[:10])
