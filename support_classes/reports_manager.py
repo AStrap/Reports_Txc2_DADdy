@@ -9,6 +9,8 @@ import utility.time_date as time_date
 import support_classes.reports_utility.info_users as info_users
 import support_classes.reports_utility.charts_sessions_days_distribution as charts_sessions_days_distribution
 import support_classes.reports_utility.chart_course_vision as chart_course_vision
+import support_classes.reports_utility.charts_lectures_average_speed as charts_lectures_average_speed
+import support_classes.reports_utility.charts_lectures_vision as charts_lectures_vision
 
 class Reports_manager:
 
@@ -142,6 +144,29 @@ class Reports_manager:
         self.save_chart(id_course, worksheet, "course_vision_%s" %(label_period))
         
         return
+    
+    """
+        Stampa grafico riguardo alla velocità media di visione di una lezione
+    """
+    def print_lectures_average_speed(self, id_course):
+        
+        c_charts_lectures_average_speed = charts_lectures_average_speed.Charts_lectures_average_speed(self.dm, self.em)
+        worksheet = c_charts_lectures_average_speed.compute_print(id_course)
+        self.save_chart(id_course, worksheet, "lecture_average_speed")
+        
+        return
+    
+    """
+        Stampa grafico riguardo la copertura di visione della lezione
+    """
+    def print_lectures_vision(self, id_course):
+        
+        c_charts_lectures_vision = charts_lectures_vision.Charts_lectures_vision(self.dm, self.em)
+        worksheet = c_charts_lectures_vision.compute_print(id_course)
+        self.save_chart(id_course, worksheet, "lecture_vision")
+        
+        return
+        
         
     """
         Salvataggio grafici come immagini

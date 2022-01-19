@@ -175,10 +175,16 @@ class Reports_computer:
         md_file.write("## Dettagli sulle lezioni \n")
         
         i = 0
+        self.rm.print_lectures_average_speed(id_course)
+        self.rm.print_lectures_vision(id_course)
         for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
             
-            #grafico velocità
-            #grafico copertura
+            md_file.write("### %s \n" %(self.dm.get_lecture_name(id_lecture)))
+            
+            md_file.write("**grafico velocit&#224; media visualizzazione** \n")
+            md_file.write("<img src=\"%s/lecture_average_speed/chart%d.png\"/> <br/> \n" %(self.path_imgs, i+1))
+            md_file.write("**grafico copertura** \n")
+            md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, i+1))
             
             if i%2 == 1:
                 md_file.write("<div style=\"page-break-after: always;\"></div>\n\n") 
