@@ -83,14 +83,6 @@ class Reports_computer:
         
         md_file.write("**Numero di studenti che hanno almeno una sessione:** %d <br/> \n" %(len(self.dm.get_users_by_course(id_course))))
         
-        lectures = self.rm.get_lectures_total_info(id_course)
-        md_file.write("**Dettagli generali sulle lezioni:**\n")
-        md_file.write("Visione media: media ercentuale tra le percentuali di visione di ogni utente che ha visto la lezione \n")
-        md_file.write("| LEZIONE | #UTENTI | #SESSIONI | #DOWNLOAD | VISIONE MEDIA | \n")
-        md_file.write("| ------- | ------- | ------- | ------- | ------- | \n")
-        for l in lectures:
-            md_file.write("| %s | %s | %s | %s | %s | \n" %(l[0], l[1], l[2], l[3], l[4]))
-        
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")             
         return
     
@@ -182,6 +174,15 @@ class Reports_computer:
     def lectures_info(self, md_file, id_course):
         md_file.write("## Dettagli sulle lezioni \n")
         
+        lectures = self.rm.get_lectures_total_info(id_course)
+        md_file.write("**Dettagli generali sulle lezioni:**\n")
+        md_file.write("Visione media: media ercentuale tra le percentuali di visione di ogni utente che ha visto la lezione \n")
+        md_file.write("| LEZIONE | #UTENTI | #SESSIONI | #DOWNLOAD | VISIONE MEDIA | \n")
+        md_file.write("| ------- | ------- | ------- | ------- | ------- | \n")
+        for l in lectures:
+            md_file.write("| %s | %s | %s | %s | %s | \n" %(l[0], l[1], l[2], l[3], l[4]))
+        
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")   
         i = 0
         self.rm.print_lectures_average_speed(id_course)
         self.rm.print_lectures_vision(id_course)
