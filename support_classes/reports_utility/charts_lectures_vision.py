@@ -28,7 +28,7 @@ class Charts_lectures_vision:
 
         self.compute_support("Supporto_grafici", id_course)
 
-        self.compute_lecture_vision("Velocità_di_visione", "Supporto_grafici", id_course)
+        self.compute_lecture_vision("Coperura di visione", "Supporto_grafici", id_course)
 
         self.em.close_workbook()
         
@@ -44,13 +44,13 @@ class Charts_lectures_vision:
 
         for l in self.dm.get_lectures_by_course(id_course):
 
-            #-- calcolo velocità medie per lezione
-            info_vision = self.compute_n_visione(id_course, l)
+            #-- calcolo informazioni riguardo la visione
+            total_vision, info_vision = self.compute_n_visione(id_course, l)
             #--
 
             #-- scrittura elementi
             head = [[str(time_date.seconds_hours(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)]]
-            body = [info_vision]
+            body = [total_vision, info_vision]
 
             self.em.write_head_table(head)
             self.em.write_body_table(body)
@@ -58,7 +58,7 @@ class Charts_lectures_vision:
         return
 
     #-
-    # stampa i grafici delle medie di velocità
+    # stampa i grafici delle distribuzione di visione
     #-
     def compute_lecture_vision(self, sheet, support_sheet, id_course):
 
@@ -69,14 +69,19 @@ class Charts_lectures_vision:
             else:
                 self.em.add_worksheet("%s%d" %(sheet,i))
 
+            ind_labels = i*2+i
             duration = math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)
 
+
             title = "Coperture di visone - %s" %(self.dm.get_lecture_name(l))
+            self.em.print_line_chart("oriz", (ind_labels,ind_labels+1), (0, duration), support_sheet, title, "minutaggio", "numero visioni", 1, 1, {'min':0})
+
+            title = "Coperture di visone univoca per utente - %s" %(self.dm.get_lecture_name(l))
             if self.max_y > 20:
                 unit = 10
             else:
                 unit = 1
-            self.em.print_line_chart("oriz", (i*2,(i*2)+1), (0, duration), support_sheet, title, "minutaggio", "numero visioni", 1, 1, {'max':self.max_y, 'min':0, 'major_unit':unit})
+            self.em.print_line_chart("oriz", (ind_labels,ind_labels+2), (0, duration), support_sheet, title, "minutaggio", "numero visioni", 1, 14, {'min':0, 'major_unit':unit})
 
 
         return
@@ -84,7 +89,8 @@ class Charts_lectures_vision:
     # calcolo numero visioni
     def compute_n_visione(self, id_course, id_lecture):
 
-        lecture_users=[[] for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
+        total_vision = [0 for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
+        lecture_users = [[] for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
 
         sessions = self.dm.get_sessions_by_course_lecture(id_course, id_lecture)
 
@@ -103,8 +109,9 @@ class Charts_lectures_vision:
                 if play:
                     if event!="SK" :
                         if t_lec>t_lec_pr:
-                            #-- controllo intervallo
+                            # controllo intervallo
                             while t_lec_pr<t_lec:
+                                total_vision[round(t_lec_pr/self.UNIT)] += 1
                                 if not user in lecture_users[round(t_lec_pr/self.UNIT)]:
                                     lecture_users[round(t_lec_pr/self.UNIT)].append(user)
                                 t_lec_pr+=1
@@ -114,16 +121,19 @@ class Charts_lectures_vision:
 
                         if date > date_update_sk:
                             while t_lec_pr<e[3]:
+                                total_vision[round(t_lec_pr/self.UNIT)] += 1
                                 if not user in lecture_users[round(t_lec_pr/self.UNIT)]:
                                     lecture_users[round(t_lec_pr/self.UNIT)].append(user)
                                 t_lec_pr+=1
                         else:
                             while t_ses_pr<t_ses:
                                 if play and t_lec_pr<self.dm.get_lecture_duration(id_lecture):
+                                    total_vision[round(t_lec_pr/self.UNIT)] += 1
                                     if not user in lecture_users[round(t_lec_pr/self.UNIT)]:
                                         lecture_users[round(t_lec_pr/self.UNIT)].append(user)
                                     t_lec_pr+=speed
                                     if speed==2 and (t_lec_pr-1)<self.dm.get_lecture_duration(id_lecture):
+                                        total_vision[round(t_lec_pr/self.UNIT)] += 1
                                         if not user in lecture_users[round(t_lec_pr/self.UNIT)]:
                                             lecture_users[round(t_lec_pr/self.UNIT)].append(user)
                                 t_ses_pr+=1;
@@ -147,4 +157,4 @@ class Charts_lectures_vision:
             if len(users)>self.max_y:
                 self.max_y = len(users)
 
-        return lecture_scores
+        return total_vision, lecture_scores

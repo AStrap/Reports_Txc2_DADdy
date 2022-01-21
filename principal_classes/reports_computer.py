@@ -192,13 +192,12 @@ class Reports_computer:
             
             md_file.write("**grafico velocit&#224; media visualizzazione** \n")
             md_file.write("<img src=\"%s/lecture_average_speed/chart%d.png\"/> <br/> \n" %(self.path_imgs, i+1))
-            md_file.write("**grafico copertura** \n")
-            md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, i+1))
-            
-            if i%2 == 1:
-                md_file.write("<div style=\"page-break-after: always;\"></div>\n\n") 
-        if i%2 == 0:
-            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+            md_file.write("**grafico copertura di visione** \n")
+            md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, (i*2+1)))
+            md_file.write("**grafico copertura di visione univoca per utente** \n")
+            md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, (i*2+2)))
+
+            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n") 
         
         return
     
