@@ -697,7 +697,7 @@ class Excel_manager:
         chart.set_title({'name': title,
                          'name_font':  {'name': 'Arial', 'size': 9}})
         
-        options_x = {'name':label_y,
+        options_x = {'name':label_x,
                      'display_units_visible': False,
                      'position_axis': 'on_tick'}
         options_x.update(axis_x_option)

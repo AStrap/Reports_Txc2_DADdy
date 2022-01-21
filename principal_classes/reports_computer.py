@@ -120,6 +120,11 @@ class Reports_computer:
         
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
 
+        self.rm.print_lectures_events(id_course, first_period, "primo periodo")
+        md_file.write("**Grafico con il numero di eventi per lezione (verso si salto o ricerca)** \n")
+        md_file.write("<img src=\"%s/lectures_events_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")  
+
         self.rm.print_course_vision(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con la distribuzione della copertura** \n")
         md_file.write("<img src=\"%s/course_vision_primo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
@@ -163,6 +168,11 @@ class Reports_computer:
             md_file.write("**Grafico con il numero di sessioni (verso orario della giornata)** \n")
             md_file.write("<img src=\"%s/hours_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+    
+            self.rm.print_lectures_events(id_course, second_period, "secondo periodo")
+            md_file.write("**Grafico con il numero di eventi per lezione (verso si salto o ricerca)** \n")
+            md_file.write("<img src=\"%s/lectures_events_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")  
     
             self.rm.print_course_vision(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con la distribuzione della copertura** \n")

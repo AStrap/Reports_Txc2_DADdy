@@ -8,6 +8,7 @@ import utility.time_date as time_date
 
 import support_classes.reports_utility.info_users as info_users
 import support_classes.reports_utility.info_lectures as info_lectures
+import support_classes.reports_utility.chart_lectures_events as chart_lectures_events
 import support_classes.reports_utility.charts_sessions_days_distribution as charts_sessions_days_distribution
 import support_classes.reports_utility.chart_sessions_hours_distribution as chart_sessions_hours_distribution
 import support_classes.reports_utility.chart_course_vision as chart_course_vision
@@ -134,14 +135,24 @@ class Reports_manager:
     
     #- GRAFICI ----------------------------------------------------------------
     """
+        Stampa i grafici riguardo il numero di eventi per lezione
+    """
+    def print_lectures_events(self, id_course, period, label_period):
+        
+        c_lectures_events = chart_lectures_events.Chart_lectures_events(self.dm, self.em)
+        workbook = c_lectures_events.compute_print(id_course, label_period, period)
+        self.save_chart(id_course, workbook, "lectures_events_%s" %(label_period))
+        return
+    
+    """
         Stampa i grafici riguardo le sessioni distribuite per giorni e dalla 
         data di pubblicazione di una lezione
     """
     def print_session_day_distribution(self, id_course, period, label_period):
         
         c_sessions_day_distribution = charts_sessions_days_distribution.Charts_sessions_days_distribution(self.dm, self.em)
-        worksheet = c_sessions_day_distribution.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, worksheet, "day_distribution_%s" %(label_period))
+        workbook = c_sessions_day_distribution.compute_print(id_course, label_period, period)
+        self.save_chart(id_course, workbook, "day_distribution_%s" %(label_period))
         
         return
     
@@ -152,8 +163,8 @@ class Reports_manager:
     def print_session_hours_distribution(self, id_course, period, label_period):
         
         c_sessions_hours_distribution = chart_sessions_hours_distribution.Chart_sessions_hours_distribution(self.dm, self.em)
-        worksheet = c_sessions_hours_distribution.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, worksheet, "hours_distribution_%s" %(label_period))
+        workbook = c_sessions_hours_distribution.compute_print(id_course, label_period, period)
+        self.save_chart(id_course, workbook, "hours_distribution_%s" %(label_period))
         
         return
     
@@ -164,8 +175,8 @@ class Reports_manager:
     def print_course_vision(self, id_course, period, label_period):
         
         c_course_vision = chart_course_vision.Chart_course_vision(self.dm, self.em)
-        worksheet = c_course_vision.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, worksheet, "course_vision_%s" %(label_period))
+        workbook = c_course_vision.compute_print(id_course, label_period, period)
+        self.save_chart(id_course, workbook, "course_vision_%s" %(label_period))
         
         return
     
@@ -175,8 +186,8 @@ class Reports_manager:
     def print_lectures_average_speed(self, id_course):
         
         c_charts_lectures_average_speed = charts_lectures_average_speed.Charts_lectures_average_speed(self.dm, self.em)
-        worksheet = c_charts_lectures_average_speed.compute_print(id_course)
-        self.save_chart(id_course, worksheet, "lecture_average_speed")
+        workbook = c_charts_lectures_average_speed.compute_print(id_course)
+        self.save_chart(id_course, workbook, "lecture_average_speed")
         
         return
     
@@ -186,8 +197,8 @@ class Reports_manager:
     def print_lectures_vision(self, id_course):
         
         c_charts_lectures_vision = charts_lectures_vision.Charts_lectures_vision(self.dm, self.em)
-        worksheet = c_charts_lectures_vision.compute_print(id_course)
-        self.save_chart(id_course, worksheet, "lecture_vision")
+        workbook = c_charts_lectures_vision.compute_print(id_course)
+        self.save_chart(id_course, workbook, "lecture_vision")
         
         return
         
