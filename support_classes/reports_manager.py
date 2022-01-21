@@ -9,6 +9,7 @@ import utility.time_date as time_date
 import support_classes.reports_utility.info_users as info_users
 import support_classes.reports_utility.info_lectures as info_lectures
 import support_classes.reports_utility.charts_sessions_days_distribution as charts_sessions_days_distribution
+import support_classes.reports_utility.chart_sessions_hours_distribution as chart_sessions_hours_distribution
 import support_classes.reports_utility.chart_course_vision as chart_course_vision
 import support_classes.reports_utility.charts_lectures_average_speed as charts_lectures_average_speed
 import support_classes.reports_utility.charts_lectures_vision as charts_lectures_vision
@@ -141,6 +142,18 @@ class Reports_manager:
         c_sessions_day_distribution = charts_sessions_days_distribution.Charts_sessions_days_distribution(self.dm, self.em)
         worksheet = c_sessions_day_distribution.compute_print(id_course, label_period, period)
         self.save_chart(id_course, worksheet, "day_distribution_%s" %(label_period))
+        
+        return
+    
+    """
+        Stampa i grafici riguardo le sessioni distribuite per giorni e dalla 
+        data di pubblicazione di una lezione
+    """
+    def print_session_hours_distribution(self, id_course, period, label_period):
+        
+        c_sessions_hours_distribution = chart_sessions_hours_distribution.Chart_sessions_hours_distribution(self.dm, self.em)
+        worksheet = c_sessions_hours_distribution.compute_print(id_course, label_period, period)
+        self.save_chart(id_course, worksheet, "hours_distribution_%s" %(label_period))
         
         return
     

@@ -113,6 +113,11 @@ class Reports_computer:
         
         md_file.write("**Grafico con il numero di sessioni (verso data visualizzazione &#8722; data caricamento)** \n")
         md_file.write("<img src=\"%s/day_distribution_primo periodo/chart2.png\"/> <br/> \n" %(self.path_imgs))
+        
+        self.rm.print_session_hours_distribution(id_course, first_period, "primo periodo")
+        md_file.write("**Grafico con il numero di sessioni (verso orario della giornata)** \n")
+        md_file.write("<img src=\"%s/hours_distribution_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
 
         self.rm.print_course_vision(id_course, first_period, "primo periodo")
@@ -153,6 +158,10 @@ class Reports_computer:
             self.rm.print_session_day_distribution(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
             md_file.write("<img src=\"%s/day_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+            
+            self.rm.print_session_hours_distribution(id_course, second_period, "secondo periodo")
+            md_file.write("**Grafico con il numero di sessioni (verso orario della giornata)** \n")
+            md_file.write("<img src=\"%s/hours_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
     
             self.rm.print_course_vision(id_course, second_period, "secondo periodo")

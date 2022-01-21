@@ -4,6 +4,9 @@ import os
 
 class Excel_manager:
 
+    WIDTH = 1100
+    HEIGHT = 227
+
     def __init__(self):
         # cursori: x riga - y colonna
         self.c_x = 0
@@ -397,7 +400,7 @@ class Excel_manager:
         chart.set_y_axis(options_y)
         
         chart.set_legend({'none': True})
-        chart.set_size({'width': 1000, 'height': 227})
+        chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
 
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
@@ -461,7 +464,7 @@ class Excel_manager:
 
         chart.set_title({'name': title,
                          'name_font':  {'name': 'Arial', 'size': 9}})
-        chart.set_size({'width': 577, 'height': 227})
+        chart.set_size({'width': self.WIDTH/2, 'height': self.HEIGHT})
 
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
@@ -542,7 +545,7 @@ class Excel_manager:
         chart.set_y_axis(options_y)
         
         chart.set_legend({'none': True})
-        chart.set_size({'width': 1000, 'height': 227})
+        chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
 
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
@@ -616,14 +619,14 @@ class Excel_manager:
 
         chart.set_title({'name': title,
                          'name_font':  {'name': 'Arial', 'size': 9}})
-        chart.set_x_axis({'name': label_x})
+        chart.set_x_axis({'name': label_x, 'position_axis': 'between'})
         
         options_y = {'name':label_y}
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
         
         chart.set_legend({'none': True})
-        chart.set_size({'width': 1000, 'height': 227})
+        chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
 
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
@@ -789,7 +792,7 @@ class Excel_manager:
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
         
-        chart.set_size({'width': 1000, 'height': 227})
+        chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
         #--
@@ -866,7 +869,7 @@ class Excel_manager:
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
         
-        chart.set_size({'width': 1000, 'height': 227})
+        chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
         chart.set_legend({'none': True})
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)

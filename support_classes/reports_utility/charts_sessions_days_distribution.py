@@ -29,13 +29,13 @@ class Charts_sessions_days_distribution:
         self.em.set_workbook(workbook_name, path_output_course)
 
         #-- giorni presenti nel periodo
-        self.days_period = time_date.get_days_by_period(period)
+        days_period = time_date.get_days_by_period(period)
         #--
 
-        self.compute_sessions_per_days("Sessioni_per_giornata", id_course, label_period, period)
+        self.compute_sessions_per_days("Sessioni_per_giornata", id_course, label_period, period, days_period)
 
         if label_period == "primo periodo":
-            self.compute_sessions_from_pubblication("Sessioni_da_pubblicazione", id_course, label_period, period)
+            self.compute_sessions_from_pubblication("Sessioni_da_pubblicazione", id_course, label_period, period, days_period)
 
         self.em.close_workbook()
         
@@ -44,7 +44,7 @@ class Charts_sessions_days_distribution:
     #-
     # Calcolo e stampa delle informazioni generali del corso
     #-
-    def compute_sessions_per_days(self, sheet, id_course, label_period, period):
+    def compute_sessions_per_days(self, sheet, id_course, label_period, period, days_period):
 
         self.em.add_worksheet(sheet)
         self.em.set_cursors(1, 1)
@@ -55,7 +55,7 @@ class Charts_sessions_days_distribution:
         head = [["GIORNO", "NUMERO SESSIONI"]]
         body = []
 
-        for day in self.days_period:
+        for day in days_period:
             body.append([day, len(self.dm.get_sessions_by_course_days(id_course, [day]))])
 
         self.em.write_head_table(head)
@@ -71,7 +71,7 @@ class Charts_sessions_days_distribution:
     # Calcolo e stampa delle numero di sessioni totale istanziate dalla pubblicazione
     # di ogni lezione e grafico
     #-
-    def compute_sessions_from_pubblication(self, sheet, id_course, label_period, period):
+    def compute_sessions_from_pubblication(self, sheet, id_course, label_period, period, days_period):
 
         y = int(period[1][:4]); m = int(period[1][5:7]); d = int(period[1][8:])
         if d == calendar.monthrange(y,m)[1]:
@@ -111,7 +111,7 @@ class Charts_sessions_days_distribution:
             lectures_sessions[l] = [0 for _ in range(self.days_max+2)]
             if self.dict_days[l]<self.days_max:
                 lectures_sessions[l][self.dict_days[l]+1]=-1
-            sessions = self.dm.get_sessions_by_course_lecture_days(id_course, l, self.days_period)
+            sessions = self.dm.get_sessions_by_course_lecture_days(id_course, l, days_period)
 
             for s in sessions:
                 date = time_date.get_datetime(s[1][:-6])
