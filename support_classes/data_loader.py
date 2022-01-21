@@ -34,7 +34,6 @@ class Data_loader:
         #-- corsi di test da non considerare
         self.test_courses = list()
         #--
-        
         return
 
 

@@ -60,12 +60,9 @@ class Info_users:
         Calcolo della lezione più vista da parte dell'utente
     """
     def compute_lecture_max_vision(self, id_course, id_user):
-        tot = 0
         lect_max_vision = ["", 0]
         for l in self.dm.get_lectures_by_course(id_course):
             tot_vision = info_vision.compute_user_tot_vision_lecture(self.dm, id_user, l, id_course)
-
-            tot += tot_vision
 
             if tot_vision > lect_max_vision[1]:
                 lect_max_vision[0] = self.dm.get_lecture_name(l)

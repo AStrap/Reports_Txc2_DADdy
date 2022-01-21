@@ -7,6 +7,7 @@ import config
 import utility.time_date as time_date
 
 import support_classes.reports_utility.info_users as info_users
+import support_classes.reports_utility.info_lectures as info_lectures
 import support_classes.reports_utility.charts_sessions_days_distribution as charts_sessions_days_distribution
 import support_classes.reports_utility.chart_course_vision as chart_course_vision
 import support_classes.reports_utility.charts_lectures_average_speed as charts_lectures_average_speed
@@ -47,6 +48,16 @@ class Reports_manager:
         exam_dates = self.dm.get_exam_dates(id_course)
         
         return exam_dates[0], exam_dates[1]
+    
+    """
+        Return informazioni generali riguardo le lezioni
+    """
+    def get_lectures_total_info(self, id_course):
+        
+        c_lectures = info_lectures.Info_lectures(self.dm)
+        
+        return c_lectures.compute_info_lectures(id_course)
+
     
     """
         Return intervalli di tempo dei due periodi
@@ -167,7 +178,7 @@ class Reports_manager:
         
         return
         
-        
+    #--------------------------------------------------------------------------  
     """
         Salvataggio grafici come immagini
     """
