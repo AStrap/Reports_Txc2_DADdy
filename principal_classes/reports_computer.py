@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from pathlib import Path
+import fitz
 
 import config
 import support_classes.reports_manager as reports_manager
@@ -33,28 +36,41 @@ class Reports_computer:
         #--
         
         #-- file markdown report
-        f = open("%s\\_reports\\%s-%s.md"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)), "w")
+        total_bookmarks = list()
+        name_file = "%s\\_reports\\%s-%s-tmp"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        f = open("%s.md" %(name_file), "w")
         f.write("# Report per il corso %s \n" %(self.dm.get_course_name(id_course)))
         
-        self.general_info(f, id_course)
+        bookmarks = self.general_info(f, id_course)
+        total_bookmarks.append(bookmarks)
         
-        self.first_period_info(f, id_course)
+        bookmarks = self.first_period_info(f, id_course)
+        total_bookmarks.append(bookmarks)
         
-        self.second_period_info(f, id_course)
+        bookmarks = self.second_period_info(f, id_course)
+        total_bookmarks.append(bookmarks)
         
-        self.lectures_info(f, id_course)
+        bookmarks = self.lectures_info(f, id_course)
+        total_bookmarks.append(bookmarks)
         
-        self.users_info(f, id_course)
+        bookmarks = self.users_info(f, id_course)
+        total_bookmarks.append(bookmarks)
         
-        self.keywords_info(f, id_course)
+        bookmarks = self.keywords_info(f, id_course)
+        total_bookmarks.append(bookmarks)
         
         f.close()
         #--
         
         #-- md file to pdf
         os.chdir("%s\\_reports" %(self.PATH_OUTPUT))
-        os.system('cmd /k "mdpdf \"./%s-%s.md\"" --border=12mm' %(id_course, self.dm.get_course_name(id_course)))
-        os.remove("%s\\_reports\\%s-%s.md"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))) 
+        os.system('cmd /k "mdpdf \"./%s-%s-tmp.md\"" --border=12mm' %(id_course, self.dm.get_course_name(id_course)))
+        os.remove("%s.md"%(name_file)) 
+        #--
+        
+        #-- pdt to pdf+bookmarks
+        self.create_pdf_bookmarks(name_file, total_bookmarks)
+        os.remove("%s.pdf"%(name_file))
         #--
         
         return
@@ -71,6 +87,9 @@ class Reports_computer:
     """
     def general_info(self, md_file, id_course):
         
+        cur_page = 0
+        bookmarks = [("Informazioni generali del corso", cur_page), list()]
+        
         first_date, last_date = self.rm.get_first_last_lecture_dates(id_course)
         md_file.write("**Data primo caricamento video:** %s \n" %(self.edit_date(first_date)))
         md_file.write("**Data ultimo caricamento video:** %s <br/> \n" %(self.edit_date(last_date)))
@@ -84,7 +103,9 @@ class Reports_computer:
         md_file.write("**Numero di studenti che hanno almeno una sessione:** %d <br/> \n" %(len(self.dm.get_users_by_course(id_course))))
         
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")             
-        return
+        cur_page += 1
+        
+        return bookmarks
     
     """
         Stampa informazioni generali riguardo il periodo durante lo svolgimento 
@@ -98,8 +119,11 @@ class Reports_computer:
     """
     def first_period_info(self, md_file, id_course):
         
+        cur_page = 0
+        bookmarks = [("Informazioni durante lo svolgimento del corso", cur_page), list()]
+        
         first_period = self.rm.get_periods(id_course)[0]
-        md_file.write("## Durante lo svolgimento del corso <br/> (Periodo 1: %s - %s ): \n" %(self.edit_date(first_period[0]), self.edit_date(first_period[1])))
+        md_file.write("## Informazioni durante lo svolgimento del corso <br/> (Periodo 1: %s - %s ): \n" %(self.edit_date(first_period[0]), self.edit_date(first_period[1])))
         
         users = self.rm.users_period(first_period, id_course)
         md_file.write("**Numero di studenti che hanno almeno una sessione nel Periodo 1:** %d \n" %(len(users)))
@@ -110,27 +134,37 @@ class Reports_computer:
         self.rm.print_session_day_distribution(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
         md_file.write("<img src=\"%s/day_distribution_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        bookmarks[1].append(("grafico numero sessioni (verso il tempo)", cur_page))
         
         md_file.write("**Grafico con il numero di sessioni (verso data visualizzazione &#8722; data caricamento)** \n")
         md_file.write("<img src=\"%s/day_distribution_primo periodo/chart2.png\"/> <br/> \n" %(self.path_imgs))
+        bookmarks[1].append(("grafico numero sessioni (verso data visualizzazione - data caricamento)", cur_page))
         
         self.rm.print_session_hours_distribution(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con il numero di sessioni (verso orario della giornata)** \n")
         md_file.write("<img src=\"%s/hours_distribution_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        bookmarks[1].append(("grafico numero sessioni (verso orario della giornata)", cur_page))
         
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+        cur_page += 1
 
         self.rm.print_lectures_events(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con il numero di eventi per lezione (verso si salto o ricerca)** \n")
-        md_file.write("<img src=\"%s/lectures_events_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
-        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")  
-
+        md_file.write("<img src=\"%s/lectures_events_primo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
+        bookmarks[1].append(("grafico numero eventi per lezione", cur_page))
+        
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+        cur_page += 1
+        
         self.rm.print_course_vision(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con la distribuzione della copertura** \n")
         md_file.write("<img src=\"%s/course_vision_primo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
+        bookmarks[1].append(("grafico numero utenti per lezione", cur_page))
 
-        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
-        return
+        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+        cur_page += 1  
+            
+        return bookmarks
     
     """
         Stampa informazioni generali riguardo il periodo dopo lo svolgimento 
@@ -143,16 +177,20 @@ class Reports_computer:
             id_course: string
     """
     def second_period_info(self, md_file, id_course):
+        
+        cur_page = 0
+        bookmarks = [("Informazioni dopo il termine del corso", cur_page), list()]
+        
         second_period = self.rm.get_periods(id_course)[1]
         
         if second_period[1] == "-":
             
-            md_file.write("## Dopo il termine del corso <br/> (Periodo 2: %s - -- ): \n" %(self.edit_date(second_period[0])))
+            md_file.write("## Informazioni dopo il termine del corso <br/> (Periodo 2: %s - -- ): \n" %(self.edit_date(second_period[0])))
             md_file.write("**Dati ancora non disponibili**")
             
         else:
             
-            md_file.write("## Dopo il termine del corso <br/> (Periodo 2: %s - %s ): \n" %(self.edit_date(second_period[0]), self.edit_date(second_period[1])))
+            md_file.write("## Informazioni dopo il termine del corso <br/> (Periodo 2: %s - %s ): \n" %(self.edit_date(second_period[0]), self.edit_date(second_period[1])))
             
             users = self.rm.users_period(second_period, id_course)
             md_file.write("**Numero di studenti che hanno almeno una sessione nel Periodo 2:** %d \n" %(len(users)))
@@ -163,23 +201,33 @@ class Reports_computer:
             self.rm.print_session_day_distribution(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
             md_file.write("<img src=\"%s/day_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+            bookmarks[1].append(("grafico numero sessioni (verso il tempo)", cur_page))
             
             self.rm.print_session_hours_distribution(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con il numero di sessioni (verso orario della giornata)** \n")
             md_file.write("<img src=\"%s/hours_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+            bookmarks[1].append(("grafico numero sessioni (verso orario della giornata)", cur_page))
+            
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+            cur_page += 1
     
             self.rm.print_lectures_events(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con il numero di eventi per lezione (verso si salto o ricerca)** \n")
-            md_file.write("<img src=\"%s/lectures_events_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+            md_file.write("<img src=\"%s/lectures_events_secondo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
+            bookmarks[1].append(("grafico numero eventi per lezione", cur_page))
+            
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")  
+            cur_page += 1
     
             self.rm.print_course_vision(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con la distribuzione della copertura** \n")
             md_file.write("<img src=\"%s/course_vision_secondo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
+            bookmarks[1].append(("grafico numero utenti per lezione", cur_page))
     
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
-        return
+        cur_page += 1
+        
+        return bookmarks
     
     """
         Stampa informazioni generali riguardo le lezioni
@@ -191,10 +239,13 @@ class Reports_computer:
             id_course: string
     """
     def lectures_info(self, md_file, id_course):
+        
+        cur_page = 0
+        bookmarks = [("Dettagli sulle lezioni", cur_page), list()]
+        
         md_file.write("## Dettagli sulle lezioni \n")
         
         lectures = self.rm.get_lectures_total_info(id_course)
-        md_file.write("**Dettagli generali sulle lezioni:**\n")
         md_file.write("Visione media: media ercentuale tra le percentuali di visione di ogni utente che ha visto la lezione \n")
         md_file.write("| LEZIONE | #UTENTI | #SESSIONI | #DOWNLOAD | VISIONE MEDIA | \n")
         md_file.write("| ------- | ------- | ------- | ------- | ------- | \n")
@@ -202,6 +253,8 @@ class Reports_computer:
             md_file.write("| %s | %s | %s | %s | %s | \n" %(l[0], l[1], l[2], l[3], l[4]))
         
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")   
+        cur_page += 1
+        
         i = 0
         self.rm.print_lectures_average_speed(id_course)
         self.rm.print_lectures_vision(id_course)
@@ -215,10 +268,12 @@ class Reports_computer:
             md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, (i*2+1)))
             md_file.write("**grafico copertura di visione univoca per utente** \n")
             md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, (i*2+2)))
+            bookmarks[1].append(("grafici lezione: %s" %(self.dm.get_lecture_name(id_lecture)), cur_page))
 
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n") 
+            cur_page += 1
         
-        return
+        return bookmarks
     
     """
         Stampa informazioni generali riguardo gli utenti
@@ -230,6 +285,10 @@ class Reports_computer:
             id_course: string
     """
     def users_info(self, md_file, id_course):
+        
+        cur_page = 0
+        bookmarks = [("Dettagli sugli utenti", cur_page), list()]
+        
         md_file.write("## Dettagli sugli utenti \n")
         md_file.write("Visione media: media percentuale tra le percentuali di visione delle lezioni viste dall'utente \n")
         md_file.write("Lezione pi&#249; vista: in termini di secondi di lezione visti dall'utente <br/> \n")
@@ -241,7 +300,9 @@ class Reports_computer:
             md_file.write("| %s | %s | %s | %s | %s | %s | %s | %s | \n" %(user_info[0], user_info[1], user_info[2], user_info[3], user_info[4], user_info[5], user_info[6], user_info[7]))
 
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
-        return
+        cur_page += 1
+        
+        return bookmarks
     
     
     """
@@ -254,6 +315,10 @@ class Reports_computer:
             id_course: string
     """
     def keywords_info(self, md_file, id_course):
+        
+        cur_page = 0
+        bookmarks = [("Dettagli sulle keyword", cur_page), list()]
+        
         keywords = self.rm.get_keywords(id_course)
         
         md_file.write("## Dettagli sulle keyword cercate \n")
@@ -264,10 +329,83 @@ class Reports_computer:
         md_file.write("| ------- | ------- | ------- | ------- | \n")
         for k in keywords:
             md_file.write("| %s | %s | %s | %s | \n" %(k[0], k[1], k[2], k[3]))
-        return
+        
+        #md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+        #cur_page += 1
+        
+        return bookmarks
     
     #--------------------------------------------------------------------------
     
+    """
+        Crea pdf con bookmarks
+    """
+    def create_pdf_bookmarks(self, name_file, total_bookmarks):
+        
+        #-- scorimento bookmark principali per calcolo pagine
+        titles = ["Report per il corso"]
+        for b in total_bookmarks[1:]:
+            titles.append(b[0][0])
+        #--
+        
+        output_file = PdfFileWriter()
+
+        #-- aggiornamento pagine
+        with fitz.open("%s.pdf" %(name_file)) as doc:
+            for p,page in enumerate(doc):
+                for i,title in enumerate(titles):
+                    if title in page.getText():
+                        total_bookmarks[i] = self.update_pages(total_bookmarks[i], p)
+                        
+        #--
+
+        #-- lettura contenuto pdf
+        input_stream = open("%s.pdf" %(name_file), "rb")
+        input_file = PdfFileReader(input_stream)
+        n_pages = input_file.numPages
+        for p in range(n_pages):
+            output_file.addPage(input_file.getPage(p))
+        #--
+        
+        #-- inserimento bookmarks
+        self.compute_bookmarks(output_file, total_bookmarks)
+        #--
+        
+        #--
+        with Path("%s.pdf" %(name_file[:-4])).open(mode="wb") as pdf_file:
+            output_file.write(pdf_file)
+        
+        input_stream.close()
+        return
+    
+    """
+        Aggiornamento pagine dei bookmarks
+    """
+    def update_pages(self, bookmarks, p):
+        
+        if type(bookmarks) == list:
+            bookmarks[0] = (bookmarks[0][0], bookmarks[0][1]+p)
+            for i, node in enumerate(bookmarks[1]):
+                bookmarks[1][i] = self.update_pages(node, p) 
+        else:
+            bookmarks = (bookmarks[0], bookmarks[1]+p)
+            
+        return bookmarks
+    
+    """
+        Crea bookmarks in modo ricorsivo nel pdf
+    """
+    def compute_bookmarks(self, output_file, bookmarks, parent=None):
+        
+        for b in bookmarks:
+            
+            if type(b) != tuple:
+                node = output_file.addBookmark(b[0][0], b[0][1], parent)
+                self.compute_bookmarks(output_file, b[1], node)
+            else:
+                node = output_file.addBookmark(b[0], b[1], parent)
+                
+        return
     """
         Modifica formato data YYYY-MM-DD -> DD-MM-YYYY
     """
