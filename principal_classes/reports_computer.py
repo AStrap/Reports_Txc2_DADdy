@@ -354,7 +354,7 @@ class Reports_computer:
         with fitz.open("%s.pdf" %(name_file)) as doc:
             for p,page in enumerate(doc):
                 for i,title in enumerate(titles):
-                    if title in page.getText():
+                    if title in page.get_text():
                         total_bookmarks[i] = self.update_pages(total_bookmarks[i], p)
                         
         #--

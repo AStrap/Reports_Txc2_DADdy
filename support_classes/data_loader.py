@@ -95,7 +95,14 @@ class Data_loader:
 
             for row in csv_reader:
                 if (time_date.cmp_dates(row[2][:10], self.days[-1]) <= 0) and (not row[1] in self.test_courses):
-                    self.lectures[row[0]] = [row[3], row[2], int(row[4]), int(row[5])]
+                    lecture_name = ""
+                    for i,c in enumerate(row[3]):
+                        if c.isupper():
+                            if i > 0 and row[3][i-1].islower():
+                                lecture_name += " "
+                        lecture_name += c
+                        
+                    self.lectures[row[0]] = [lecture_name, row[2], int(row[4]), int(row[5])]
                     self.courses_lectures[row[1]].append(row[0])
         #--
     
