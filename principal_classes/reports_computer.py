@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import math
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from pathlib import Path
 import fitz
@@ -149,20 +150,20 @@ class Reports_computer:
         cur_page += 1
 
         self.rm.print_lectures_events(id_course, first_period, "primo periodo")
-        md_file.write("**Grafico con il numero di eventi per lezione (verso si salto o ricerca)** \n")
-        md_file.write("<img src=\"%s/lectures_events_primo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
+        md_file.write("**Grafico con il numero di eventi per lezione (eventi di salto o ricerca)** \n")
         bookmarks[1].append(("grafico numero eventi per lezione", cur_page))
-        
-        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
-        cur_page += 1
+        for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)): 
+            md_file.write("<img src=\"%s/lectures_events_primo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))    
+            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+            cur_page += 1
         
         self.rm.print_course_vision(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con la distribuzione della copertura** \n")
-        md_file.write("<img src=\"%s/course_vision_primo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
         bookmarks[1].append(("grafico numero utenti per lezione", cur_page))
-
-        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
-        cur_page += 1  
+        for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)):
+            md_file.write("<img src=\"%s/course_vision_primo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
+            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+            cur_page += 1  
             
         return bookmarks
     
@@ -212,20 +213,20 @@ class Reports_computer:
             cur_page += 1
     
             self.rm.print_lectures_events(id_course, second_period, "secondo periodo")
-            md_file.write("**Grafico con il numero di eventi per lezione (verso si salto o ricerca)** \n")
-            md_file.write("<img src=\"%s/lectures_events_secondo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
+            md_file.write("**Grafico con il numero di eventi per lezione (eventi di salto o ricerca)** \n")
             bookmarks[1].append(("grafico numero eventi per lezione", cur_page))
-            
-            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")  
-            cur_page += 1
+            for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)): 
+                md_file.write("<img src=\"%s/lectures_events_secondo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
+                md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")  
+                cur_page += 1
     
             self.rm.print_course_vision(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con la distribuzione della copertura** \n")
-            md_file.write("<img src=\"%s/course_vision_secondo periodo/chart1.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, "%"))
-            bookmarks[1].append(("grafico numero utenti per lezione", cur_page))
-    
-        md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
-        cur_page += 1
+            bookmarks[1].append(("grafico numero utenti per lezione", cur_page)) 
+            for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)):
+                md_file.write("<img src=\"%s/course_vision_secondo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
+                md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")              
+                cur_page += 1
         
         return bookmarks
     

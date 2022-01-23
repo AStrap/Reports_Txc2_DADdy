@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import math
 
 import config
 import utility.time_date as time_date
@@ -6,6 +7,7 @@ import utility.time_date as time_date
 class Chart_course_vision:
     
     PATH_OUTPUT = config.PATH_OUTPUT
+    N_LECTURES_PER_CHART = config.N_LECTURES_PER_CHART
     
     def __init__(self, dm, em):
         # data manager
@@ -35,42 +37,54 @@ class Chart_course_vision:
     """
     def compute_users_per_lecture(self, sheet, id_course, label_period, period):
         
-        self.em.add_worksheet(sheet)
-        self.em.set_cursors(1, 1)
-        
-        #-- sessioni per giornata
-        c_x_i, c_y = self.em.get_cursors()
-        
-        head = [["LEZIONE", "NUMERO UTENTI"]]
-        body = []
+        lectures = self.dm.get_lectures_by_course(id_course)
+        n_charts = math.ceil(len(lectures)/self.N_LECTURES_PER_CHART)
         
         #-- giorni da considerare
         days = time_date.get_days_by_period(period)
         #--
         
-        max_user = 0
-        for l in self.dm.get_lectures_by_course(id_course):
-            sessions = self.dm.get_sessions_by_course_lecture_days(id_course, l, days)
+        for c in range(n_charts):
+        
+            self.em.add_worksheet("%s%s" %(sheet, c))
+            self.em.set_cursors(1, 1)
+        
+            tmp_lectures = 0
+            if c != n_charts-1:
+                tmp_lectures = lectures[c*self.N_LECTURES_PER_CHART:(c+1)*self.N_LECTURES_PER_CHART]
+            else:
+                tmp_lectures = lectures[c*self.N_LECTURES_PER_CHART:]
             
-            users = list()
-            for s in sessions:
-                if not s[-1] in users:
-                    users.append(s[-1])
+            c_x_i, c_y = self.em.get_cursors()
+        
+            head = [["LEZIONE", "NUMERO UTENTI"]]
+            body = []
+        
+        
+        
+            max_user = 0
+            for l in tmp_lectures:
+                sessions = self.dm.get_sessions_by_course_lecture_days(id_course, l, days)
             
-            body.append([self.dm.get_lecture_name(l), len(users)])
-            if len(users)>max_user:
-                max_user = len(users)
+                users = list()
+                for s in sessions:
+                    if not s[-1] in users:
+                        users.append(s[-1])
                 
-        option_x = dict()
-        if max_user < 10:
-            option_x['major_unit'] = 1
+                body.append([self.dm.get_lecture_name(l), len(users)])
+                if len(users)>max_user:
+                    max_user = len(users)
+                
+            option_x = dict()
+            if max_user < 10:
+                option_x['major_unit'] = 1
+                
+            self.em.write_head_table(head)
+            self.em.write_body_table(body)
             
-        self.em.write_head_table(head)
-        self.em.write_body_table(body)
-        
-        c_x, c_y = self.em.get_cursors()
-        
-        self.em.print_bar_chart("ver", (c_x_i+1,c_x-1), (c_y, c_y+1), sheet, "Utenti per lezione - %s" %(label_period), "numero utenti", "lezione", c_x_i, c_y+3, option_x)
+            c_x, c_y = self.em.get_cursors()
+            
+            self.em.print_bar_chart("ver", (c_x_i+1,c_x-1), (c_y, c_y+1), "%s%s" %(sheet, c), "Utenti per lezione - %s" %(label_period), "numero utenti", "lezione", c_x_i, c_y+3, option_x)
         #--
         return
     
