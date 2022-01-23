@@ -26,7 +26,7 @@ class Charts_lectures_average_speed:
 
         self.compute_support("Supporto_grafici", id_course)
 
-        self.compute_average_speed("Velocita_di_visione", "Supporto_grafici", id_course)
+        self.print_charts_average_speed("Velocita_di_visione", "Supporto_grafici", id_course)
 
         self.em.close_workbook()
         
@@ -50,7 +50,7 @@ class Charts_lectures_average_speed:
             head = [[str(datetime.timedelta(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)]]
             body = [[]]
 
-            for i,s in enumerate(info_speed[1:]):
+            for i,s in enumerate(info_speed):
                 tmp = ["" for _ in range(i)]
                 tmp.append(s); tmp.append(s)
                 body[0].extend(tmp)
@@ -59,44 +59,6 @@ class Charts_lectures_average_speed:
             self.em.write_body_table(body)
             #--
 
-
-
-        return
-
-    #-
-    # stampa i grafici delle medie di velocità
-    #-
-    def compute_average_speed(self, sheet, support_sheet, id_course):
-
-        for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
-
-            if i==0:
-                self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
-            else:
-                self.em.add_worksheet("%s%d" %(sheet,i))
-
-            if self.dm.get_lecture_duration(l)==0:
-                self.em.print_line_chart("oriz", (i*2,(i*2)+1), (0, 0), support_sheet, "Velocità media - %s" %(self.dm.get_lecture_name(l)), "minutaggio", "livello di velocità", 1, 1, {'max':4, 'min':0, 'major_unit':1})
-                continue
-
-            x = [i*2, (i*2)+1]
-            y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
-
-            #- inserimento dei skip
-            c_y=0
-            # spazi bianchi
-            s=0
-            while s<math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)-1:
-                y_s = c_y; y_e = c_y+s+1
-                y.append((y_s, y_e))
-
-                c_y += s+2
-                s += 1
-
-            title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
-            self.em.print_line_chart_speed(x, y, support_sheet, title, "minutaggio", "livello di velocità", 1, 1, {"max":4, "min":0})
-
-
         return
 
     #-
@@ -104,7 +66,7 @@ class Charts_lectures_average_speed:
     #-
     def compute_speed(self, id_lecture, sessions):
 
-        info_speed = [[] for _ in range(math.floor(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
+        info_speed = [[] for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
 
         for s in sessions:
             # sessioni che durano più di 1 minuto
@@ -136,3 +98,39 @@ class Charts_lectures_average_speed:
             else:
                 r_info_speed[i] = 0
         return r_info_speed
+
+    #-
+    # stampa i grafici delle medie di velocità
+    #-
+    def print_charts_average_speed(self, sheet, support_sheet, id_course):
+
+        for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
+
+            if i==0:
+                self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
+            else:
+                self.em.add_worksheet("%s%d" %(sheet,i))
+
+            if self.dm.get_lecture_duration(l)==0:
+                self.em.print_line_chart("oriz", (i*2,(i*2)+1), (0, 0), support_sheet, "Velocità media - %s" %(self.dm.get_lecture_name(l)), "minutaggio", "livello di velocità", 1, 1, {'max':4, 'min':0, 'major_unit':1})
+                continue
+
+            x = [i*2, (i*2)+1]
+            y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
+
+            #- inserimento dei skip
+            c_y=0
+            # spazi bianchi
+            s=0
+            while s<math.ceil(self.dm.get_lecture_duration(l)/self.UNIT):
+                y_s = c_y; y_e = c_y+s+1
+                y.append((y_s, y_e))
+
+                c_y += s+2
+                s += 1
+
+            title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
+            self.em.print_line_chart_speed(x, y, support_sheet, title, "minutaggio", "livello di velocità", 1, 1, {"max":4, "min":0})
+
+
+        return

@@ -196,7 +196,7 @@ class Data_loader:
         ses_pr = 0
         for e in events:
             if play==1:
-                if e[2]>lect_pr and e[0]!="SK" and (e[1]-ses_pr)*2>=e[2]-lect_pr:
+                if e[2]>lect_pr and e[0]!="SK":
                     tot += e[2]-lect_pr
 
             if e[0]=="PL":
