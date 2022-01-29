@@ -875,6 +875,108 @@ class Excel_manager:
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
         #--
         return
+    
+    """
+        Stampa Grafico a linee specifico per il caso di visualizzazione degli 
+        eventi
+
+        Parametri:
+            orien: "oriz" o "vert"
+              indica l'orientamento dei dati e il significato x,y
+              oriz : x indica riga label e righe serie dei dati, y indica range colonne valori
+              vert : y indica colanna label e colonne serie dei dati, x indica range righe valori
+
+            x: (int, int)
+                (riga iniziale, riga finale)
+
+            y: (int, int, ...)
+                (colonna iniziale, colonna finale)
+                
+            info_events: list()
+                informazioni riguardo gli eventi                
+
+            support_sheet: string
+                nome foglio da cui prendere i dati
+                
+            title: string
+                titolo grafico
+                
+            label_x: string
+                label asse x
+                
+            label_y: string
+                label asse y
+                
+            p_x: int
+                indice riga dove posizionare il grafico
+                
+            p_y: int
+                indice colonna dove posizionare il grafico
+                
+            axis_y_option: dict()
+                opzioni aggiuntive per l'asse y
+    """
+    def print_line_chart_seek_events(self, x, y, info_events, support_sheet, title, label_x, label_y, p_x, p_y, axis_y_option):
+        # creazione grafico
+        chart = self.workbook.add_chart({'type': 'line'})
+        label_s = "$%s$%d"%(self.colnum_string(y[0]+1),x[0]+1); label_e = "$%s$%d"%(self.colnum_string(y[1]+1),x[0]+1)
+        
+        markers_type  = ['square', 'circle', 'diamond', 'triangle']
+        markers_color = ['red', 'green', 'blue', 'yellow']
+        for i,type_seek in enumerate(info_events):
+        
+            c_y_tmp= 0
+            for j,m in enumerate(type_seek):
+                if m != 0:
+                    val_s = "$%s$%d"%(self.colnum_string(c_y_tmp+1),x[i+1]+1)
+                    c_y_tmp += j
+                    val_e = "$%s$%d"%(self.colnum_string(c_y_tmp+1),x[i+1]+1)
+                    c_y_tmp += 1
+                    
+                    chart.add_series({
+                        'name': 'serie',
+                        'categories': '=%s!%s:%s' %(support_sheet, label_s, label_e),
+                        'values':     '=%s!%s:%s' %(support_sheet, val_s, val_e),
+                        'line':       {'none':True},
+                        'marker':     {'type':markers_type[i],
+                                       'size':10,
+                                       'border': {'color': 'black', 'size':1},
+                                       'fill': {'color': markers_color[i]}} 
+                        })
+            
+        #-- serie vuota
+        c_y_tmp = 0
+        val_s = "$%s$%d"%(self.colnum_string(c_y_tmp+1),x[5]+1)
+        c_y_tmp += y[1]
+        val_e = "$%s$%d"%(self.colnum_string(c_y_tmp+1),x[5]+1)
+        chart.add_series({
+            'name': 'serie',
+            'categories': '=%s!%s:%s' %(support_sheet, label_s, label_e),
+            'values':     '=%s!%s:%s' %(support_sheet, val_s, val_e)})   
+        #--
+                
+    
+        chart.set_title({'name': title,
+                         'name_font':  {'name': 'Arial', 'size': 9}})
+        chart.set_x_axis({'name': label_x,
+                          'display_units_visible': False,
+                          'position_axis': 'on_tick',
+                          'num_font':  {'rotation': 90},
+                          'major_gridlines': {
+                                  'visible': True,
+                                  'line': {'width': 0.25}}})
+        
+        options_y = {'name':label_y}
+        options_y.update(axis_y_option)
+        chart.set_y_axis(options_y)
+        
+        chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
+        chart.set_legend({'none': True})
+        
+        #-- salvataggio grafico
+        self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
+        #--
+        return
 
     #--------------------------------------------------------------------------
     """

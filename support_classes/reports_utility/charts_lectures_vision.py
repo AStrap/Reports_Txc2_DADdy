@@ -7,7 +7,7 @@ import utility.time_date as time_date
 class Charts_lectures_vision:
 
     PATH_OUTPUT = config.PATH_OUTPUT
-    UNIT = config.TIME_UNIT     
+    UNIT = config.TIME_UNIT
 
     def __init__(self, dm, em):
 
@@ -32,7 +32,7 @@ class Charts_lectures_vision:
         self.compute_lecture_vision("Coperura di visione", "Supporto_grafici", id_course)
 
         self.em.close_workbook()
-        
+
         return workbook_name
 
     #-
@@ -94,15 +94,15 @@ class Charts_lectures_vision:
 
     # calcolo numero visioni
     def compute_n_vision(self, id_course, id_lecture):
-       
+
         total_vision = [0 for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
-       
+
         sessions = self.dm.get_sessions_by_course_lecture(id_course, id_lecture)
-       
+
         cur_unit = -1
         for s in sessions:
             play=0; speed=1
-       
+
             t_ses_pr = 0; t_lec_pr = 0
             for e in s[3]:
                 event = e[0]; t_ses = e[1]; t_lec = e[2]
@@ -110,13 +110,13 @@ class Charts_lectures_vision:
                     continue
                 elif event == "DL":
                     continue
-       
+
                 if play:
                     if event!="SK" :
                         if t_lec>t_lec_pr:
                             # controllo intervallo
                             while t_lec_pr<t_lec:
-                                tmp = round(t_lec_pr/self.UNIT) 
+                                tmp = round(t_lec_pr/self.UNIT)
                                 if tmp != cur_unit:
                                     total_vision[tmp] += 1
                                     cur_unit=tmp
@@ -124,10 +124,10 @@ class Charts_lectures_vision:
                     elif event=="SK":
                         date = time_date.get_datetime(s[0])
                         date_update_sk = time_date.get_datetime("2021-11-08")
-       
+
                         if date > date_update_sk:
                             while t_lec_pr<e[3]:
-                                tmp = round(t_lec_pr/self.UNIT) 
+                                tmp = round(t_lec_pr/self.UNIT)
                                 if tmp != cur_unit:
                                     total_vision[tmp] += 1
                                     cur_unit=tmp
@@ -141,12 +141,14 @@ class Charts_lectures_vision:
                                         cur_unit=tmp
                                     t_lec_pr+=speed
                                     if speed==2 and (t_lec_pr-1)<self.dm.get_lecture_duration(id_lecture):
-                                        tmp = round((t_lec_pr-1)/self.UNIT) 
+                                        tmp = round((t_lec_pr-1)/self.UNIT)
                                         if tmp != cur_unit:
                                             total_vision[tmp] += 1
                                             cur_unit=tmp
-                                t_ses_pr+=1;
-       
+                                    t_ses_pr+=1
+                                else:
+                                    t_ses_pr = t_ses
+
                 #-- aggiornamento del play e speed
                 if event=="PL":
                     play = 1
@@ -157,9 +159,9 @@ class Charts_lectures_vision:
                 elif event=="S2" or event=="S3" or event=="S4":
                     speed = 2
                 #--
-       
+
                 t_lec_pr = t_lec; t_ses_pr = t_ses
-       
+
         for y in total_vision:
             if y > self.max_y:
                 self.max_y = y

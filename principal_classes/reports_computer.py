@@ -259,6 +259,7 @@ class Reports_computer:
         i = 0
         self.rm.print_lectures_average_speed(id_course)
         self.rm.print_lectures_vision(id_course)
+        self.rm.print_lectures_seek_events(id_course)
         for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
             
             md_file.write("### %s \n" %(self.dm.get_lecture_name(id_lecture)))
@@ -269,6 +270,9 @@ class Reports_computer:
             md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, (i*2+1)))
             md_file.write("**grafico copertura di visione univoca per utente** \n")
             md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, (i*2+2)))
+            md_file.write("**grafico studio eventi di salto temporale** \n")
+            md_file.write("<div><img src=\"../../utility/img/legend_seek_lectures.png\" width=\"70%s\"/> \n" %("%"))
+            md_file.write("<img src=\"%s/lecture_seek_events/chart%d.png\"/></div> <br/> \n" %(self.path_imgs, i+1))
             bookmarks[1].append(("grafici lezione: %s" %(self.dm.get_lecture_name(id_lecture)), cur_page))
 
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n") 

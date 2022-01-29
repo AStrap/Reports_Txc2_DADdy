@@ -14,6 +14,7 @@ import support_classes.reports_utility.chart_sessions_hours_distribution as char
 import support_classes.reports_utility.chart_course_vision as chart_course_vision
 import support_classes.reports_utility.charts_lectures_average_speed as charts_lectures_average_speed
 import support_classes.reports_utility.charts_lectures_vision as charts_lectures_vision
+import support_classes.reports_utility.charts_lectures_seek_events as charts_lectures_seek_events
 
 class Reports_manager:
 
@@ -199,6 +200,17 @@ class Reports_manager:
         c_charts_lectures_vision = charts_lectures_vision.Charts_lectures_vision(self.dm, self.em)
         workbook = c_charts_lectures_vision.compute_print(id_course)
         self.save_chart(id_course, workbook, "lecture_vision")
+        
+        return
+        
+    """
+        Stampa grafico riguardo la tipologia e il numero di eventi che puntano ad un specifico minutaggio 
+    """
+    def print_lectures_seek_events(self, id_course):
+        
+        c_charts_lectures_seek_events = charts_lectures_seek_events.Charts_lectures_seek_events(self.dm, self.em)
+        workbook = c_charts_lectures_seek_events.compute_print(id_course)
+        self.save_chart(id_course, workbook, "lecture_seek_events")
         
         return
         

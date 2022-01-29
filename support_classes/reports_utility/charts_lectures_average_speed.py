@@ -7,7 +7,7 @@ import config
 class Charts_lectures_average_speed:
 
     PATH_OUTPUT = config.PATH_OUTPUT
-    UNIT = config.TIME_UNIT 
+    UNIT = config.TIME_UNIT
 
     def __init__(self, dm, em):
         # data manager
@@ -29,12 +29,12 @@ class Charts_lectures_average_speed:
         self.print_charts_average_speed("Velocita_di_visione", "Supporto_grafici", id_course)
 
         self.em.close_workbook()
-        
+
         return workbook_name
 
     #-
-    # Calcolo e produzione del foglio di supporto per studio dei vari punti di
-    # interesse, in base a particolari criteri
+    # Calcolo e produzione del foglio di supporto per studio delle velocità medie
+    # di visione
     #-
     def compute_support(self, sheet, id_course):
 
@@ -69,8 +69,6 @@ class Charts_lectures_average_speed:
         info_speed = [[] for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
 
         for s in sessions:
-            # sessioni che durano più di 1 minuto
-
             #tempo lezione e velocita lezione correnti
             t_cor = 0; v_cor = 1; play=0
             for e in s[3]:
@@ -111,10 +109,6 @@ class Charts_lectures_average_speed:
             else:
                 self.em.add_worksheet("%s%d" %(sheet,i))
 
-            if self.dm.get_lecture_duration(l)==0:
-                self.em.print_line_chart("oriz", (i*2,(i*2)+1), (0, 0), support_sheet, "Velocità media - %s" %(self.dm.get_lecture_name(l)), "minutaggio", "livello di velocità", 1, 1, {'max':4, 'min':0, 'major_unit':1})
-                continue
-
             x = [i*2, (i*2)+1]
             y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
 
@@ -130,7 +124,7 @@ class Charts_lectures_average_speed:
                 s += 1
 
             title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
-            self.em.print_line_chart_speed(x, y, support_sheet, title, "minutaggio", "livello di velocità", 1, 1, {"max":4, "min":0})
+            self.em.print_line_chart_speed(x, y, support_sheet, title, "minutaggio", "livello di velocità", 1, 1, {"max":4, "min":0, 'major_unit':1})
 
 
         return

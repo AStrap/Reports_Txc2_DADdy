@@ -36,7 +36,7 @@ def main():
     rc = reports_computer.Reports_computer(dm,em)
     
     #for id_course in dm.get_courses():
-    for id_course in ["32812","33305"]:
+    for id_course in ["32812"]:
         rc.compute_print(id_course)
     #--
     
