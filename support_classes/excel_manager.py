@@ -776,7 +776,7 @@ class Excel_manager:
         #- creazione serie
         for i, (val_s,val_e) in enumerate(zip(values_s, values_e)):
             chart.add_series({
-                'name':name_series[i],
+                'name': name_series[i],
                 'categories': '=%s!%s:%s' %(support_sheet, labels_s, labels_e),
                 'values':     '=%s!%s:%s' %(support_sheet, val_s, val_e)})
         #-

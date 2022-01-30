@@ -15,14 +15,11 @@ class Charts_lectures_seek_events:
 
         # excel manager
         self.em = em
-        
-        # valore massimo sull'asse y
-        self.max_y = 0
 
         return
 
     def compute_print(self, id_course):
-        self.max_y = 0
+        
         path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         workbook_name = "lectures_seek_events_%s.xlsx" %(self.dm.get_course_name(id_course))
@@ -63,9 +60,6 @@ class Charts_lectures_seek_events:
                     if m != 0:
                         tmp = ["" for _ in range(j)]; tmp.append(m)
                         body[0].extend(tmp)
-                        
-                        if m > self.max_y:
-                            self.max_y = m
                         
                 self.em.write_body_table(body)
             
@@ -163,13 +157,8 @@ class Charts_lectures_seek_events:
             x = [i*6, (i*6)+1, (i*6)+2, (i*6)+3, (i*6)+4, (i*6)+5]
             y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
 
-            if self.max_y > 20:
-                unit = 10
-            else:
-                unit = 1
-
             title = "Numero eventi di salto temporale - %s" %(self.dm.get_lecture_name(l))
-            self.em.print_line_chart_seek_events(x, y, info_events[i], support_sheet, title, "minutaggio", "numero di eventi", 1, 1, {"min":0, 'major_unit':unit})
+            self.em.print_line_chart_seek_events(x, y, info_events[i], support_sheet, title, "minutaggio", "numero di eventi", 1, 1, {"min":0})
 
 
         return

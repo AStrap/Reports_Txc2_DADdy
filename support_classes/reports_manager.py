@@ -15,6 +15,7 @@ import support_classes.reports_utility.chart_course_vision as chart_course_visio
 import support_classes.reports_utility.charts_lectures_average_speed as charts_lectures_average_speed
 import support_classes.reports_utility.charts_lectures_vision as charts_lectures_vision
 import support_classes.reports_utility.charts_lectures_seek_events as charts_lectures_seek_events
+import support_classes.reports_utility.chart_user_agents as chart_user_agents
 
 class Reports_manager:
 
@@ -211,6 +212,14 @@ class Reports_manager:
         c_charts_lectures_seek_events = charts_lectures_seek_events.Charts_lectures_seek_events(self.dm, self.em)
         workbook = c_charts_lectures_seek_events.compute_print(id_course)
         self.save_chart(id_course, workbook, "lecture_seek_events")
+        
+        return
+    
+    def print_user_agent_info(self, id_course):
+        
+        c_chart_user_agents = chart_user_agents.Chart_user_agents(self.dm, self.em)
+        workbook = c_chart_user_agents.compute_print(id_course)
+        self.save_chart(id_course, workbook, "user_agent")
         
         return
         

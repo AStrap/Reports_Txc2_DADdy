@@ -98,6 +98,27 @@ def add_days(date, n_days):
     r_date = r_date + datetime.timedelta(days=n_days)
     
     return str(r_date)[:10]
+
+"""
+    Incrementa data di x ore
+    
+    Parametri:
+        date: string - YYYY-MM-DDTHH:MM:SS
+            data da incrementare
+        n_days: int 
+            numero ore da incrementare
+            
+    Return:
+        r_date: string
+            data aggiornata
+             
+"""
+def add_hours(date, n_hours):
+    r_date = get_datetime(date)
+    
+    r_date = r_date + datetime.timedelta(hours=n_hours)
+    
+    return "%sT%s" %(str(r_date)[:10], str(r_date)[11:19])
     
 """
     Calcolo giorni dato il periodo
