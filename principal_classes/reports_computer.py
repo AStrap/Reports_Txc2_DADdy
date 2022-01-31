@@ -103,10 +103,10 @@ class Reports_computer:
         
         md_file.write("**Numero di studenti che hanno almeno una sessione:** %d <br/> \n" %(len(self.dm.get_users_by_course(id_course))))
         
-        self.rm.print_user_agent_info(id_course)
-        md_file.write("**Grafico con il numero di dispositivi per tipo (verso parte giornata)** \n")
-        md_file.write("<img src=\"%s/user_agent/chart1.png\"/> <br/> \n" %(self.path_imgs))
-        bookmarks[1].append(("grafico numero dispositivi per tipo", cur_page))
+        #self.rm.print_user_agent_info(id_course)
+        #md_file.write("**Grafico con il numero di dispositivi per tipo (verso parte giornata)** \n")
+        #md_file.write("<img src=\"%s/user_agent/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        #bookmarks[1].append(("grafico numero dispositivi per tipo", cur_page))
         
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")             
         cur_page += 1
