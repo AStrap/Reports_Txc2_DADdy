@@ -41,6 +41,9 @@ class Charts_lectures_average_speed:
         self.em.add_worksheet(sheet)
 
         for l in self.dm.get_lectures_by_course(id_course):
+            
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = 10*60
 
             #-- calcolo velocità medie per lezione
             info_speed = self.compute_speed(l, self.dm.get_sessions_by_course_lecture(id_course, l))
@@ -59,6 +62,8 @@ class Charts_lectures_average_speed:
             self.em.write_body_table(body)
             #--
 
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = config.TIME_UNIT 
         return
 
     #-
@@ -104,6 +109,9 @@ class Charts_lectures_average_speed:
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = 10*60
+
             if i==0:
                 self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
             else:
@@ -125,6 +133,8 @@ class Charts_lectures_average_speed:
 
             title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
             self.em.print_line_chart_speed(x, y, support_sheet, title, "minutaggio", "livello di velocità", 1, 1, {"max":4, "min":0, 'major_unit':1})
-
+            
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = config.TIME_UNIT
 
         return

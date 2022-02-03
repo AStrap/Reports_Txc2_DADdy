@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+import principal_classes.user_info_computer as user_info_computer
 import principal_classes.reports_computer as reports_computer
 
 import config
@@ -26,18 +27,30 @@ def main():
             os.mkdir("%s\\%s-%s" %(PATH_OUTPUT, c, dm.get_course_name(c)))
         except:
             pass
+        
     try:
         os.mkdir("%s\\_reports" %(PATH_OUTPUT))
     except:
         pass
+    
+    try:
+        os.mkdir("%s\\_users_info" %(PATH_OUTPUT))
+    except:
+        pass
+    #--
+    
+    #-- stampa info utenti per ogni classe
+    uc = user_info_computer.User_info_computer(dm)
+    
+    for id_course in dm.get_courses():
+        uc.compute_save(id_course)
     #--
     
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm,em)
     
-    for id_course in dm.get_courses():
-    #for id_course in ["32812"]:
-        rc.compute_print(id_course)
+    #for id_course in dm.get_courses():
+    #    rc.compute_print(id_course)
     #--
     
     return

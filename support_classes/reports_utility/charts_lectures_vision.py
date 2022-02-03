@@ -45,6 +45,9 @@ class Charts_lectures_vision:
 
         for l in self.dm.get_lectures_by_course(id_course):
 
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = 10*60            
+
             #-- calcolo informazioni riguardo la visione
             total_vision = self.compute_n_vision(id_course, l)
             user_vision = self.compute_n_vision_users(id_course, l)
@@ -57,6 +60,9 @@ class Charts_lectures_vision:
             self.em.write_head_table(head)
             self.em.write_body_table(body)
             #--
+            
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = config.TIME_UNIT
         return
 
     #-
@@ -65,6 +71,9 @@ class Charts_lectures_vision:
     def compute_lecture_vision(self, sheet, support_sheet, id_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
+
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = 10*60            
 
             if i==0:
                 self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
@@ -89,6 +98,8 @@ class Charts_lectures_vision:
                 unit = 1
             self.em.print_line_chart("oriz", (ind_labels,ind_labels+2), (0, duration), support_sheet, title, "minutaggio", "numero visioni", 1, 14, {'max':self.max_y2, 'min':0, 'major_unit':unit})
 
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = config.TIME_UNIT
 
         return
 

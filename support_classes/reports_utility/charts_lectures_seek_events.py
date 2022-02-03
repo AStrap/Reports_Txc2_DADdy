@@ -44,6 +44,9 @@ class Charts_lectures_seek_events:
         r_info_events = list()
         for l in self.dm.get_lectures_by_course(id_course):
 
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = 10*60            
+
             #-- calcolo velocità medie per lezione
             info_events = self.compute_seek_events(l, self.dm.get_sessions_by_course_lecture(id_course, l))
             r_info_events.append(info_events)
@@ -65,6 +68,9 @@ class Charts_lectures_seek_events:
             
             self.em.add_row(1)
             #--
+            
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = config.TIME_UNIT 
 
         return r_info_events
 
@@ -133,12 +139,6 @@ class Charts_lectures_seek_events:
                 elif event == "S2" or event == "S3" or event == "S4":
                     speed = 2
                 #--
-                
-                    
-                if skip_event:
-                    skip_event = False
-                    t_lec_pr = e[2]
-                    continue
 
         return info_events
 
@@ -148,6 +148,9 @@ class Charts_lectures_seek_events:
     def print_charts_average_speed(self, sheet, support_sheet, id_course, info_events):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
+
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = 10*60            
 
             if i==0:
                 self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
@@ -160,5 +163,7 @@ class Charts_lectures_seek_events:
             title = "Numero eventi di salto temporale - %s" %(self.dm.get_lecture_name(l))
             self.em.print_line_chart_seek_events(x, y, info_events[i], support_sheet, title, "minutaggio", "numero di eventi", 1, 1, {"min":0})
 
+            if self.dm.get_lecture_duration(l)>10000:
+                self.UNIT = config.TIME_UNIT
 
         return

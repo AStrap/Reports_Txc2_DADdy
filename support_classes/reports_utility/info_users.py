@@ -125,39 +125,45 @@ class Info_users:
 
         for s in self.dm.get_session_by_course_user(id_course, id_user):
 
-            lecture_duration = self.dm.get_lecture_duration(s[-2])
+            id_lecture = s[-2]
+            
+            t_lect_pr = 0; t_ses_pr = 0
+            speed = 0; play = 0; 
+            skip_event = False
+            for i,e in enumerate(s[3]):
+                event = e[0]; t_ses = e[1]; t_lect = int(e[2])
 
-            t_lec_pr = 0; t_ses_pr = 0
-            t_lec_cor = 0; t_ses_cor = 0; v_cor = 1; play=0
-            for e in s[3]:
-                t_lec_cor = e[2]; t_ses_cor = e[1]
+                if skip_event:
+                    skip_event = False
+                    t_lect_pr = t_lect
+                    continue
 
-                if play:
-                    diff = t_ses_cor-t_ses_pr
-                    if t_lec_pr+(diff*v_cor) <= lecture_duration:
-                        t_lec_pr += diff*v_cor
-
-
-                if e[0] == "SK":
-                    if t_lec_cor < t_lec_pr:
+                while t_ses_pr < t_ses:
+                    if play and t_lect_pr<self.dm.get_lecture_duration(id_lecture):
+                        t_lect_pr+=1
+                        if speed == 2 and t_lect_pr<self.dm.get_lecture_duration(id_lecture):
+                            t_lect_pr += 1
+                        t_ses_pr+=1
+                    else:
+                        t_ses_pr = t_ses
+                
+                #-- verifica presenza salti
+                if event == "SK":
+                    if t_lect < t_lect_pr:
                         n_backwards += 1
-                elif e[0] == "S0":
-                    v_cor = 1
-                elif e[0] == "S1":
-                    v_cor = 1.25
-                elif e[0] == "S2":
-                    v_cor = 1.5
-                elif e[0] == "S3":
-                    v_cor = 1.75
-                elif e[0] == "S4":
-                    v_cor = 2
-                elif e[0]=="PL":
+                elif (event == "SC" or event=="SL" or event=="KW") and i+1<len(s[3]) and s[3][i+1][0]=="SK":
+                    skip_event = True    
+                 
+                 
+                #-- aggiornamento del play e speed
+                if event == "PL":
                     play = 1
-                elif e[0]=="PS":
+                elif event == "PS":
                     play = 0
-
-                if (e[0]!="SL" and e[0]!="DL") or e[2]!=0:
-                    t_lec_pr = t_lec_cor; t_ses_pr = t_ses_cor
-
+                elif event == "S0" or event == "S1":
+                    speed = 1
+                elif event == "S2" or event == "S3" or event == "S4":
+                    speed = 2
+                #--
 
         return n_backwards

@@ -19,7 +19,7 @@ class Data_manager:
         self.lectures = dict()
         # dizionario utenti    -  ID: []
         self.users = dict()
-        # dizionario sessioni  -  ID: [timestamp, userAgent, eventi, languageCode, durata, ID_corso, ID_lezione, ID_utente]
+        # dizionario sessioni  -  ID: [date, timestamp, userAgent, eventi, languageCode, durata, ID_corso, ID_lezione, ID_utente]
         self.sessions = dict()
 
         #-- RELAZIONI
