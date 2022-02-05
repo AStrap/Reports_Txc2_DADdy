@@ -151,10 +151,10 @@ class User_info_computer:
     """
         Percentuale di visione di ogni corso
     """
-    def get_user_perc_vision(self, id_course,id_user):
+    def get_user_perc_vision(self, id_course, id_user):
         user_info = list()
         for id_lecture in self.dm.get_lectures_by_course(id_course):
-            perc_vision = info_vision.compute_user_perc_vision_lecture(self.dm, id_user, id_lecture, id_course)
+            perc_vision = round(info_vision.compute_user_perc_vision_lecture(self.dm, id_user, id_lecture, id_course),2)
             user_info.append(perc_vision)
         
         return user_info    
