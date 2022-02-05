@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from zipfile import ZipFile
 
 import principal_classes.user_info_computer as user_info_computer
 import principal_classes.reports_computer as reports_computer
@@ -44,6 +45,13 @@ def main():
     
     for id_course in dm.get_courses():
         uc.compute_save(id_course)
+        
+    sub_folders = ["test","course_vision"]
+    for sub_f in sub_folders:
+        zipObj = ZipFile("%s\\_users_info\\%s\\data.zip"%(PATH_OUTPUT,sub_f), 'w')
+        for id_course in dm.get_courses():
+            zipObj.write("%s\\_users_info\\%s\\%s-%s.csv"%(PATH_OUTPUT,sub_f,id_course,dm.get_course_name(id_course))) 
+        zipObj.close()
     #--
     
     #-- stampa report per ogni classe

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+import os
 
 import config
 import utility.info_vision as info_vision
@@ -21,7 +22,24 @@ class User_info_computer:
     """
     def compute_save(self, id_course):
         
-        output_file = "%s\\_users_info\\%s-%s.csv"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        self.compute_test(id_course)
+        
+        self.compute_course_perc_vision(id_course)
+        return
+
+    #--------------------------------------------------------------------------
+    """
+        Dati test che si basano sulle frequenze degli eventi
+    """
+    def compute_test(self, id_course):
+        sub_folder = "\\_users_info\\test"
+        
+        try:
+            os.mkdir("%s\\%s" %(self.PATH_OUTPUT, sub_folder))
+        except:
+            pass
+        
+        output_file = "%s\\%s\\%s-%s.csv"%(self.PATH_OUTPUT, sub_folder, id_course, self.dm.get_course_name(id_course))
         
         users_perc = list()
         
@@ -40,8 +58,8 @@ class User_info_computer:
         print("\n%s-%s" %(id_course, self.dm.get_course_name(id_course)))
         for u,p in users_perc:
             print("\t%s: %f" %(u,p))
+               
         return
-
     
     """
         Calcolo delle varie frequenze richieste
@@ -102,5 +120,42 @@ class User_info_computer:
             user_info[i+2] = info/float(tot_time_vision)
         
         return user_info
-        
+    #--------------------------------------------------------------------------
     
+    """
+        Dati riguardo la percentuale di visione di ogni corso
+    """
+    def compute_course_perc_vision(self, id_course):
+        sub_folder = "\\_users_info\\course_vision"
+        
+        try:
+            os.mkdir("%s\\%s" %(self.PATH_OUTPUT, sub_folder))
+        except:
+            pass
+        
+        output_file = "%s\\%s\\%s-%s.csv"%(self.PATH_OUTPUT, sub_folder, id_course, self.dm.get_course_name(id_course))
+        
+        with open(output_file, 'w', newline='') as csvfile:
+            spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            
+            for id_user in self.dm.get_users_by_course(id_course):
+                user_info = self.get_user_perc_vision(id_course, id_user)
+                spamwriter.writerow(user_info+[id_user])
+                
+            print("\n%s-%s" %(id_course, self.dm.get_course_name(id_course)))
+            for id_lecture in self.dm.get_lectures_by_course(id_course):
+                print("\t%s" %(self.dm.get_lecture_name(id_lecture)))
+        
+        return
+    
+    """
+        Percentuale di visione di ogni corso
+    """
+    def get_user_perc_vision(self, id_course,id_user):
+        user_info = list()
+        for id_lecture in self.dm.get_lectures_by_course(id_course):
+            perc_vision = info_vision.compute_user_perc_vision_lecture(self.dm, id_user, id_lecture, id_course)
+            user_info.append(perc_vision)
+        
+        return user_info    
+    #--------------------------------------------------------------------------

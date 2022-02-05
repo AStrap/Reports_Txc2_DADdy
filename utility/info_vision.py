@@ -17,7 +17,7 @@ def compute_user_perc_vision_course(dm, id_user, id_course):
     return (tot*100)/(100*len(dm.get_lectures_by_course(id_course)))
 
 #-
-# Calcolo della percentuale di visione di una lezione date le sessioni
+# Calcolo della percentuale di visione di una lezione
 #-
 def compute_user_perc_vision_lecture(dm, id_user, id_lecture, id_course):
     sessions = dm.get_sessions_by_lecture_user(id_course, id_lecture, id_user)
