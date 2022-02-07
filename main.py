@@ -2,7 +2,6 @@
 import os
 from zipfile import ZipFile
 
-import principal_classes.user_info_computer as user_info_computer
 import principal_classes.reports_computer as reports_computer
 
 import config
@@ -33,32 +32,21 @@ def main():
         os.mkdir("%s\\_reports" %(PATH_OUTPUT))
     except:
         pass
-    
-    try:
-        os.mkdir("%s\\_users_info" %(PATH_OUTPUT))
-    except:
-        pass
-    #--
-    
-    #-- stampa info utenti per ogni classe
-    uc = user_info_computer.User_info_computer(dm)
-    
-    for id_course in dm.get_courses():
-        uc.compute_save(id_course)
-        
-    sub_folders = ["test","course_vision"]
-    for sub_f in sub_folders:
-        zipObj = ZipFile("%s\\_users_info\\%s\\data.zip"%(PATH_OUTPUT,sub_f), 'w')
-        for id_course in dm.get_courses():
-            zipObj.write("%s\\_users_info\\%s\\%s-%s.csv"%(PATH_OUTPUT,sub_f,id_course,dm.get_course_name(id_course))) 
-        zipObj.close()
     #--
     
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm,em)
     
-    #for id_course in dm.get_courses():
-    #    rc.compute_print(id_course)
+    for id_course in dm.get_courses():
+    #for id_course in ["32812"]:
+        rc.compute_print(id_course)
+    #--
+    
+    #-- salvataggio informazioni degli utenti      
+    zipObj = ZipFile("%s\\users_info.zip"%(PATH_OUTPUT), 'w')
+    for id_course in dm.get_courses():
+        zipObj.write(filename = "%s\\%s-%s\\users_info.csv"%(PATH_OUTPUT,id_course,dm.get_course_name(id_course)), arcname="%s-%s.csv"%(id_course, dm.get_course_name(id_course))) 
+    zipObj.close()
     #--
     
     return

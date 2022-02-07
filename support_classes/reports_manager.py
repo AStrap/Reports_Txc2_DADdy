@@ -117,6 +117,14 @@ class Reports_manager:
         return c_users.compute_info_users(id_course)
     
     """
+        Return informazioni riguardo ai gruppi di utenti per corso specifico
+    """
+    def get_users_clusters(self, id_course):
+        c_users = info_users.Info_users(self.dm)
+        
+        return c_users.compute_clusters_activity(id_course)
+    
+    """
         Return informazioni riguardo le keywords cercate
     """
     def get_keywords(self, id_course):

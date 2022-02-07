@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
+import csv
 
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn_extra.cluster import KMedoids
+from sklearn.metrics import silhouette_score
+
+import config
 import utility.info_vision as info_vision
 
 class Info_users:
+
+    PATH_OUTPUT = config.PATH_OUTPUT
 
     def __init__(self, dm):
 
@@ -23,6 +32,10 @@ class Info_users:
         users_info = list()
         #--
 
+        output_file = "%s\\%s-%s\\users_info.csv"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        output_csvfile = open(output_file, 'w', newline='')
+        spamwriter = csv.writer(output_csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
         for id_user in self.dm.get_users_by_course(id_course):
 
             n_sessions, lectures = self.compute_sessions_lectures(id_course, id_user)
@@ -39,7 +52,13 @@ class Info_users:
 
             users_info.append([id_user, n_sessions, len(lectures), perc_average_vision, lect_max_vision, n_events, n_pauses, n_backwards])
 
+            perc_lectures = round((len(lectures)*100.00)/len(self.dm.get_lectures_by_course(id_course)), 2)
+            course_vision = info_vision.compute_user_perc_vision_course(self.dm, id_user, id_course)
+            spamwriter.writerow([perc_lectures,course_vision,perc_average_vision,id_user])
+            
         users_info.sort( key=lambda x:x[1], reverse=True)
+        
+        output_csvfile.close()
 
         return users_info
 
@@ -167,3 +186,45 @@ class Info_users:
                 #--
 
         return n_backwards
+
+    #--------------------------------------------------------------------------
+    
+    def compute_clusters_activity(self, id_course):
+        
+        users = list()
+        
+        file_name = "%s\\%s-%s\\users_info.csv" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        
+        with open(file_name, 'r') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            for row in csv_reader:
+                users.append(row[-1])
+                
+        if len(users)<2:
+            return []
+        
+        #-- letture dati da csv
+        features = ["#lezioni","perc.visione corso","perc.visione media"]
+        df = pd.read_csv(file_name, names=features+['target'])
+        
+        x = df.loc[:, features].values
+        x = StandardScaler().fit_transform(x)
+        #--
+        
+        #-- scelta numero di cluster
+        sil = []
+        n_clust = 2
+        if len(users)>=6:
+            n_clust = 4
+        #--
+        
+        #-- esecuzione algoritmo pam  
+        kmedoids = KMedoids(n_clusters=n_clust, method='pam', random_state=0).fit(x)
+        results = kmedoids.labels_
+        #--
+        
+        clusters = [[] for _ in range(n_clust)]
+        for i,r in enumerate(results):
+            clusters[r].append(users[i])
+        
+        return clusters

@@ -16,9 +16,26 @@ def compute_user_perc_vision_course(dm, id_user, id_course):
     
     return (tot*100)/(100*len(dm.get_lectures_by_course(id_course)))
 
-#-
-# Calcolo della percentuale di visione di una lezione
-#-
+"""
+    Calcolo delle informazioni riguardo il totale di secondi di visione del corso vista dall'utente 
+"""
+def compute_user_tot_vision_course(dm, id_user, id_course):
+    
+    sessions = dm.get_session_by_course_user(id_course, id_user)
+
+    sessions.sort(key=lambda x: (x[-3], x[-2]))
+    
+    #- calcolo visione per ogni lezione e totale
+    tot = 0
+    for l in dm.get_lectures_by_course(id_course):
+        tot += compute_user_tot_vision_lecture(dm, id_user, l, id_course)
+    #-
+    
+    return tot
+
+"""
+    Calcolo della percentuale di visione di una lezione
+"""
 def compute_user_perc_vision_lecture(dm, id_user, id_lecture, id_course):
     sessions = dm.get_sessions_by_lecture_user(id_course, id_lecture, id_user)
     
@@ -66,9 +83,9 @@ def compute_user_perc_vision_lecture(dm, id_user, id_lecture, id_course):
     
     return (seconds_seen*100)/duration 
 
-#-
-# Calcolo tempo totale visione della lezione
-#-
+"""
+    Calcolo tempo totale visione della lezione
+"""
 def compute_user_tot_vision_lecture(dm, id_user, id_lecture, id_course):
     sessions = dm.get_sessions_by_lecture_user(id_course, id_lecture, id_user)
     
