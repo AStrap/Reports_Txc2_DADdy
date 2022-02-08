@@ -3,8 +3,7 @@ import csv
 
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from sklearn_extra.cluster import KMedoids
-from sklearn.metrics import silhouette_score
+from sklearn.cluster import KMeans
 
 import config
 import utility.info_vision as info_vision
@@ -218,8 +217,8 @@ class Info_users:
         #--
         
         #-- esecuzione algoritmo pam  
-        kmedoids = KMedoids(n_clusters=n_clust, method='pam', random_state=0).fit(x)
-        results = kmedoids.labels_
+        kmeans = KMeans(n_clusters=n_clust).fit(x)
+        results = kmeans.labels_
         #--
         
         clusters = [[] for _ in range(n_clust)]

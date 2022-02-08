@@ -318,9 +318,13 @@ class Reports_computer:
         
         tmp = "| "
         for cluster in users_clusters:
-            for id_user in cluster:
-                tmp = "%s%s<br/> " %(tmp, id_user)
-            tmp = tmp[:-6]
+            for i,id_user in enumerate(cluster):
+                if i%2 == 1:
+                    tmp = "%s%s<br/> " %(tmp, id_user)
+                else:
+                    tmp = "%s%s " %(tmp, id_user)
+            if i%2 == 1:
+                tmp = tmp[:-6]
             tmp = "%s | " %(tmp)
         
         tmp = "%s\n\n" %(tmp)
