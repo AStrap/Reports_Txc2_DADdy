@@ -212,7 +212,6 @@ class Info_users:
         #--
         
         #-- scelta numero di cluster
-        sil = []
         n_clust = 2
         if len(users)>=6:
             n_clust = 4
@@ -224,7 +223,25 @@ class Info_users:
         #--
         
         clusters = [[] for _ in range(n_clust)]
+        tot_perc_vision_clusters = [0 for _ in range(n_clust)]
         for i,r in enumerate(results):
             clusters[r].append(users[i])
+            tot_perc_vision_clusters[r] += info_vision.compute_user_perc_vision_course(self.dm, users[i], id_course)
+         
+        for i,val in enumerate(tot_perc_vision_clusters):
+            tot_perc_vision_clusters[i] = round(float(val)/len(clusters[i]),2)
         
-        return clusters
+        r_clusters = list()
+        while len(clusters)>0:
+            min_val = tot_perc_vision_clusters[0]
+            min_ind = 0
+            for i,val in enumerate(tot_perc_vision_clusters):
+                if val < min_val:
+                    min_val = tot_perc_vision_clusters[i]
+                    min_ind = i        
+            
+            r_clusters.insert(0,clusters[min_ind])
+            del(clusters[min_ind])
+            del(tot_perc_vision_clusters[min_ind])
+        
+        return r_clusters
