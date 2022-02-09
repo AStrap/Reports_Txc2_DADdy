@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import subprocess
 import math
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from pathlib import Path
@@ -66,8 +67,9 @@ class Reports_computer:
         #-- md file to pdf
         #os.system("start /B start cmd.exe @cmd /k mdpdf \"%s/_reports/%s-%s-tmp.md\" --border=12mm" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
         #os.system("start /B start cmd.exe @cmd /k del \"%s/_reports/%s-%s-tmp.md\"" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
-        os.chdir("%s\\_reports" %(self.PATH_OUTPUT))
-        os.system('cmd /k "mdpdf \"./%s-%s-tmp.md\"" --border=12mm' %(id_course, self.dm.get_course_name(id_course)))
+        p = subprocess.Popen('cmd /k "mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
+        p.wait()
+        
         os.remove("%s.md"%(name_file))
         #--
 
