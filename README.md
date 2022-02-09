@@ -35,7 +35,7 @@
 > - USER_AGENTS: dispositivi considerati (non presente grafico)
 
 ## Output
-La cartella "_reports" conterrà tutti i report elaborati. \\
+La cartella "_reports" conterrà tutti i report elaborati. <br/>
 Le altre cartelle hanno più una funzione di supporto
 
 ## Limitazioni
