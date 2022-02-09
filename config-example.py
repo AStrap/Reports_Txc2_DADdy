@@ -44,3 +44,7 @@ DAY_PERIODS = [("01:00:00","07:00:00"), ("07:00:00","13:00:00"), ("13:00:00","19
 #--- user_agents
 USER_AGENTS = [("WINDOWS", ["Win"]), ("MOBILE", ["iPhone","Android","iPad"]), ("MACOS", ["Mac OS"]), ("DISTRIBUZIONI LINUX", [])]
 #---
+
+#--- flag esecuzione conversione markdown to pdf
+MD_PDF = False
+#---

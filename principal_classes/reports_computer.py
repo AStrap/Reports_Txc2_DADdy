@@ -39,7 +39,11 @@ class Reports_computer:
 
         #-- file markdown report
         total_bookmarks = list()
-        name_file = "%s\\_reports\\%s-%s-tmp"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        if config.MD_PDF:
+            name_file = "%s\\_reports\\%s-%s-tmp"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        else:
+            name_file = "%s\\_reports\\%s-%s"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+
         f = open("%s.md" %(name_file), "w")
         f.write("# Report per il corso %s \n" %(self.dm.get_course_name(id_course)))
 
@@ -64,23 +68,19 @@ class Reports_computer:
         f.close()
         #--
 
-        #-- md file to pdf
-        #os.system("start /B start cmd.exe @cmd /k mdpdf \"%s/_reports/%s-%s-tmp.md\" --border=12mm" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
-        #os.system("start /B start cmd.exe @cmd /k del \"%s/_reports/%s-%s-tmp.md\"" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
-        #p = subprocess.Popen('cmd /k "mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
-        #p.wait()
-        p = subprocess.Popen('cmd /k "mdpdf -o \"%s/_reports/%s-%s-tmp.pdf\" \"%s/_reports/%s-%s-tmp.md\"" && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course),self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
-        p.wait()
-        #md_to_pdf.md_to_pdf("%s/_reports/%s-%s-tmp.md"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
 
-        os.remove("%s.md"%(name_file))
-        #--
+        if config.MD_PDF:
+            #-- md file to pdf
+            p = subprocess.Popen('cmd /k "mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
+            p.wait()
 
-        #-- pdt to pdf+bookmarks
-        self.create_pdf_bookmarks(name_file, total_bookmarks)
-        os.remove("%s.pdf"%(name_file))
-        #os.system("start /B start cmd.exe @cmd /k del \"%s/_reports/%s-%s-tmp.pdf\"" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
-        #--
+            os.remove("%s.md"%(name_file))
+            #--
+
+            #-- pdt to pdf+bookmarks
+            self.create_pdf_bookmarks(name_file, total_bookmarks)
+            os.remove("%s.pdf"%(name_file))
+            #--
 
         return
 
