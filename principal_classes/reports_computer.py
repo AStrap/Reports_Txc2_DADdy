@@ -7,7 +7,6 @@ from pathlib import Path
 import fitz
 
 import config
-import utility.md_to_pdf as md_to_pdf
 import support_classes.reports_manager as reports_manager
 
 class Reports_computer:
@@ -70,9 +69,9 @@ class Reports_computer:
         #os.system("start /B start cmd.exe @cmd /k del \"%s/_reports/%s-%s-tmp.md\"" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
         #p = subprocess.Popen('cmd /k "mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
         #p.wait()
-        p = subprocess.Popen('cmd /k "mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
+        p = subprocess.Popen('cmd /k "mdpdf -o \"%s/_reports/%s-%s-tmp.pdf\" \"%s/_reports/%s-%s-tmp.md\"" && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course),self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
         p.wait()
-        md_to_pdf.md_to_pdf("%s/_reports/%s-%s-tmp.md"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
+        #md_to_pdf.md_to_pdf("%s/_reports/%s-%s-tmp.md"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
 
         os.remove("%s.md"%(name_file))
         #--
