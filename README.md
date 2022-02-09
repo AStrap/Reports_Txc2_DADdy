@@ -34,6 +34,9 @@
 > - DAY_PERIODS: periodi considerati di una giornato (non presente grafico)
 > - USER_AGENTS: dispositivi considerati (non presente grafico)
 
+## Esecuzione
+`python main.py`
+
 ## Output
 La cartella "_reports" conterrà tutti i report elaborati. <br/>
 Le altre cartelle hanno più una funzione di supporto
