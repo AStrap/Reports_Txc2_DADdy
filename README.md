@@ -34,6 +34,9 @@
 > - DAY_PERIODS: periodi considerati di una giornato (non presente grafico)
 > - USER_AGENTS: dispositivi considerati (non presente grafico)
 
+## Output
+La cartella "_reports" conterrà tutti i report elaborati. //
+Le altre cartelle hanno più una funzione di supporto
 
 ## Limitazioni
 Limitazione di visualizzazione grafici nei pdf, risolvibile con una gestione interativa come potrebbe essere un sito web.
