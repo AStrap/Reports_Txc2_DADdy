@@ -11,7 +11,7 @@
 
 1. Download ed estrazione progetto: https://github.com/AStrap/Reports_Txc2_DADdy.git
 
-2. Inserimento dei dati da elaborare (default: cartella "data" nella stessa posizione di "main.py")//
+2. Inserimento dei dati da elaborare (default: cartella "data" nella stessa posizione di "main.py")<br/>
 > Dati previsti:
 > - Cartelle YY-MM: con i file csv riguardanti il mese (non obbligatorio tutte le giornate del mese)
 > - "all_courses.csv" con ogni riga: id_course,nome_corso,docente,data_primo_appello,data_secondo_appello (docente=="--" se il corso e le sessioni da non considerare)
