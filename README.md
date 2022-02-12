@@ -1,5 +1,5 @@
 # Reports_Txc2_DADdy
-  Python 3.9
+  Windows - Python 3.9
 
 ## Requisiti
 
@@ -26,7 +26,7 @@
 > - PATH_COURSES_DATA: path del file "all_courses.csv" (default: posizione in "data/")
 > - PATH_LECTURES_DATA: path del file "all_lectures.csv" (default: posizione in "data/")
 > - PATH_OUTPUT: path per la stampa dei risultati (default: stessa posizione main.py)
-> - MD_PDF: flag che indica se eseguire la conversione dei file md
+> - MD_PDF: flag che indica se eseguire la conversione dei file md (default: False)
 >
 > parametri che comportano modifica dei grafici:
 > - TIME_UNIT: unita di tempo di certi grafici a linea
