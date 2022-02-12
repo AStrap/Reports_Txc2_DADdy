@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from zipfile import ZipFile
+#from zipfile import ZipFile
 
 import principal_classes.reports_computer as reports_computer
 
@@ -37,17 +37,21 @@ def main():
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm,em)
 
-    #for id_course in dm.get_courses():
+    #for i,id_course in enumerate(dm.get_courses()):
     for id_course in ["32812"]:
+        i = 1
         rc.compute_print(id_course)
+        print("---")
         print("Creato report: %s - %s" %(id_course, dm.get_course_name(id_course)))
+        print("%d su %d" %(i+1, len(dm.get_courses())))
+        print("---")
     #--
 
     #-- salvataggio informazioni degli utenti
-    zipObj = ZipFile("%s\\users_info.zip"%(PATH_OUTPUT), 'w')
-    for id_course in dm.get_courses():
-        zipObj.write(filename = "%s\\%s-%s\\users_info.csv"%(PATH_OUTPUT,id_course,dm.get_course_name(id_course)), arcname="%s-%s.csv"%(id_course, dm.get_course_name(id_course)))
-    zipObj.close()
+    #zipObj = ZipFile("%s\\users_info.zip"%(PATH_OUTPUT), 'w')
+    #for id_course in dm.get_courses():
+    #    zipObj.write(filename = "%s\\%s-%s\\users_info.csv"%(PATH_OUTPUT,id_course,dm.get_course_name(id_course)), arcname="%s-%s.csv"%(id_course, dm.get_course_name(id_course)))
+    #zipObj.close()
     #--
 
     return

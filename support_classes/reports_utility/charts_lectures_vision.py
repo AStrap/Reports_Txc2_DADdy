@@ -11,16 +11,29 @@ class Charts_lectures_vision:
 
     def __init__(self, dm, em):
 
-        # data manager
+        #-- data manager
         self.dm = dm
+        #--
 
-        # excel manager
+        #-- excel manager
         self.em = em
+        #--
 
         self.max_y = 0
         self.max_y2 = 0
         return
 
+    """
+        Calcolo e stampa grafici riguardo l'uso dei dispositivi
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+
+        Return:
+            - workbook_name: str
+                nome file excel in cui salvati i grafici
+    """
     def compute_print(self, id_course):
         path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
@@ -35,10 +48,17 @@ class Charts_lectures_vision:
 
         return workbook_name
 
-    #-
-    # Calcolo e produzione del foglio di supporto per studio dei vari punti di
-    # interesse, in base a particolari criteri
-    #-
+    """
+        Calcolo e produzione del foglio di supporto per studio dei vari punti di
+        interesse, in base a particolari criteri
+
+        Parametri:
+            - sheet: str
+                nome foglio su cui stampare i grafici
+
+            - id_course: str
+                corso di riferimento
+    """
     def compute_support(self, sheet, id_course):
 
         self.em.add_worksheet(sheet)
@@ -46,7 +66,7 @@ class Charts_lectures_vision:
         for l in self.dm.get_lectures_by_course(id_course):
 
             if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60            
+                self.UNIT = 10*60
 
             #-- calcolo informazioni riguardo la visione
             total_vision = self.compute_n_vision(id_course, l)
@@ -60,20 +80,30 @@ class Charts_lectures_vision:
             self.em.write_head_table(head)
             self.em.write_body_table(body)
             #--
-            
+
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = config.TIME_UNIT
         return
 
-    #-
-    # stampa i grafici delle distribuzione di visione
-    #-
+    """
+        Stampa i grafici delle distribuzione di visione
+
+        Parametri:
+            - sheet: str
+                nome foglio su cui stampare i grafici
+
+            - support_sheet: str
+                nome foglio in cui presenti dati per grafici
+
+            - id_course: str
+                corso di riferimento
+    """
     def compute_lecture_vision(self, sheet, support_sheet, id_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
             if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60            
+                self.UNIT = 10*60
 
             if i==0:
                 self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
@@ -103,7 +133,21 @@ class Charts_lectures_vision:
 
         return
 
-    # calcolo numero visioni
+    """
+        Calcolo numero visioni della lezione
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+
+            - id_lecture: str
+                lezione di riferimento
+
+        Return:
+            - total_vision: list()
+                lista di numero visione per unità di tempo nella lezione
+
+    """
     def compute_n_vision(self, id_course, id_lecture):
 
         total_vision = [0 for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
@@ -178,7 +222,20 @@ class Charts_lectures_vision:
                 self.max_y = y
         return total_vision
 
-    # calcolo numero visioni
+    """
+        Calcolo numero visioni della lezione univoci per utente
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+
+            - id_lecture: str
+                lezione di riferimento
+
+        Return:
+            - total_vision: list()
+                lista di numero visione per unità di tempo nella lezione
+    """
     def compute_n_vision_users(self, id_course, id_lecture):
 
         lecture_users = [[] for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
@@ -238,10 +295,10 @@ class Charts_lectures_vision:
 
                 t_lec_pr = t_lec; t_ses_pr = t_ses
 
-        lecture_scores=[0 for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
+        lecture_vision=[0 for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
         for i,users in enumerate(lecture_users):
-            lecture_scores[i] = len(users)
+            lecture_vision[i] = len(users)
             if len(users)>self.max_y2:
                 self.max_y2 = len(users)
 
-        return lecture_scores
+        return lecture_vision

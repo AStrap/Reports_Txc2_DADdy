@@ -2,6 +2,9 @@
 import config
 import support_classes.data_loader as data_loader
 
+"""
+    Gestione dei dati riguardo i corsi, le lezioni, le sessioni e gli utenti
+"""
 class Data_manager:
 
     PATH_PRJ = config.PATH_PRJ
@@ -43,7 +46,7 @@ class Data_manager:
         self.lectures = self.dl.get_lectures()
         self.users = self.dl.get_users()
         self.sessions = self.dl.get_sessions()
-        
+
         self.courses_lectures = self.dl.get_courses_lectures()
         self.courses_users = self.dl.get_courses_users()
         #--
@@ -141,7 +144,7 @@ class Data_manager:
             if not s[-1] in r_users:
                 r_users.append(s[-1])
         return r_users
-   
+
 
     #-SESSIONI----------------------------------------------------------------
     """
@@ -152,6 +155,10 @@ class Data_manager:
 
     """
         Return sessioni associate ad un corso
+
+        Parametri:
+            - id_course: str
+                corso considerato
     """
     def get_sessions_by_course(self, id_course):
         r_sessions = list()
@@ -163,6 +170,13 @@ class Data_manager:
 
     """
         Return sessioni associati ad un corso e una lezione specifica
+
+        Parametri:
+            - id_course: str
+                corso considerato
+
+            - id_lecture: str
+                lezione considerata
     """
     def get_sessions_by_course_lecture(self, id_course, id_lecture):
         r_sessions = list()
@@ -174,11 +188,12 @@ class Data_manager:
 
     """
         Return sessioni associati ad un corso in un periodo di giorni
-        
+
         Parametri:
-            id_course: string
-                
-            days: list()
+            - id_course: str
+                corso considerato
+
+            - days: list() (es. ["2021-10-01", "2021-10-02"])
                 lista giorni in formato YYYY-MM-DD
     """
     def get_sessions_by_course_days(self, id_course, days):
@@ -193,6 +208,9 @@ class Data_manager:
 
     """
         Return sessioni di una data specifica
+        Parametri:
+            - days: str (es. "2021-10-01")
+                giorno in formato YYYY-MM-DD
     """
     def get_sessions_by_day(self, day):
         r_sessions = list()
@@ -203,6 +221,13 @@ class Data_manager:
 
     """
         Return sessioni associati ad un corso ed un utente specifico
+
+        Parametri:
+            - id_course: str
+                corso considerato
+
+            - id_user: str
+                utente considerato
     """
     def get_session_by_course_user(self, id_course, id_user):
         r_sessions = list()
@@ -214,6 +239,16 @@ class Data_manager:
 
     """
         Return sessioni associati ad un corso, una lezione ed un utente specifico
+
+        Parametri:
+            - id_course: str
+                corso considerato
+
+            - id_lecture: str
+                lezione considerata
+
+            - id_user: str
+                utente considerato
     """
     def get_sessions_by_lecture_user(self, id_course, id_lecture, id_user):
         r_sessions = list()
@@ -225,13 +260,15 @@ class Data_manager:
 
     """
         Return sessioni associati ad un corso in un periodo di giorni
-        
+
         Parametri:
-            id_course: string
-            
-            id_lecture: string
-                
-            days: list()
+            - id_course: str
+                corso considerato
+
+            - id_lecture: str
+                lezione considerata
+
+            - days: list() (es. ["2021-10-01", "2021-10-02"])
                 lista giorni in formato YYYY-MM-DD
     """
     def get_sessions_by_course_lecture_days(self, id_course, id_lecture, days):

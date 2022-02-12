@@ -7,7 +7,7 @@ import config
 class Charts_lectures_seek_events:
 
     PATH_OUTPUT = config.PATH_OUTPUT
-    UNIT = config.TIME_UNIT 
+    UNIT = config.TIME_UNIT
 
     def __init__(self, dm, em):
         # data manager
@@ -18,8 +18,19 @@ class Charts_lectures_seek_events:
 
         return
 
+    """
+        Calcolo e stampa grafici riguardo l'uso dei dispositivi
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+
+        Return:
+            - workbook_name: str
+                nome file excel in cui salvati i grafici
+    """
     def compute_print(self, id_course):
-        
+
         path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         workbook_name = "lectures_seek_events_%s.xlsx" %(self.dm.get_course_name(id_course))
@@ -30,13 +41,24 @@ class Charts_lectures_seek_events:
         self.print_charts_average_speed("Seek_eventi", "Supporto_grafici", id_course, info_events)
 
         self.em.close_workbook()
-        
+
         return workbook_name
 
-    #-
-    # Calcolo e produzione del foglio di supporto per studio della tipologia e 
-    # numero di eventi che puntano ad uno specifico minutaggio  
-    #-
+    """
+        Calcolo e produzione del foglio di supporto per studio della tipologia
+        e numero di eventi che puntano ad uno specifico minutaggio
+
+        Parametri:
+            - sheet: str
+                nome foglio su cui stampare i grafici
+
+            - id_course: str
+                corso di riferimento
+
+        Return:
+            - r_info_events: list()
+                informazioni riguardo eventi di salto usati
+    """
     def compute_support(self, sheet, id_course):
 
         self.em.add_worksheet(sheet)
@@ -45,7 +67,7 @@ class Charts_lectures_seek_events:
         for l in self.dm.get_lectures_by_course(id_course):
 
             if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60            
+                self.UNIT = 10*60
 
             #-- calcolo velocità medie per lezione
             info_events = self.compute_seek_events(l, self.dm.get_sessions_by_course_lecture(id_course, l))
@@ -56,33 +78,46 @@ class Charts_lectures_seek_events:
             head = [[str(datetime.timedelta(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)]]
             self.em.write_head_table(head)
 
-            for i,type_seek in enumerate(info_events):   
+            for i,type_seek in enumerate(info_events):
                 body = [[]]
 
-                for j,m in enumerate(type_seek):                    
+                for j,m in enumerate(type_seek):
                     if m != 0:
                         tmp = ["" for _ in range(j)]; tmp.append(m)
                         body[0].extend(tmp)
-                        
+
                 self.em.write_body_table(body)
-            
+
             self.em.add_row(1)
             #--
-            
+
             if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = config.TIME_UNIT 
+                self.UNIT = config.TIME_UNIT
 
         return r_info_events
 
-    #-
-    # elabera numero eventi per tipologie che puntano ad un certo minutaggio
-    # 
-    # return:
-    #   0 - backward seek
-    #   1 - sezione seek
-    #   2 - slide seek
-    #   3 - keyword seek
-    #-
+    """
+        Calcolo numero eventi per tipologie che puntano ad un certo minutaggio
+
+        Parametri:
+            - id_lecture: str
+                lezione di riferimento
+
+            - sessions: list()
+                lista sessioni da considerare
+
+        Return:
+            - info_events: list()
+                lista per ogni tipologia di seek,
+                ogni lista divisa per unità di tempo, numero eventi in
+                riferimento all'unità di tempo
+
+                ind. 0 - backward seek
+                ind. 1 - sezione seek
+                ind. 2 - slide seek
+                ind. 3 - keyword seek
+
+    """
     def compute_seek_events(self, id_lecture, sessions):
 
         info_events = [[0 for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)] for _ in range(4)]
@@ -91,7 +126,7 @@ class Charts_lectures_seek_events:
         for s in sessions:
 
             t_lect_pr = 0; t_ses_pr = 0
-            speed = 0; play = 0; 
+            speed = 0; play = 0;
             skip_event = False
             for i,e in enumerate(s[3]):
                 event = e[0]; t_ses = e[1]; t_lect = int(e[2])
@@ -100,7 +135,7 @@ class Charts_lectures_seek_events:
                     skip_event = False
                     t_lect_pr = t_lect
                     continue
-                
+
                 while t_ses_pr < t_ses:
                     if play and t_lect_pr<self.dm.get_lecture_duration(id_lecture):
                         t_lect_pr+=1
@@ -109,7 +144,7 @@ class Charts_lectures_seek_events:
                         t_ses_pr+=1
                     else:
                         t_ses_pr = t_ses
-                
+
                 #-- verifica presenza salti
                 if event == "SK":
                     if t_lect < t_lect_pr:
@@ -127,8 +162,8 @@ class Charts_lectures_seek_events:
                     tmp = round(s[3][i+1][2]/self.UNIT)
                     info_events[3][tmp] += 1
                     skip_event = True
-                
-                
+
+
                 #-- aggiornamento del play e speed
                 if event == "PL":
                     play = 1
@@ -142,15 +177,28 @@ class Charts_lectures_seek_events:
 
         return info_events
 
-    #-
-    # stampa i grafici delle medie di velocità
-    #-
+    """
+        Stampa dei grafici delle medie di velocità
+
+        Parametri:
+            - sheet: str
+                nome foglio su cui stampare i grafici
+
+            - support_sheet: str
+                nome foglio in cui presenti dati per grafici
+
+            - id_course: str
+                corso di riferimento
+
+            - info_events: list()
+                informazioni sulle eventi di salto utilizzati
+    """
     def print_charts_average_speed(self, sheet, support_sheet, id_course, info_events):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
             if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60            
+                self.UNIT = 10*60
 
             if i==0:
                 self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))

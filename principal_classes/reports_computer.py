@@ -23,13 +23,22 @@ class Reports_computer:
         self.em = em
         #--
 
-        #-- report manager: elaborazione informazione per report
+        #-- report manager: elaborazion informazione per i report
         self.rm = reports_manager.Reports_manager(self.dm, self.em)
         #--
         return
 
     """
-        Calcolo e stampa del report
+        Se flag config.MD_PDF == True:
+            Stampa del report in markdown (es. idcorso_nomecorso-tmp.md)
+            Conversione da markdown a pdf (es. idcorso_nomecorso-tmp.pdf)
+            Conversione da pdf senza bookmarks a pdf con bookmarks (es. idcorso_nomecorso.pdf)
+        altrimenti:
+            Stampa del report in markdown (es. idcorso_nomecorso.md)
+
+        Parametri:
+            - id_course: str
+                id del corso a cui si fa riferimento nel report
     """
     def compute_print(self, id_course):
 
@@ -37,7 +46,7 @@ class Reports_computer:
         self.path_imgs = "../%s-%s/img" %(id_course, self.dm.get_course_name(id_course))
         #--
 
-        #-- file markdown report
+        #-- file markdown del report
         total_bookmarks = list()
         if config.MD_PDF:
             name_file = "%s\\_reports\\%s-%s-tmp"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
@@ -47,23 +56,34 @@ class Reports_computer:
         f = open("%s.md" %(name_file), "w")
         f.write("# Report per il corso %s \n" %(self.dm.get_course_name(id_course)))
 
-        bookmarks = self.general_info(f, id_course)
-        total_bookmarks.append(bookmarks)
+        #-- STRUTTURA DEI BOOKMARK
+        # total_bookmars: lista dei bookmark principali
+        #
+        # Struttura singolo bookmarks
+        #       ( nome bookmark per esempio: indice-indice bookmark padre-nome bookmark, nomero pagina rispetto bookmark root)
+        # [("0-/-bookmark_root",0), [("1-0-esempio_nome",0),("2-0-esempio_nome",1),[("3-0-esempio_nome",2),[("4-3-esempio_nome",2)]]]]
+        #
+        # Sceglie nome bookmark univoco per una ricerca di pagine tramite ricerca per nome
+        #--
 
-        bookmarks = self.first_period_info(f, id_course)
-        total_bookmarks.append(bookmarks)
+        #-- sezioni report
+        bookmarks_pdf = self.general_info(f, id_course)
+        total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks = self.second_period_info(f, id_course)
-        total_bookmarks.append(bookmarks)
+        bookmarks_pdf = self.first_period_info(f, id_course)
+        total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks = self.lectures_info(f, id_course)
-        total_bookmarks.append(bookmarks)
+        bookmarks_pdf = self.second_period_info(f, id_course)
+        total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks = self.users_info(f, id_course)
-        total_bookmarks.append(bookmarks)
+        bookmarks_pdf = self.lectures_info(f, id_course)
+        total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks = self.keywords_info(f, id_course)
-        total_bookmarks.append(bookmarks)
+        bookmarks_pdf = self.users_info(f, id_course)
+        total_bookmarks.append(bookmarks_pdf)
+
+        bookmarks_pdf = self.keywords_info(f, id_course)
+        total_bookmarks.append(bookmarks_pdf)
 
         f.close()
         #--
@@ -88,11 +108,11 @@ class Reports_computer:
         Stampa informazioni generali riguardo il corso
 
         Parametri:
-            md_file: iowrapper
-                file markdown output
+            - md_file: iowrapper
+                file markdown del report
 
-            id_course: string
-
+            - id_course: str
+                id del corso a cui si fa riferimento nel report
     """
     def general_info(self, md_file, id_course):
 
@@ -126,10 +146,11 @@ class Reports_computer:
         del corso
 
         Parametri:
-            md_file: iowrapper
-                file markdown output
+            - md_file: iowrapper
+                file markdown del report
 
-            id_course: string
+            - id_course: str
+                id del corso a cui si fa riferimento nel report
     """
     def first_period_info(self, md_file, id_course):
 
@@ -185,10 +206,11 @@ class Reports_computer:
         del corso
 
         Parametri:
-            md_file: iowrapper
-                file markdown output
+            - md_file: iowrapper
+                file markdown del report
 
-            id_course: string
+            - id_course: str
+                id del corso a cui si fa riferimento nel report
     """
     def second_period_info(self, md_file, id_course):
 
@@ -247,10 +269,11 @@ class Reports_computer:
         Stampa informazioni generali riguardo le lezioni
 
         Parametri:
-            md_file: iowrapper
-                file markdown output
+            - md_file: iowrapper
+                file markdown del report
 
-            id_course: string
+            - id_course: str
+                id del corso a cui si fa riferimento nel report
     """
     def lectures_info(self, md_file, id_course):
 
@@ -297,10 +320,11 @@ class Reports_computer:
         Stampa informazioni generali riguardo gli utenti
 
         Parametri:
-            md_file: iowrapper
-                file markdown output
+            - md_file: iowrapper
+                file markdown del report
 
-            id_course: string
+            - id_course: str
+                id del corso a cui si fa riferimento nel report
     """
     def users_info(self, md_file, id_course):
 
@@ -357,10 +381,11 @@ class Reports_computer:
         Stampa informazioni riguardo le keyword cercate
 
         Parametri:
-            md_file: iowrapper
-                file markdown output
+            - md_file: iowrapper
+                file markdown del report
 
-            id_course: string
+            - id_course: str
+                id del corso a cui si fa riferimento nel report
     """
     def keywords_info(self, md_file, id_course):
 
@@ -387,6 +412,13 @@ class Reports_computer:
 
     """
         Crea pdf con bookmarks
+
+        Parametri:
+            - name_file: str
+                path del file senza estensione
+
+            - total_bookmarks: list()
+                lista dei bookmarks da inserire
     """
     def create_pdf_bookmarks(self, name_file, total_bookmarks):
 
@@ -428,6 +460,18 @@ class Reports_computer:
 
     """
         Aggiornamento pagine dei bookmarks
+
+        Parametri:
+            - bookmarks: list()
+                lista bookmark
+
+            - p: int
+                pagina corrispondente al bookmark principale a cui fanno
+                riferimento i bookmark figli
+
+        Return:
+            - bookmarks: list()
+                lista bookmark con pagine aggiornate
     """
     def update_pages(self, bookmarks, p):
 
@@ -442,6 +486,16 @@ class Reports_computer:
 
     """
         Crea bookmarks in modo ricorsivo nel pdf
+
+        Parametri:
+            output_file:
+                file pdf finale
+
+            bookmarks: list()
+                lista bookmarks
+
+            parent: int
+                bookmark padre
     """
     def compute_bookmarks(self, output_file, bookmarks, parent=None):
 
@@ -456,6 +510,10 @@ class Reports_computer:
         return
     """
         Modifica formato data YYYY-MM-DD -> DD-MM-YYYY
+
+        Parametri:
+            - date: str
+                data da modificare
     """
     def edit_date(self, date):
         y = date[:4]; m = date[5:7]; d = date[8:]

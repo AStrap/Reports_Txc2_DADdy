@@ -10,14 +10,27 @@ class Charts_lectures_average_speed:
     UNIT = config.TIME_UNIT
 
     def __init__(self, dm, em):
-        # data manager
+        #-- data manager
         self.dm = dm
+        #--
 
-        # excel manager
+        #-- excel manager
         self.em = em
+        #--
 
         return
 
+    """
+        Calcolo e stampa grafici riguardo l'uso dei dispositivi
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+
+        Return:
+            - workbook_name: str
+                nome file excel in cui salvati i grafici
+    """
     def compute_print(self, id_course):
         path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
@@ -32,16 +45,23 @@ class Charts_lectures_average_speed:
 
         return workbook_name
 
-    #-
-    # Calcolo e produzione del foglio di supporto per studio delle velocità medie
-    # di visione
-    #-
+    """
+        Calcolo e produzione del foglio di supporto per studio delle velocità
+        medie di visione
+
+        Parametri:
+            - sheet: str
+                nome foglio su cui stampare i grafici
+
+            - id_course: str
+                corso di riferimento
+    """
     def compute_support(self, sheet, id_course):
 
         self.em.add_worksheet(sheet)
 
         for l in self.dm.get_lectures_by_course(id_course):
-            
+
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = 10*60
 
@@ -63,12 +83,23 @@ class Charts_lectures_average_speed:
             #--
 
             if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = config.TIME_UNIT 
+                self.UNIT = config.TIME_UNIT
         return
 
-    #-
-    # elabera le medie di velocità
-    #-
+    """
+        Calcolo medie di velocità
+
+        Parametri:
+            - id_lecture: str
+                lezione di riferimento
+
+            - sessions: list()
+                lista sessioni da considerare
+
+        Return:
+            - r_info_speed: list()
+                media di velocità ogni unità di tempo
+    """
     def compute_speed(self, id_lecture, sessions):
 
         info_speed = [[] for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
@@ -96,15 +127,25 @@ class Charts_lectures_average_speed:
         r_info_speed = [0 for _ in range(math.ceil(self.dm.get_lecture_duration(id_lecture)/self.UNIT)+1)]
         for i,inter in enumerate(info_speed):
             if len(inter)>0:
-                #media velocità usata
+                # media velocità usata
                 r_info_speed[i] = sum(inter)/len(inter)
             else:
                 r_info_speed[i] = 0
         return r_info_speed
 
-    #-
-    # stampa i grafici delle medie di velocità
-    #-
+    """
+        Stampa i grafici delle medie di velocità
+
+        Parametri:
+            - sheet: str
+                nome foglio su cui stampare i grafici
+
+            - support_sheet: str
+                nome foglio in cui presenti dati per grafici
+                
+            - id_course: str
+                corso di riferimento
+    """
     def print_charts_average_speed(self, sheet, support_sheet, id_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
@@ -133,7 +174,7 @@ class Charts_lectures_average_speed:
 
             title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
             self.em.print_line_chart_speed(x, y, support_sheet, title, "minutaggio", "livello di velocità", 1, 1, {"max":4, "min":0, 'major_unit':1})
-            
+
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = config.TIME_UNIT
 

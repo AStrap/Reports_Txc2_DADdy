@@ -2,6 +2,9 @@
 import xlsxwriter
 import os
 
+"""
+    Gestione della stampa di informazioni nei file excel
+"""
 class Excel_manager:
 
     WIDTH = 1100
@@ -19,8 +22,11 @@ class Excel_manager:
         Settaggio file excel di lavoro
 
         Parametri:
-            workbook: string
+            - workbook: str
                 nome file excel da creare
+
+            - path_output: str
+                path per la stampa del file
     """
     def set_workbook(self, workbook, path_output):
         os.chdir(path_output)
@@ -28,7 +34,7 @@ class Excel_manager:
         return
 
     """
-        Chiusura file excel di lavoro corrente
+        Chiusura del file excel di lavoro corrente
     """
     def close_workbook(self):
         self.workbook.close()
@@ -40,7 +46,7 @@ class Excel_manager:
         Creazione di un foglio excel
 
         Parametri:
-            worksheet: string
+            - worksheet: str
                 nome foglio excel da creare
     """
     def add_worksheet(self, worksheet):
@@ -57,7 +63,7 @@ class Excel_manager:
         impostato
 
         Parametri:
-            worksheet: string
+            - worksheet: str
                 nome foglio excel da creare
     """
     def add_worksheet_support_sheet(self, worksheet):
@@ -76,6 +82,12 @@ class Excel_manager:
 
     """
         Return posizione corrente dei cursori
+
+        Return:
+            - c_x: int
+                posizione cursore riga
+            - c_y: int
+                posizione cursore colonna
     """
     def get_cursors(self):
         return self.c_x, self.c_y
@@ -85,10 +97,10 @@ class Excel_manager:
         Modifica posizione dei cursori
 
         Parametri:
-            c_x: int
+            - c_x: int
                 posizione cursore riga
 
-            c_y: int
+            - c_y: int
                 posizione cursore colonna
     """
     def set_cursors(self, c_x, c_y):
@@ -98,6 +110,10 @@ class Excel_manager:
 
     """
         Spostamento cursore x di n_x righe
+
+        Parametri:
+            - n_x: int
+                numero riga da spostare il cursore
     """
     def add_row(self, n_x):
         self.c_x += n_x
@@ -105,6 +121,10 @@ class Excel_manager:
 
     """
         Spostamento cursore x di n_y colonne
+
+        Parametri:
+            - n_y: int
+                numero colonne da spostare il cursore
     """
     def add_col(self, n_y):
         self.c_y += n_y
@@ -114,13 +134,13 @@ class Excel_manager:
         Scrittura di una cella
 
         Parametri:
-            x: int
+            - x: int
                 indice riga
-            y: int
+            - y: int
                 indice colonna
-            value: string
+            - value: str
                 valore da scrivere
-            cell_format: dict
+            - cell_format: dict
                 dizionario formato come indicato da xlsxwriter
     """
     def write_cell(self, x, y, value, cell_format):
@@ -135,14 +155,14 @@ class Excel_manager:
         Scrittura parte testa della tabella
 
         Parametri:
-            data: list(list())
-                dati da scrivere
+            - data: list() (es. [["cellaA1", "cellaB1"]["cellaA2", "cellaB2"]])
+                dati da scrivere nell'intestazione della tabella
     """
     def write_head_table(self, data):
         #-- colonna di partenza
         y_i = self.c_y
         #--
-        
+
         #-- scrittura celle
         cell_format = self.workbook.add_format({'bold': True, 'align':'center', 'top': 2, 'left': 2, 'bottom': 2, 'right': 2})
         for row in data:
@@ -159,8 +179,8 @@ class Excel_manager:
         Scrittura parte corpo della tabella
 
         Parametri:
-            data: list(list())
-                dati da scrivere
+            - data: list() (es. [["cellaA1", "cellaB1"]["cellaA2", "cellaB2"]])
+                dati da scrivere nel body della tabella
     """
     def write_body_table(self, data):
         #--colonna di partenza
@@ -255,23 +275,23 @@ class Excel_manager:
             cell_format = self.workbook.add_format({'top': 2, 'left': 2, 'bottom': 2, 'right':2})
             self.worksheet.write(cells["top"][0], cells_values["top"][0], cell_format)
         #--
-        
+
         return
 
     """
         Funzione che unisce un gruppo di celle
 
         Parametri:
-            x: (int, int)
-                riga iniziale, riga finale da considerare
+            - x: (int, int)
+                riga iniziale, riga finale da considerare nell'unione
 
-            y: (int, int)
-                colonna iniziale, colonna finale da considerare
+            - y: (int, int)
+                colonna iniziale, colonna finale da considerare nell'unione
 
-            value: string
+            - value: str
                 valore da scrivere
 
-            cell_format: dict()
+            - cell_format: dict()
                 formato secondo modulo xlsxwriter
     """
     def merge_cells(self, x, y, value, cell_format):
@@ -292,19 +312,19 @@ class Excel_manager:
         Inserimento formattazione condizionale
 
         Parametri:
-            x: (int, int)
-              riga iniziale, riga finale da considerare
+            - x: (int, int)
+              riga iniziale, riga finale da considerare nella formattazione
 
-            y: (int, int)
-                colonna iniziale, colonna finale da considerare
+            - y: (int, int)
+                colonna iniziale, colonna finale da considerare nella formattazione
 
-            criteria: string
+            - criteria: str
                 criterio come considerati dal modulo xlsxwriter
 
-            value: string
+            - value: str
                 valore da scrivere
 
-            cell_format: dict()
+            - cell_format: dict()
                 formato in caso di condizione vera
     """
     def conditional_format_cells(self, x, y, criteria, value, cell_format):
@@ -325,39 +345,37 @@ class Excel_manager:
         Stampa di un grafico a linee
 
         Parametri:
-            orien: "oriz" o "vert"
+            - orien: "oriz" o "vert"
               indica l'orientamento dei dati e il significato x,y
               oriz : x indica riga label e riga dati, y indica range colonne valori
               vert : y indica colanna label e colonna dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int)
+            - y: (int, int)
                 (colonna iniziale, colonna finale)
 
-            support_sheet: string
+            - support_sheetstr
                 nome foglio da cui prendere i dati
-                
-            title: string
-                titolo grafico
-                
-            label_x: string
-                label asse x
-                
-            label_y: string
-                label asse y
-                
-            p_x: int
-                indice riga dove posizionare il grafico
-                
-            p_y: int
-                indice colonna dove posizionare il grafico
-                
-            axis_y_option: dict()
-                opzioni aggiuntive per l'asse y
-        Return:
 
+            - title: str
+                titolo grafico
+
+            - label_x: str
+                label asse x
+
+            - label_y: str
+                label asse y
+
+            - p_x: int
+                indice riga dove posizionare il grafico
+
+            - p_y: int
+                indice colonna dove posizionare il grafico
+
+            - axis_y_option: dict()
+                opzioni aggiuntive per l'asse y
     """
     def print_line_chart(self, orient, x, y, support_sheet, title, label_x, label_y, p_x, p_y, axis_y_option):
 
@@ -394,11 +412,11 @@ class Excel_manager:
                           'major_gridlines': {
                                   'visible': True,
                                   'line': {'width': 0.25}}})
-        
+
         options_y = {'name':label_y}
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
-        
+
         chart.set_legend({'none': True})
         chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
 
@@ -411,30 +429,28 @@ class Excel_manager:
         Stampa di un grafico a torte
 
         Parametri:
-            orien: "oriz" o "vert"
+            - orien: "oriz" o "vert"
               indica l'orientamento dei dati e il significato x,y
               oriz : x indica riga label e riga dati, y indica range colonne valori
               vert : y indica colanna label e colonna dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int)
+            - y: (int, int)
                 (colonna iniziale, colonna finale)
 
-            support_sheet: string
+            - support_sheet: str
                 nome foglio da cui prendere i dati
-                
-            title: string
+
+            - title: str
                 titolo grafico
-                
-            p_x: int
+
+            - p_x: int
                 indice riga dove posizionare il grafico
-                
-            p_y: int
+
+            - p_y: int
                 indice colonna dove posizionare il grafico
-                
-        Return:
 
     """
     def print_pie_chart(self, orient, x, y, support_sheet, title, p_x, p_y):
@@ -475,38 +491,37 @@ class Excel_manager:
         Stampa di un grafico a colonne
 
         Parametri:
-            orien: "oriz" o "vert"
+            - orien: "oriz" o "vert"
               indica l'orientamento dei dati e il significato x,y
               oriz : x indica riga label e riga dati, y indica range colonne valori
               vert : y indica colanna label e colonna dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int)
+            - y: (int, int)
                 (colonna iniziale, colonna finale)
 
-            support_sheet: string
+            - support_sheet: str
                 nome foglio da cui prendere i dati
-                
-            title: string
+
+            - title: str
                 titolo grafico
-                
-            label_x: string
+
+            - label_x: str
                 label asse x
-                
-            label_y: string
+
+            - label_y: str
                 label asse y
-                
-            p_x: int
+
+            - p_x: int
                 indice riga dove posizionare il grafico
-                
-            p_y: int
+
+            - p_y: int
                 indice colonna dove posizionare il grafico
-                
-            axis_y_option: dict()
+
+            - axis_y_option: dict()
                 opzioni aggiuntive per l'asse y
-        Return:
 
     """
     def print_column_chart(self, orient, x, y, support_sheet, title, label_x, label_y, p_x, p_y, axis_y_option):
@@ -539,11 +554,11 @@ class Excel_manager:
         chart.set_x_axis({'name': label_x, 'display_units_visible': False, 'position_axis': 'on_tick', 'major_gridlines': {
                 'visible': True,
                 'line': {'width': 0.25}} })
-        
+
         options_y = {'name':label_y}
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
-        
+
         chart.set_legend({'none': True})
         chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
 
@@ -556,38 +571,37 @@ class Excel_manager:
         Stampa di un grafico a istogramma
 
         Parametri:
-            orien: "oriz" o "vert"
+            - orien: "oriz" o "vert"
               indica l'orientamento dei dati e il significato x,y
               oriz : x indica riga label e riga dati, y indica range colonne valori
               vert : y indica colanna label e colonna dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int)
+            - y: (int, int)
                 (colonna iniziale, colonna finale)
 
-            support_sheet: string
+            - support_sheet: str
                 nome foglio da cui prendere i dati
-                
-            title: string
+
+            - title: str
                 titolo grafico
-                
-            label_x: string
+
+            - label_x: str
                 label asse x
-                
-            label_y: string
+
+            - label_y: str
                 label asse y
-                
-            p_x: int
+
+            - p_x: int
                 indice riga dove posizionare il grafico
-                
-            p_y: int
+
+            - p_y: int
                 indice colonna dove posizionare il grafico
-                
-            axis_y_option: dict()
+
+            - axis_y_option: dict()
                 opzioni aggiuntive per l'asse y
-        Return:
 
     """
     def print_isto_chart(self, orient, x, y, support_sheet, title, label_x, label_y, p_x, p_y, axis_y_option):
@@ -620,11 +634,11 @@ class Excel_manager:
         chart.set_title({'name': title,
                          'name_font':  {'name': 'Arial', 'size': 9}})
         chart.set_x_axis({'name': label_x, 'position_axis': 'between'})
-        
+
         options_y = {'name':label_y}
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
-        
+
         chart.set_legend({'none': True})
         chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
 
@@ -637,36 +651,34 @@ class Excel_manager:
         Stampa di un grafico a barre
 
         Parametri:
-            orien: "oriz" o "vert"
-              indica l'orientamento dei dati e il significato x,y
-              oriz : x indica riga label e riga dati, y indica range colonne valori
-              vert : y indica colanna label e colonna dati, x indica range righe valori
+            - orien: "oriz" o "vert"
+                indica l'orientamento dei dati e il significato x,y
+                oriz : x indica riga label e riga dati, y indica range colonne valori
+                vert : y indica colanna label e colonna dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int)
+            - y: (int, int)
                 (colonna iniziale, colonna finale)
 
-            support_sheet: string
+            - support_sheet: str
                 nome foglio da cui prendere i dati
-                
-            title: string
+
+            - title: str
                 titolo grafico
-                
-            label_x: string
+
+            - label_x: str
                 label asse x
-                
-            label_y: string
+
+            - label_ystr
                 label asse y
-                
-            p_x: int
+
+            - p_x: int
                 indice riga dove posizionare il grafico
-                
-            p_y: int
+
+            - p_y: int
                 indice colonna dove posizionare il grafico
-                
-        Return:
 
     """
     def print_bar_chart(self, orient, x, y, support_sheet, title, label_x, label_y, p_x, p_y, axis_x_option):
@@ -696,14 +708,14 @@ class Excel_manager:
 
         chart.set_title({'name': title,
                          'name_font':  {'name': 'Arial', 'size': 9}})
-        
+
         options_x = {'name':label_x,
                      'display_units_visible': False,
                      'position_axis': 'on_tick'}
         options_x.update(axis_x_option)
         chart.set_x_axis(options_x)
-        
-        
+
+
 
         chart.set_y_axis({'name': label_y, 'reverse': True})
         chart.set_legend({'none': True})
@@ -720,36 +732,36 @@ class Excel_manager:
         Stampa a linee colonne multiple
 
         Parametri:
-            orien: "oriz" o "vert"
-              indica l'orientamento dei dati e il significato x,y
-              oriz : x indica riga label e righe serie dei dati, y indica range colonne valori
-              vert : y indica colanna label e colonne serie dei dati, x indica range righe valori
+            - orien: "oriz" o "vert"
+                indica l'orientamento dei dati e il significato x,y
+                oriz : x indica riga label e righe serie dei dati, y indica range colonne valori
+                vert : y indica colanna label e colonne serie dei dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int)
+            - y: (int, int)
                 (colonna iniziale, colonna finale)
 
-            support_sheet: string
+            - support_sheet: str
                 nome foglio da cui prendere i dati
-                
-            title: string
+
+            - title: str
                 titolo grafico
-                
-            label_x: string
+
+            - label_x: str
                 label asse x
-                
-            label_y: string
+
+            - label_y: str
                 label asse y
-                
-            p_x: int
+
+            - p_x: int
                 indice riga dove posizionare il grafico
-                
-            p_y: int
+
+            - p_y: int
                 indice colonna dove posizionare il grafico
-                
-            axis_y_option: dict()
+
+            - axis_y_option: dict()
                 opzioni aggiuntive per l'asse y
     """
     def print_column_chart_multp(self, orient, x, y, name_series, support_sheet, title, label_x, label_y, p_x, p_y, axis_y_option):
@@ -787,11 +799,11 @@ class Excel_manager:
         chart.set_x_axis({'name': label_x, 'display_units_visible': False, 'major_gridlines': {
                 'visible': True,
                 'line': {'width': 0.25}} })
-        
+
         options_y = {'name':label_y}
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
-        
+
         chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
@@ -803,36 +815,36 @@ class Excel_manager:
         per report
 
         Parametri:
-            orien: "oriz" o "vert"
+            - orien: "oriz" o "vert"
               indica l'orientamento dei dati e il significato x,y
               oriz : x indica riga label e righe serie dei dati, y indica range colonne valori
               vert : y indica colanna label e colonne serie dei dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int)
+            - y: (int, int)
                 (colonna iniziale, colonna finale)
 
-            support_sheet: string
+            - support_sheet: str
                 nome foglio da cui prendere i dati
-                
-            title: string
+
+            - title: str
                 titolo grafico
-                
-            label_x: string
+
+            - label_x: str
                 label asse x
-                
-            label_y: string
+
+            - label_y: str
                 label asse y
-                
-            p_x: int
+
+            - p_x: int
                 indice riga dove posizionare il grafico
-                
-            p_y: int
+
+            - p_y: int
                 indice colonna dove posizionare il grafico
-                
-            axis_y_option: dict()
+
+            - axis_y_option: dict()
                 opzioni aggiuntive per l'asse y
     """
     def print_line_chart_speed(self, x, y, support_sheet, title, label_x, label_y, p_x, p_y, axis_y_option):
@@ -864,67 +876,67 @@ class Excel_manager:
                           'major_gridlines': {
                                   'visible': True,
                                   'line': {'width': 0.25}}})
-        
+
         options_y = {'name':label_y}
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
-        
+
         chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
         chart.set_legend({'none': True})
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
         #--
         return
-    
+
     """
-        Stampa Grafico a linee specifico per il caso di visualizzazione degli 
+        Stampa Grafico a linee specifico per il caso di visualizzazione degli
         eventi
 
         Parametri:
-            orien: "oriz" o "vert"
+            - orien: "oriz" o "vert"
               indica l'orientamento dei dati e il significato x,y
               oriz : x indica riga label e righe serie dei dati, y indica range colonne valori
               vert : y indica colanna label e colonne serie dei dati, x indica range righe valori
 
-            x: (int, int)
+            - x: (int, int)
                 (riga iniziale, riga finale)
 
-            y: (int, int, ...)
+            - y: (int, int, ...)
                 (colonna iniziale, colonna finale)
-                
-            info_events: list()
-                informazioni riguardo gli eventi                
 
-            support_sheet: string
+            - info_events: list()
+                informazioni riguardo gli eventi
+
+            - support_sheet: str
                 nome foglio da cui prendere i dati
-                
-            title: string
+
+            - title: str
                 titolo grafico
-                
-            label_x: string
+
+            - label_x: str
                 label asse x
-                
-            label_y: string
+
+            - label_y: str
                 label asse y
-                
-            p_x: int
+
+            - p_x: int
                 indice riga dove posizionare il grafico
-                
-            p_y: int
+
+            - p_y: int
                 indice colonna dove posizionare il grafico
-                
-            axis_y_option: dict()
+
+            - axis_y_option: dict()
                 opzioni aggiuntive per l'asse y
     """
     def print_line_chart_seek_events(self, x, y, info_events, support_sheet, title, label_x, label_y, p_x, p_y, axis_y_option):
         # creazione grafico
         chart = self.workbook.add_chart({'type': 'line'})
         label_s = "$%s$%d"%(self.colnum_string(y[0]+1),x[0]+1); label_e = "$%s$%d"%(self.colnum_string(y[1]+1),x[0]+1)
-        
+
         markers_type  = ['square', 'circle', 'diamond', 'triangle']
         markers_color = ['red', 'green', 'blue', 'yellow']
         for i,type_seek in enumerate(info_events):
-        
+
             c_y_tmp= 0
             for j,m in enumerate(type_seek):
                 if m != 0:
@@ -932,7 +944,7 @@ class Excel_manager:
                     c_y_tmp += j
                     val_e = "$%s$%d"%(self.colnum_string(c_y_tmp+1),x[i+1]+1)
                     c_y_tmp += 1
-                    
+
                     chart.add_series({
                         'name': 'serie',
                         'categories': '=%s!%s:%s' %(support_sheet, label_s, label_e),
@@ -941,9 +953,9 @@ class Excel_manager:
                         'marker':     {'type':markers_type[i],
                                        'size':10,
                                        'border': {'color': 'black', 'size':1},
-                                       'fill': {'color': markers_color[i]}} 
+                                       'fill': {'color': markers_color[i]}}
                         })
-            
+
         #-- serie vuota
         c_y_tmp = 0
         val_s = "$%s$%d"%(self.colnum_string(c_y_tmp+1),x[5]+1)
@@ -952,10 +964,10 @@ class Excel_manager:
         chart.add_series({
             'name': 'serie',
             'categories': '=%s!%s:%s' %(support_sheet, label_s, label_e),
-            'values':     '=%s!%s:%s' %(support_sheet, val_s, val_e)})   
+            'values':     '=%s!%s:%s' %(support_sheet, val_s, val_e)})
         #--
-                
-    
+
+
         chart.set_title({'name': title,
                          'name_font':  {'name': 'Arial', 'size': 9}})
         chart.set_x_axis({'name': label_x,
@@ -965,14 +977,14 @@ class Excel_manager:
                           'major_gridlines': {
                                   'visible': True,
                                   'line': {'width': 0.25}}})
-        
+
         options_y = {'name':label_y}
         options_y.update(axis_y_option)
         chart.set_y_axis(options_y)
-        
+
         chart.set_size({'width': self.WIDTH, 'height': self.HEIGHT})
         chart.set_legend({'none': True})
-        
+
         #-- salvataggio grafico
         self.worksheet.insert_chart("$%s$%d"%(self.colnum_string(p_y+1),p_x+1), chart)
         #--
@@ -981,12 +993,12 @@ class Excel_manager:
     #--------------------------------------------------------------------------
     """
         Funzione per auto-fittare la dimensione delle colonne
-        
+
         Parametri:
-            value: string
+            - value: str
                 valore presente nella cella
-                
-            size: int
+
+            - size: int
                 dimensione cella da impostare
     """
     def update_size_column(self, value, size):
@@ -1003,9 +1015,9 @@ class Excel_manager:
     """
         Conversione indice numerico in indice alfabetico secondo logica excel
         1 = A
-        
+
         Parametri:
-            n: int
+            - n: int
                 indice colonna
     """
     def colnum_string(self, n):

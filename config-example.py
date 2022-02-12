@@ -29,6 +29,11 @@ PATH_LECTURES_DATA = "%s\\all_lectures.csv" %(PATH_DATA)
 PATH_OUTPUT = "%s\\output" %(PATH_PRJ)
 #---
 
+#--- flag esecuzione conversione markdown to pdf
+# linea codice esecuzione conversione reports_computer.py [94-95]
+MD_PDF = False
+#---
+
 #--- unità di tempo di studio (secondi)
 TIME_UNIT = 1*60
 #---
@@ -43,8 +48,4 @@ DAY_PERIODS = [("01:00:00","07:00:00"), ("07:00:00","13:00:00"), ("13:00:00","19
 
 #--- user_agents
 USER_AGENTS = [("WINDOWS", ["Win"]), ("MOBILE", ["iPhone","Android","iPad"]), ("MACOS", ["Mac OS"]), ("DISTRIBUZIONI LINUX", [])]
-#---
-
-#--- flag esecuzione conversione markdown to pdf
-MD_PDF = False
 #---

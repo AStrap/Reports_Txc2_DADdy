@@ -10,15 +10,15 @@ import datetime
 
 """
     Conversione stringa - data
-    
+
     Parametri:
-        date: string - YYYY-MM-DD (o formato sopra indicati)
+        - date: str (es. YYYY-MM-DD (o formato sopra indicati))
             data da convertire
-        
+
     Return:
-        r_date: datetime.datetime
+        - r_date: datetime.datetime
             data come oggetto del modulo datetime
-             
+
 """
 def get_datetime(date):
     date_format_cent = '%Y-%m-%dT%H:%M:%S.%f'
@@ -32,115 +32,113 @@ def get_datetime(date):
             r_date = datetime.datetime.strptime(date, date_format_no_cent)
         except:
             r_date = datetime.datetime.strptime(date, date_format_no_hour)
-        
+
     return r_date
 
 """
-    Conversione secondi - orario 
-    
+    Conversione secondi - orario
+
     Parametri:
-        secondi: int
-        
+        - secondi: int
+
     Return:
-        orario: string
+        - orario: str
             orario in formato HH:MM:SS
 """
 def seconds_hours(seconds):
-    
+
     r_hours = datetime.timedelta(seconds=seconds)
-        
+
     return str(r_hours)
 
 """
     Confronto tra due date
-    
+
     Parametri:
-        date1: string - YYYY-MM-DD (o formato sopra indicati)
+        - date1: str - YYYY-MM-DD (o formato sopra indicati)
             prima data da confrontare
-        date2: string - YYYY-MM-DD (o formato sopra indicati)
+        - date2: str - YYYY-MM-DD (o formato sopra indicati)
             seconda data da confrontare
-            
+
     Return:
         0  se date uguali
         1  se la prima data è più grande della seconda
         -1 se la seconda data è più grande della prima
-             
+
 """
 def cmp_dates(date1, date2):
     date1 = get_datetime(date1)
     date2 = get_datetime(date2)
-    
+
     r = 0
     if date1 < date2:
         r = -1
     elif date1 > date2:
         r = 1
-       
-    return r 
+
+    return r
 
 """
     Incrementa data di x giorni
-    
+
     Parametri:
-        date: string - YYYY-MM-DD
+        - date: str - YYYY-MM-DD
             data da incrementare
-        n_days: int 
+        - n_days: int
             numero giorni da sommare
-            
+
     Return:
-        r_date: string
+        - r_date: str
             data aggiornata
-             
+
 """
 def add_days(date, n_days):
     r_date = get_datetime(date)
-    
+
     r_date = r_date + datetime.timedelta(days=n_days)
-    
+
     return str(r_date)[:10]
 
 """
     Incrementa data di x ore
-    
+
     Parametri:
-        date: string - YYYY-MM-DDTHH:MM:SS
+        - date: str - YYYY-MM-DDTHH:MM:SS
             data da incrementare
-        n_days: int 
+        - n_days: int
             numero ore da incrementare
-            
+
     Return:
-        r_date: string
+        - r_date: str
             data aggiornata
-             
+
 """
 def add_hours(date, n_hours):
     r_date = get_datetime(date)
-    
+
     r_date = r_date + datetime.timedelta(hours=n_hours)
-    
+
     return "%sT%s" %(str(r_date)[:10], str(r_date)[11:19])
-    
+
 """
     Calcolo giorni dato il periodo
-    
+
     Parametri:
-        date_range_study: (string - string) (YYYY-MM-DD - YYYY-MM-DD)
-            periodo di tempo  
-            
+        - date_range_study: (str - str) (YYYY-MM-DD - YYYY-MM-DD)
+            periodo di tempo
+
     Return:
-        r_days: list(string)
+        - r_days: list(str)
             lista giorni compresi nel periodo
-             
+
 """
 def get_days_by_period(period):
     r_days = list()
     date_s = get_datetime(period[0])
     date_e = get_datetime(period[1])
-    
+
     while date_s <= date_e:
         r_days.append(str(date_s)[:10])
         date_s = date_s + datetime.timedelta(days=1)
-    
-    return r_days
-    
 
+    return r_days

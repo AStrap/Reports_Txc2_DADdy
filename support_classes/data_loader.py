@@ -5,10 +5,17 @@ import json
 import config
 import utility.time_date as time_date
 
+"""
+    Caricamento dati dai file:
+        YY-MM
+            YYYY-MM-DD.json
+        all_courses.csv
+        all_lectures.csv
+"""
 class Data_loader:
 
     PATH_DATA = config.PATH_DATA
-    DATE_RANGE_STUDY = config.DATE_RANGE_STUDY   
+    DATE_RANGE_STUDY = config.DATE_RANGE_STUDY
     PATH_COURSES_DATA = config.PATH_COURSES_DATA
     PATH_LECTURES_DATA = config.PATH_LECTURES_DATA
 
@@ -23,7 +30,7 @@ class Data_loader:
         self.users = dict()
         self.sessions = dict()
         #--
-        
+
         #-- relazione corsi-lezioni N-N
         self.courses_lectures = dict()
         #--
@@ -38,31 +45,31 @@ class Data_loader:
 
 
     """
-        Caricamento dei dati dai file csv      
+        Caricamento dei dati dai file csv
     """
     def load_data(self):
-        
+
         #-- calcolo giorni considerati
         self.days = time_date.get_days_by_period(self.DATE_RANGE_STUDY)
         #--
-        
+
         #-- lettura dei dati riguardo corsi, lezioni e sessioni
         self.load_courses()
         self.load_lectures()
         self.load_sessions()
         #--
-        
+
         return
 
     """
         Caricamento dei dati riguardo i corsi
     """
     def load_courses(self):
-        
+
         #-- file .csv con informazioni dei corsi
         file_courses = self.PATH_COURSES_DATA
         #--
-        
+
         #-- lettura informazioni
         with open(file_courses, 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -76,18 +83,18 @@ class Data_loader:
                 else:
                     self.test_courses.append(row[0])
         #--
-        
+
         return
 
 
     """
-        Caricamento dei dati riguardo le lezioni caricate                
+        Caricamento dei dati riguardo le lezioni caricate
     """
     def load_lectures(self):
 
         #-- file con informazioni delle lezioni
         file_lectures = self.PATH_LECTURES_DATA
-        #--        
+        #--
 
         #-- lettura informazioni
         with open(file_lectures, 'r') as csv_file:
@@ -101,93 +108,96 @@ class Data_loader:
                             if i > 0 and row[3][i-1].islower():
                                 lecture_name += " "
                         lecture_name += c
-                        
+
                     self.lectures[row[0]] = [lecture_name, row[2], int(row[4]), int(row[5])]
                     self.courses_lectures[row[1]].append(row[0])
         #--
-    
+
         return
-    
+
     """
-        Caricamento dei dati riguardo le sessioni                
+        Caricamento dei dati riguardo le sessioni
     """
     def load_sessions(self):
         path = self.PATH_DATA
-        
+
         #-- lettura informazioni
         for day in self.days:
             y = day[2:4]; m = day[5:7]
             json_file = "%s\\%s-%s\\%s.json" %(path, y, m, day)
-            
-            with open(json_file, 'r') as json_file:
-                sessions = json.load(json_file)
-                for s in sessions:
-                    id_session   = s["sessionId"]
-                    id_course    = s["courseId"]
-                    uuid_lecture = s["lectureUUID"]
-                    id_user      = s["userId"]
-                    user_agent   = s["userAgent"]
-                    timestamp    = s["timestamp"]
-                    events       = s["events"]
-                    duration = events[-1][1] if len(events)>0 else 0
-                    try:
-                        # dato inserito dal 9/11
-                        languageCode = s["languageCode"]
-                    except:
-                        languageCode = "null"
-                
-                    #-- ignorare sessioni di test
-                    if id_course in self.test_courses:
-                        continue
-                    #--
-                    
-                    #- conversione delle durate turbo a durate normali
-                    events = self.fix_turbo_timestamp(events, self.lectures[uuid_lecture][2], self.lectures[uuid_lecture][3])
-                    #-
-        
-                    #- ottimizzazione dei ritardi di registrazione dei eventi salto
-                    if time_date.cmp_dates(day, "2021-11-08") < 0:
-                        events = self.fix_events(events)
-                    #-
-                    
-                    #-- eliminazione eventi con durata <5 minuti e visione lezione <1 minuto
-                    if (len(events)==0) or (self.lecture_time_vision(events)<60) or (duration<(5*60)):
-                        continue
-                    #--
-                    
-                    #-- controlli conformita' informazioni corsi e lezione
-                    if not id_course in self.courses.keys():
-                        print("Corso non presente: %s" % id_course)
-                    if not uuid_lecture in self.lectures.keys():
-                        print("Lezione non presente: %s" % uuid_lecture)
-                    #--
-                    
-                    self.sessions[id_session] = [day, timestamp, user_agent, events, languageCode, duration, id_course, uuid_lecture, id_user]
-                    
-                    #-- aggiornamento courses_lectures
-                    if not uuid_lecture in self.courses_lectures[id_course]:
-                        self.courses_lectures[id_course].append(uuid_lecture)
-                    #-- 
-                    
-                    #-- aggiornamento users e users_lectures
-                    if not id_user in self.users.keys():
-                        self.users[id_user] = list()
-                    
-                    if not id_user in self.courses_users[id_course]:
-                        self.courses_users[id_course].append(id_user)
-                    #--
+            try:
+                with open(json_file, 'r') as json_file:
+                    sessions = json.load(json_file)
+                    for s in sessions:
+                        id_session   = s["sessionId"]
+                        id_course    = s["courseId"]
+                        uuid_lecture = s["lectureUUID"]
+                        id_user      = s["userId"]
+                        user_agent   = s["userAgent"]
+                        timestamp    = s["timestamp"]
+                        events       = s["events"]
+                        duration = events[-1][1] if len(events)>0 else 0
+                        try:
+                            # dato inserito dal 9/11
+                            languageCode = s["languageCode"]
+                        except:
+                            languageCode = "null"
+
+                        #-- ignorare sessioni di test
+                        if id_course in self.test_courses:
+                            continue
+                        #--
+
+                        #- conversione delle durate turbo a durate normali
+                        events = self.fix_turbo_timestamp(events, self.lectures[uuid_lecture][2], self.lectures[uuid_lecture][3])
+                        #-
+
+                        #- ottimizzazione dei ritardi di registrazione dei eventi salto
+                        if time_date.cmp_dates(day, "2021-11-08") < 0:
+                            events = self.fix_events(events)
+                        #-
+
+                        #-- eliminazione eventi con durata <5 minuti e visione lezione <1 minuto
+                        if (len(events)==0) or (self.lecture_time_vision(events)<60) or (duration<(5*60)):
+                            continue
+                        #--
+
+                        #-- controlli conformita' informazioni corsi e lezione
+                        if not id_course in self.courses.keys():
+                            print("Corso non presente: %s" % id_course)
+                        if not uuid_lecture in self.lectures.keys():
+                            print("Lezione non presente: %s" % uuid_lecture)
+                        #--
+
+                        self.sessions[id_session] = [day, timestamp, user_agent, events, languageCode, duration, id_course, uuid_lecture, id_user]
+
+                        #-- aggiornamento courses_lectures
+                        if not uuid_lecture in self.courses_lectures[id_course]:
+                            self.courses_lectures[id_course].append(uuid_lecture)
+                        #--
+
+                        #-- aggiornamento users e users_lectures
+                        if not id_user in self.users.keys():
+                            self.users[id_user] = list()
+
+                        if not id_user in self.courses_users[id_course]:
+                            self.courses_users[id_course].append(id_user)
+                        #--
+            except:
+                print("Mancata lettura: %s" %(json_file))
         #--
         return
-    
+
     """
         Calcolo tempo totale di visione della lezione in base agli eventi
-        
+
         Parametri:
-            events: list()
-            
+            -events: list() (es. [['PL', 0 ,0], ['PS', 1, 1]])
+                eventi eseguti dall'utente
+
         Return:
-            tot: int
-                tempo totale di visione
+            - tot: int
+                tempo totale di visione in secondi
     """
     def lecture_time_vision(self, events):
         play=0; tot=0;
@@ -206,19 +216,20 @@ class Data_loader:
 
             if (e[0]!="SL" and e[0]!="DL") or e[2]!=0:
                 lect_pr = e[2]
-                
+
             ses_pr = e[1]
         return tot
-    
+
     """
-        Aggiustamento degli eventi di salto non precisi (risolto 8/11)
+        Aggiustamento degli eventi di salto non precisi (risolto 8/11 dalla sorgente)
 
         Parametri:
-            events: list()
+            - events: list() (es. [['PL', 0 ,0], ['PS', 2, 2], ['SK', 2, 2]])
+                eventi eseguiti dall'utente
 
         Return:
-            events: list()
-                eventi aggiustati
+            - events: list() (es. [['PL', 0 ,0], ['SK', 2, 2], ['PS', 2, 2]])
+                eventi migliorati
     """
     def fix_events(self, events):
         tmp_events = list()
@@ -232,7 +243,7 @@ class Data_loader:
         del_index = list()
         i=0
 
-        # criteri di visulizzazione
+        #-- aggiustamento eventi
         for event in events:
             e=event[0]; t_ses=event[1]; t_lec=event[2]
 
@@ -246,9 +257,9 @@ class Data_loader:
 
             if e!="DL" and (e!="SL" or e!="KW" or t_lec!=0):
                 t_ses_pr = t_ses; t_lec_pr=t_lec
+        #--
 
-
-        # eliminazione SK ritardati
+        #-- eliminazione SK dupplicati
         for i in del_index:
             end = False
             tmp = i
@@ -259,25 +270,28 @@ class Data_loader:
                     del tmp_events[i]
                     end = True
                 i+=1
+        #--
 
         return tmp_events
 
     """
         Aggiustamento degli eventi, conversione tutti i timestampa "turbo" a
-        "normale"
+        "normale" (in modalità turbo viene considerato come il timestamp di un
+        video con durata minore, anche se è la stessa lezione)
 
         Parametri:
-            events: list()
+            - events: list() (es. [['PL', 0, 0], ['PS', 1, 1])
+                eventi eseguiti dall'utente
 
-            duration: int
+            - duration: int
                 durata "normale" della lezione
 
-            turbo_duration: int
-                durata "turbo" della lezione
+            -turbo_duration: int
+                durata in modalita "turbo" della lezione (<"normale")
 
         Return:
-            events: list()
-                eventi aggiustati
+            - events: list() (es. [['PL', 0 ,0], ['PS', 1, 1]])
+                eventi migliorati
     """
     def fix_turbo_timestamp(self, events, duration, turbo_duration):
         tmp_events = list()
@@ -320,26 +334,26 @@ class Data_loader:
             tmp_events.append(e)
 
         return tmp_events
-    
 
-    #--------------------------------------------------------------------------    
+
+    #--------------------------------------------------------------------------
 
     """
         Return informazioni riguardo i corsi
-                
+
         Return:
-            courses: dict()
-                id_corso : [nome_corso, docente, primo appello, secondo appello]          
+            - courses: dict() (es. {id_corso : ["nome corso", "nome docente", 2022-01-01, 2022-02-01]})
+                informazioni riguardo i corsi
     """
     def get_courses(self):
         return self.courses
-    
+
     """
         Return informazioni riguardo le lezioni
 
         Return:
-            lectures: dizionario
-                id_lezione : [nome_lezione, data_caricamento, durata, durata_turbo]               
+            - lectures: dict() (es. {id_lezione : ["nome lezione", 2021-10-01T00:01:00.000000, 10000, 8000]})
+                informazioni riguardo le lezioni
     """
     def get_lectures(self):
         return self.lectures
@@ -348,8 +362,8 @@ class Data_loader:
         Return informazioni riguardo le sessioni
 
         Return:
-            sessions: dizionario
-                id_sessione : [ data, time_stamp, user_agent, events, languageCode, durata, id_course, id_lecture, id_user]          
+            - sessions: dict() (se. {id_sessione : [ 2021-10-01, 2021-10-01T00:00:00.000000+02:00, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36", ["PL", 0, 0], "it", 10000, id_course, id_lecture, id_user]})
+                informazioni riguardo le sessioni
     """
     def get_sessions(self):
         return self.sessions
@@ -358,8 +372,8 @@ class Data_loader:
         Return informazioni riguardo gli utenti
 
         Return:
-            users: dizionario
-                id_user : []
+            - users: dict() (es. {id_user : []})
+                informazioni riguardo gli utenti
     """
     def get_users(self):
         return self.sessions
@@ -368,22 +382,19 @@ class Data_loader:
         Return informazioni riguardo le relazioni tra corsi e lezioni
 
         Return:
-            courses_lectures: dizionario
-                id_corso : [lista id lezioni] 
-                
+            - courses_lectures: dict() (es. {id_corso : [id_lezione1, id_lezione2]})
+                lista lezioni che conpongono ogni corso
+
     """
     def get_courses_lectures(self):
         return self.courses_lectures
-    
+
     """
         Return informazioni riguardo le relazioni tra corsi e utenti
 
         Return:
-            courses_users: dizionario
-                id_corso : [lista id utenti]           
+            - courses_users: dict() (es. {id_corso : [id_utente1, id_utente2]})
+                lista utenti che hanno partecipato un corso
     """
     def get_courses_users(self):
         return self.courses_users
-    
-    
-    
