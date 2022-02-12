@@ -72,7 +72,7 @@ class Chart_sessions_hours_distribution:
                 periodo di studio
 
             - days_period: list() (es. ["YYYY-MM-DD", "YYYY-MM-DD"])
-                giorni da co
+                giorni da cosiderare
 
     """
     def compute_sessions_per_hours(self, sheet, id_course, label_period, period, days_period):

@@ -39,7 +39,7 @@ def main():
 
     #for i,id_course in enumerate(dm.get_courses()):
     for id_course in ["32812"]:
-        i = 1
+        i = 0
         rc.compute_print(id_course)
         print("---")
         print("Creato report: %s - %s" %(id_course, dm.get_course_name(id_course)))

@@ -17,7 +17,7 @@
 > - "all_courses.csv" con ogni riga: id_course,nome_corso,docente,data_primo_appello,data_secondo_appello (docente=="--" se il corso e le sessioni da non considerare)
 > - "all_lectures.csv" con ogni riga: id_lecture,id_course,timestamp_di_pubblicazione,nome_lezione,durata_normale_lezione,durata_turbo_lezione
 
-3. Inserimento cartella output, se si mantiene la posizione di default
+3. In caso di cambio posizione di output, ricordarsi di inserire anche l'immagine "output/legend_seek_lectures.png"
 
 4. Creazione file config.py (seguire esempio) e modifica di parametri:
 > - PATH_PRJ: path del progetto

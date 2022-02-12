@@ -307,7 +307,7 @@ class Reports_computer:
             md_file.write("**grafico copertura di visione univoca per utente** \n")
             md_file.write("<img src=\"%s/lecture_vision/chart%d.png\"/> <br/> \n" %(self.path_imgs, (i*2+2)))
             md_file.write("**grafico studio eventi di salto temporale** \n")
-            md_file.write("<div><img src=\"../../utility/img/legend_seek_lectures.png\" width=\"70%s\"/> \n" %("%"))
+            md_file.write("<div><img src=\"../legend_seek_lectures.png\" width=\"70%s\"/> \n" %("%"))
             md_file.write("<img src=\"%s/lecture_seek_events/chart%d.png\"/></div> <br/> \n" %(self.path_imgs, i+1))
             bookmarks[1].append(("grafici lezione: %s" %(self.dm.get_lecture_name(id_lecture)), cur_page))
 
