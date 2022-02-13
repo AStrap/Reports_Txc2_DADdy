@@ -41,5 +41,6 @@
 La cartella "_reports" conterrà tutti i report elaborati. <br/>
 Le altre cartelle hanno più una funzione di supporto
 
-## Limitazioni
-Limitazione di visualizzazione grafici nei pdf, risolvibile con una gestione interativa come potrebbe essere un sito web.
+## Struttura
+
+<img src="https://github.com/AStrap/Reports_Txc2_DADdy/blob/main/utility/img/Prj_structure.jpg" alt="Struttura del progetto"/>
