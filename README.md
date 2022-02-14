@@ -13,7 +13,7 @@
 
 2. Inserimento dei dati da elaborare (default: cartella "data" nella stessa posizione di "main.py")<br/>
 > Dati previsti:
-> - Cartelle YY-MM: con i file csv riguardanti il mese (non obbligatorio tutte le giornate del mese)
+> - Cartelle YY-MM: con i file csv riguardanti il mese
 > - "all_courses.csv" con ogni riga: `id_course,nome_corso,docente,data_primo_appello,data_secondo_appello` (docente=="--" se è un corso di test), 
 >   è possibile decidere che corsi ignorare inserendo `#,` all'inizio della riga corripondente dei corsi.
 > - "all_lectures.csv" con ogni riga: `id_lecture,id_course,timestamp_di_pubblicazione,nome_lezione,durata_normale_lezione,durata_turbo_lezione`
