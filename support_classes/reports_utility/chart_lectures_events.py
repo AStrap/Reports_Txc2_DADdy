@@ -38,7 +38,7 @@ class Chart_lectures_events:
     def compute_print(self, id_course, label_period, period):
         path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
-        workbook_name = "lezioni_eventi_%s_%s.xlsx" %(label_period, self.dm.get_course_name(id_course))
+        workbook_name = "lectures_events_%s_%s.xlsx" %(label_period, self.dm.get_course_name(id_course))
         self.em.set_workbook(workbook_name, path_output_course)
 
         self.compute_events_per_lecture("Eventi_per_lezione", id_course, label_period, period)

@@ -40,6 +40,7 @@ class Data_loader:
 
         #-- corsi di test da non considerare
         self.test_courses = list()
+        self.ign_courses = list()
         #--
         return
 
@@ -76,12 +77,14 @@ class Data_loader:
 
             for row in csv_reader:
                 #se docente==-- allora corso di test da ignorare
-                if row[2]!="--":
+                if row[2]!="--" and row[0]!="#":
                     self.courses[row[0]] = [row[1],row[2],row[3],row[4]]
                     self.courses_lectures[row[0]] = list()
                     self.courses_users[row[0]] = list()
-                else:
+                elif row[2]=="--":
                     self.test_courses.append(row[0])
+                elif row[0]=="#":
+                    self.ign_courses.append(row[1])
         #--
 
         return
@@ -101,7 +104,10 @@ class Data_loader:
             csv_reader = csv.reader(csv_file, delimiter=',')
 
             for row in csv_reader:
-                if (time_date.cmp_dates(row[2][:10], self.days[-1]) <= 0) and (not row[1] in self.test_courses):
+                if (time_date.cmp_dates(row[2][:10], self.days[-1]) <= 0) and (not row[1] in self.test_courses) and (not row[1] in self.ign_courses):
+                    if not row[1] in self.courses.keys():
+                        continue
+
                     lecture_name = ""
                     for i,c in enumerate(row[3]):
                         if c.isupper():
@@ -144,7 +150,16 @@ class Data_loader:
                             languageCode = "null"
 
                         #-- ignorare sessioni di test
-                        if id_course in self.test_courses:
+                        if id_course in self.test_courses or id_course in self.ign_courses:
+                            continue
+                        #--
+
+                        #-- controlli conformita' informazioni corsi e lezione
+                        if not id_course in self.courses.keys():
+                            print("Corso non presente: %s" % id_course)
+                            continue
+                        if not uuid_lecture in self.lectures.keys():
+                            print("Lezione non presente: %s" % uuid_lecture)
                             continue
                         #--
 
@@ -160,13 +175,6 @@ class Data_loader:
                         #-- eliminazione eventi con durata <5 minuti e visione lezione <1 minuto
                         if (len(events)==0) or (self.lecture_time_vision(events)<60) or (duration<(5*60)):
                             continue
-                        #--
-
-                        #-- controlli conformita' informazioni corsi e lezione
-                        if not id_course in self.courses.keys():
-                            print("Corso non presente: %s" % id_course)
-                        if not uuid_lecture in self.lectures.keys():
-                            print("Lezione non presente: %s" % uuid_lecture)
                         #--
 
                         self.sessions[id_session] = [day, timestamp, user_agent, events, languageCode, duration, id_course, uuid_lecture, id_user]

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import signal,os
 #from zipfile import ZipFile
 
 import principal_classes.reports_computer as reports_computer
@@ -11,7 +11,6 @@ import support_classes.excel_manager as excel_manager
 PATH_OUTPUT = config.PATH_OUTPUT
 
 def main():
-
     #-- data manager: gestiore dei dati
     dm = data_manager.Data_manager()
     dm.load_data()
@@ -37,9 +36,7 @@ def main():
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm,em)
 
-    #for i,id_course in enumerate(dm.get_courses()):
-    for id_course in ["32812"]:
-        i = 0
+    for i,id_course in enumerate(dm.get_courses()):
         rc.compute_print(id_course)
         print("---")
         print("Creato report: %s - %s" %(id_course, dm.get_course_name(id_course)))
