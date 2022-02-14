@@ -14,8 +14,9 @@
 2. Inserimento dei dati da elaborare (default: cartella "data" nella stessa posizione di "main.py")<br/>
 > Dati previsti:
 > - Cartelle YY-MM: con i file csv riguardanti il mese (non obbligatorio tutte le giornate del mese)
-> - "all_courses.csv" con ogni riga: id_course,nome_corso,docente,data_primo_appello,data_secondo_appello (docente=="--" se il corso e le sessioni da non considerare)
-> - "all_lectures.csv" con ogni riga: id_lecture,id_course,timestamp_di_pubblicazione,nome_lezione,durata_normale_lezione,durata_turbo_lezione
+> - "all_courses.csv" con ogni riga: `id_course,nome_corso,docente,data_primo_appello,data_secondo_appello` (docente=="--" se è un corso di test), 
+>   è possibile decidere che corsi ignorare inserendo `#,` all'inizio della riga corripondente dei corsi.
+> - "all_lectures.csv" con ogni riga: `id_lecture,id_course,timestamp_di_pubblicazione,nome_lezione,durata_normale_lezione,durata_turbo_lezione`
 
 3. In caso di cambio posizione di output, ricordarsi di inserire anche l'immagine "output/legend_seek_lectures.png"
 
@@ -35,11 +36,11 @@
 > - USER_AGENTS: dispositivi considerati (non presente grafico)
 
 ## Esecuzione
-`python main.py`
+`python main.py` (tempo di esecuzione di 25 minuti, ottobre-gennaio)
 
 ## Output
 La cartella "_reports" conterrà tutti i report elaborati. <br/>
-Le altre cartelle hanno più una funzione di supporto
+Le altre cartelle hanno una funzione di supporto
 
 ## Struttura
 
