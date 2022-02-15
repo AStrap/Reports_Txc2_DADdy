@@ -403,7 +403,6 @@ class Reports_manager:
         workbook_file_name = "%s\\%s-%s\\%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course), workbook_name)
         workbook = app.Workbooks.Open(Filename=workbook_file_name)
 
-        #WARNING: The following line will cause the script to discard any unsaved changes in your workbook
         app.DisplayAlerts = False
 
         i = 1

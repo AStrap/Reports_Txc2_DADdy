@@ -19,7 +19,8 @@ class Chart_lectures_events:
         return
 
     """
-        Calcolo e stampa dei grafici riguardo un corso
+        Calcolo e stampa dei grafici riguado numero eventi totali eseguiti nelle
+        lezioni
 
         Parametri:
             - id_course: str

@@ -21,7 +21,8 @@ class Charts_sessions_days_distribution:
         return
 
     """
-        Calcolo e stampa grafici riguardo l'uso dei dispositivi
+        Calcolo e stampa grafici riguardo la distribuzioni di istanziamento
+        delle sessioni 
 
         Parametri:
             - id_course: str

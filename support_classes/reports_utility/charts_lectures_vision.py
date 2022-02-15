@@ -24,7 +24,8 @@ class Charts_lectures_vision:
         return
 
     """
-        Calcolo e stampa grafici riguardo l'uso dei dispositivi
+        Calcolo e stampa grafici riguardo lo studio di visione delle lezioni da
+        parte degli utenti
 
         Parametri:
             - id_course: str

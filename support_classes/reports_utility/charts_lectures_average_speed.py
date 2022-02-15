@@ -21,7 +21,8 @@ class Charts_lectures_average_speed:
         return
 
     """
-        Calcolo e stampa grafici riguardo l'uso dei dispositivi
+        Calcolo e stampa grafici riguardo la velocità media di visione delle
+        lezioni
 
         Parametri:
             - id_course: str
@@ -142,7 +143,7 @@ class Charts_lectures_average_speed:
 
             - support_sheet: str
                 nome foglio in cui presenti dati per grafici
-                
+
             - id_course: str
                 corso di riferimento
     """
