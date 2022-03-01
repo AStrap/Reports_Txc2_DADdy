@@ -222,7 +222,7 @@ class Reports_computer:
         if second_period[1] == "-":
 
             md_file.write("## Informazioni dopo il termine del corso <br/> (Periodo 2: %s - -- ): \n" %(self.edit_date(second_period[0])))
-            md_file.write("**Dati ancora non disponibili**")
+            md_file.write("**Dati ancora non disponibili**\n")
 
         else:
 
@@ -335,32 +335,32 @@ class Reports_computer:
         users_info = self.rm.get_users_info(id_course)
         users_clusters = self.rm.get_users_clusters(id_course)
         n_clusters = len(users_clusters)
+        if len(users_info)>0:
+            md_file.write("Cluster%d -> cluster%d\n" %(0, n_clusters-1))
+            md_file.write("visione pi&#249; completa del corso -> visione pi&#249; mirata in punti ostici del corso \n")
 
-        md_file.write("Cluster%d -> cluster%d\n" %(0, n_clusters-1))
-        md_file.write("visione pi&#249; completa del corso -> visione pi&#249; mirata in punti ostici del corso \n")
+            tmp = "| "
+            tmp2 = "| "
+            for i in range(n_clusters):
+                tmp = "%sCluster%d | " %(tmp, i)
+                tmp2 = "%s:--- | " %(tmp2)
+            tmp = "%s\n" %(tmp); tmp2 = "%s\n" %(tmp2)
+            md_file.write(tmp)
+            md_file.write(tmp2)
 
-        tmp = "| "
-        tmp2 = "| "
-        for i in range(n_clusters):
-            tmp = "%sCluster%d | " %(tmp, i)
-            tmp2 = "%s:--- | " %(tmp2)
-        tmp = "%s\n" %(tmp); tmp2 = "%s\n" %(tmp2)
-        md_file.write(tmp)
-        md_file.write(tmp2)
-
-        tmp = "| "
-        for cluster in users_clusters:
-            for i,id_user in enumerate(cluster):
+            tmp = "| "
+            for cluster in users_clusters:
+                for i,id_user in enumerate(cluster):
+                    if i%2 == 1:
+                        tmp = "%s%s<br/> " %(tmp, id_user)
+                    else:
+                        tmp = "%s%s " %(tmp, id_user)
                 if i%2 == 1:
-                    tmp = "%s%s<br/> " %(tmp, id_user)
-                else:
-                    tmp = "%s%s " %(tmp, id_user)
-            if i%2 == 1:
-                tmp = tmp[:-6]
-            tmp = "%s | " %(tmp)
+                    tmp = tmp[:-6]
+                tmp = "%s | " %(tmp)
 
-        tmp = "%s\n\n" %(tmp)
-        md_file.write(tmp)
+            tmp = "%s\n\n" %(tmp)
+            md_file.write(tmp)
 
         md_file.write("Visione media: media percentuale tra le percentuali di visione delle lezioni viste dall'utente \n")
         md_file.write("Lezione pi&#249; vista: in termini di secondi di lezione visti dall'utente <br/> \n")
