@@ -14,6 +14,16 @@ def main():
     #-- data manager: gestiore dei dati
     dm = data_manager.Data_manager()
     dm.load_data()
+
+    miss_courses, miss_lectures = dm.get_miss_info()
+    if len(miss_courses)>0 or len(miss_lectures)>0:
+        for c in miss_courses:
+            print("Informazioni mancanti per il corso: %s" %c)
+
+        for l in miss_lectures:
+            print("Informazioni mancanti per la lezione: %s" %l)
+
+        exit()
     #--
 
     #-- excel manager: gestione dei fogli excel

@@ -38,9 +38,14 @@ class Data_loader:
         self.courses_users = dict()
         #--
 
-        #-- corsi di test da non considerare
+        #-- corsi di test o corsi da non considerare
         self.test_courses = list()
         self.ign_courses = list()
+        #--
+
+        #-- dati mancanti
+        self.miss_courses = list()
+        self.miss_lectures = list()
         #--
         return
 
@@ -75,12 +80,14 @@ class Data_loader:
         with open(file_courses, 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
 
-            for row in csv_reader:
+            for i_r,row in enumerate(csv_reader):
                 #se docente==-- allora corso di test da ignorare
-                if row[2]!="--" and row[0]!="#":
+                if row[2]!="--" and row[0]!="#" and i_r>0:
                     self.courses[row[0]] = [row[1],row[2],row[3],row[4]]
                     self.courses_lectures[row[0]] = list()
                     self.courses_users[row[0]] = list()
+                elif i_r==0:
+                    continue
                 elif row[2]=="--":
                     self.test_courses.append(row[0])
                 elif row[0]=="#":
@@ -103,10 +110,11 @@ class Data_loader:
         with open(file_lectures, 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
 
-            for row in csv_reader:
+            for i_r,row in enumerate(csv_reader):
+                if i_r == 0:
+                    continue
+
                 if (time_date.cmp_dates(row[2][:10], self.days[-1]) <= 0) and (not row[1] in self.test_courses) and (not row[1] in self.ign_courses):
-                    if not row[1] in self.courses.keys():
-                        continue
 
                     lecture_name = ""
                     for i,c in enumerate(row[3]):
@@ -116,7 +124,8 @@ class Data_loader:
                         lecture_name += c
 
                     self.lectures[row[0]] = [lecture_name, row[2], int(row[4]), int(row[5])]
-                    self.courses_lectures[row[1]].append(row[0])
+                    if row[1] in self.courses.keys():
+                        self.courses_lectures[row[1]].append(row[0])
         #--
 
         return
@@ -155,11 +164,16 @@ class Data_loader:
                         #--
 
                         #-- controlli conformita' informazioni corsi e lezione
+                        miss = False
                         if not id_course in self.courses.keys():
-                            print("Corso non presente: %s" % id_course)
-                            continue
+                            if not id_course in self.miss_courses:
+                                self.miss_courses.append(id_course)
+                            miss = True
                         if not uuid_lecture in self.lectures.keys():
-                            print("Lezione non presente: %s" % uuid_lecture)
+                            if not uuid_lecture in self.miss_lectures:
+                                self.miss_lectures.append(id_lectures)
+                            miss = True
+                        if miss:
                             continue
                         #--
 
@@ -406,3 +420,16 @@ class Data_loader:
     """
     def get_courses_users(self):
         return self.courses_users
+
+    """
+        Return lista corsi e lezioni di cui mancano le informazioni
+
+        Return:
+            - miss_courses: list()
+                lista corsi di cui mancano le informazioni
+
+            - miss_lectures: list()
+                lista lezioni di cui mancano le informazioni
+    """
+    def get_miss_info(self):
+        return self.miss_courses, self.miss_lectures

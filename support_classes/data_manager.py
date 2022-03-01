@@ -32,7 +32,12 @@ class Data_manager:
         self.courses_users = dict()
         #--
 
+        #-- corsi e lezioni di cui mancano le informazioni
+        self.miss_courses = list()
+        self.miss_lectures = list()
         #----------------------------------------------------------------------
+
+
         return
 
     """
@@ -49,9 +54,24 @@ class Data_manager:
 
         self.courses_lectures = self.dl.get_courses_lectures()
         self.courses_users = self.dl.get_courses_users()
+
+        self.miss_courses, self.miss_lectures = self.dl.get_miss_info()
         #--
 
         return
+
+    """
+        Return lista corsi e lezioni di cui mancano le informazioni
+
+        Return:
+            - miss_courses: list()
+                lista corsi di cui mancano le informazioni
+
+            - miss_lectures: list()
+                lista lezioni di cui mancano le informazioni
+    """
+    def get_miss_info(self):
+        return self.miss_courses, self.miss_lectures
 
     #-CORSI-------------------------------------------------------------------
     """
