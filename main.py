@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import signal,os
-#from zipfile import ZipFile
 
-import principal_classes.reports_computer as reports_computer
-
-import config
 import support_classes.data_manager as data_manager
+import principal_classes.reports_computer as reports_computer
 import support_classes.excel_manager as excel_manager
 
+import config
 PATH_OUTPUT = config.PATH_OUTPUT
 
 def main():
@@ -26,12 +24,9 @@ def main():
         exit()
     #--
 
-    #-- excel manager: gestione dei fogli excel
-    em = excel_manager.Excel_manager()
-    #--
-
     #-- creazione cartelle output
-    for c in dm.get_courses():
+    #for c in dm.get_courses():
+    for c in ["32812"]:
         try:
             os.mkdir("%s\\%s-%s" %(PATH_OUTPUT, c, dm.get_course_name(c)))
         except:
@@ -44,21 +39,15 @@ def main():
     #--
 
     #-- stampa report per ogni classe
-    rc = reports_computer.Reports_computer(dm,em)
+    rc = reports_computer.Reports_computer(dm)
 
-    for i,id_course in enumerate(dm.get_courses()):
+    #for i,id_course in enumerate(dm.get_courses()):
+    for i,id_course in enumerate(["32812"]):
         rc.compute_print(id_course)
         print("---")
         print("Creato report: %s - %s" %(id_course, dm.get_course_name(id_course)))
         print("%d su %d" %(i+1, len(dm.get_courses())))
         print("---")
-    #--
-
-    #-- salvataggio informazioni degli utenti
-    #zipObj = ZipFile("%s\\users_info.zip"%(PATH_OUTPUT), 'w')
-    #for id_course in dm.get_courses():
-    #    zipObj.write(filename = "%s\\%s-%s\\users_info.csv"%(PATH_OUTPUT,id_course,dm.get_course_name(id_course)), arcname="%s-%s.csv"%(id_course, dm.get_course_name(id_course)))
-    #zipObj.close()
     #--
 
     return

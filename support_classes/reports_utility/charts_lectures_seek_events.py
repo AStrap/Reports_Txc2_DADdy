@@ -9,12 +9,9 @@ class Charts_lectures_seek_events:
     PATH_OUTPUT = config.PATH_OUTPUT
     UNIT = config.TIME_UNIT
 
-    def __init__(self, dm, em):
+    def __init__(self, dm):
         # data manager
         self.dm = dm
-
-        # excel manager
-        self.em = em
 
         return
 

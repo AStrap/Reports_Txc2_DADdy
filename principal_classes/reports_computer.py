@@ -6,25 +6,22 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 from pathlib import Path
 import fitz
 
-import config
 import support_classes.reports_manager as reports_manager
+
+import config
 
 class Reports_computer:
 
     PATH_OUTPUT = config.PATH_OUTPUT
 
-    def __init__(self, dm, em):
+    def __init__(self, dm):
 
         #-- data_manager
         self.dm = dm
         #--
 
-        #-- excel_manager
-        self.em = em
-        #--
-
         #-- report manager: elaborazion informazione per i report
-        self.rm = reports_manager.Reports_manager(self.dm, self.em)
+        self.rm = reports_manager.Reports_manager(self.dm)
         #--
         return
 
@@ -43,7 +40,7 @@ class Reports_computer:
     def compute_print(self, id_course):
 
         #-- cartella immagini per i reports
-        self.path_imgs = "../%s-%s/img" %(id_course, self.dm.get_course_name(id_course))
+        self.path_imgs = "../%s-%s" %(id_course, self.dm.get_course_name(id_course))
         #--
 
         #-- file markdown del report
@@ -73,17 +70,17 @@ class Reports_computer:
         bookmarks_pdf = self.first_period_info(f, id_course)
         total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks_pdf = self.second_period_info(f, id_course)
-        total_bookmarks.append(bookmarks_pdf)
+        #bookmarks_pdf = self.second_period_info(f, id_course)
+        #total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks_pdf = self.lectures_info(f, id_course)
-        total_bookmarks.append(bookmarks_pdf)
+        #bookmarks_pdf = self.lectures_info(f, id_course)
+        #total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks_pdf = self.users_info(f, id_course)
-        total_bookmarks.append(bookmarks_pdf)
+        #bookmarks_pdf = self.users_info(f, id_course)
+        #total_bookmarks.append(bookmarks_pdf)
 
-        bookmarks_pdf = self.keywords_info(f, id_course)
-        total_bookmarks.append(bookmarks_pdf)
+        #bookmarks_pdf = self.keywords_info(f, id_course)
+        #total_bookmarks.append(bookmarks_pdf)
 
         f.close()
         #--
@@ -131,11 +128,6 @@ class Reports_computer:
 
         md_file.write("**Numero di studenti che hanno almeno una sessione:** %d <br/> \n" %(len(self.dm.get_users_by_course(id_course))))
 
-        #self.rm.print_user_agent_info(id_course)
-        #md_file.write("**Grafico con il numero di dispositivi per tipo (verso parte giornata)** \n")
-        #md_file.write("<img src=\"%s/user_agent/chart1.png\"/> <br/> \n" %(self.path_imgs))
-        #bookmarks[1].append(("grafico numero dispositivi per tipo", cur_page))
-
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
         cur_page += 1
 
@@ -168,16 +160,16 @@ class Reports_computer:
 
         self.rm.print_session_day_distribution(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
-        md_file.write("<img src=\"%s/day_distribution_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        md_file.write("<img src=\"%s/Sessioni per giornata - primo periodo.png\"/> <br/> \n" %(self.path_imgs))
         bookmarks[1].append(("grafico numero sessioni (verso il tempo)", cur_page))
 
         md_file.write("**Grafico con il numero di sessioni (verso data visualizzazione &#8722; data caricamento)** \n")
-        md_file.write("<img src=\"%s/day_distribution_primo periodo/chart2.png\"/> <br/> \n" %(self.path_imgs))
+        md_file.write("<img src=\"%s/Sessioni per giornata dalla pubblicazione - primo periodo.png\"/> <br/> \n" %(self.path_imgs))
         bookmarks[1].append(("grafico numero sessioni (verso data visualizzazione - data caricamento)", cur_page))
 
         self.rm.print_session_hours_distribution(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con il numero di sessioni (verso orario della giornata)** \n")
-        md_file.write("<img src=\"%s/hours_distribution_primo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+        md_file.write("<img src=\"%s/Sessioni attive per orario - primo periodo.png\"/> <br/> \n" %(self.path_imgs))
         bookmarks[1].append(("grafico numero sessioni (verso orario della giornata)", cur_page))
 
         md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
@@ -190,14 +182,14 @@ class Reports_computer:
             md_file.write("<img src=\"%s/lectures_events_primo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
             cur_page += 1
-
-        self.rm.print_course_vision(id_course, first_period, "primo periodo")
-        md_file.write("**Grafico con la distribuzione della copertura** \n")
-        bookmarks[1].append(("grafico numero utenti per lezione", cur_page))
-        for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)):
-            md_file.write("<img src=\"%s/course_vision_primo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
-            md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
-            cur_page += 1
+        
+        # self.rm.print_course_vision(id_course, first_period, "primo periodo")
+        # md_file.write("**Grafico con la distribuzione della copertura** \n")
+        # bookmarks[1].append(("grafico numero utenti per lezione", cur_page))
+        # for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)):
+        #     md_file.write("<img src=\"%s/course_vision_primo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
+        #     md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
+        #     cur_page += 1
 
         return bookmarks
 

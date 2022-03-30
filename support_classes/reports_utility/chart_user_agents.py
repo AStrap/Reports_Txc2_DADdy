@@ -8,12 +8,9 @@ class Chart_user_agents:
     DAY_PERIODS = config.DAY_PERIODS
     USER_AGENTS = config.USER_AGENTS
 
-    def __init__(self, dm, em):
+    def __init__(self, dm):
         # data manager
         self.dm = dm
-
-        # excel manager
-        self.em = em
 
         return
 
