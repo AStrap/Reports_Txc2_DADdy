@@ -3,6 +3,7 @@ import math
 
 import config
 import utility.time_date as time_date
+import utility.chart_printer as chart_printer
 
 class Chart_course_vision:
 
@@ -37,13 +38,9 @@ class Chart_course_vision:
     def compute_print(self, id_course, label_period, period):
         path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
-        workbook_name = "copertura_corso_%s_%s.xlsx" %(label_period, self.dm.get_course_name(id_course))
-        self.em.set_workbook(workbook_name, path_output_course)
+        self.compute_users_per_lecture(id_course, label_period, period, path_output_course)
 
-        self.compute_users_per_lecture("Utenti_per_lezione", id_course, label_period, period)
-
-        self.em.close_workbook()
-        return workbook_name
+        return
 
     """
         Calcolo e stampa del numero di utenti per lezione
@@ -61,7 +58,7 @@ class Chart_course_vision:
             - period: (str, str)
                 periodo di studio
     """
-    def compute_users_per_lecture(self, sheet, id_course, label_period, period):
+    def compute_users_per_lecture(self, id_course, label_period, period, path_output_course):
 
         lectures = self.dm.get_lectures_by_course(id_course)
         n_charts = math.ceil(len(lectures)/self.N_LECTURES_PER_CHART)
@@ -72,21 +69,14 @@ class Chart_course_vision:
 
         for c in range(n_charts):
 
-            self.em.add_worksheet("%s%s" %(sheet, c))
-            self.em.set_cursors(1, 1)
-
             tmp_lectures = 0
             if c != n_charts-1:
                 tmp_lectures = lectures[c*self.N_LECTURES_PER_CHART:(c+1)*self.N_LECTURES_PER_CHART]
             else:
                 tmp_lectures = lectures[c*self.N_LECTURES_PER_CHART:]
 
-            c_x_i, c_y = self.em.get_cursors()
-
-            head = [["LEZIONE", "NUMERO UTENTI"]]
-            body = []
-
-
+            val_x = list()
+            val_y = list()
 
             max_user = 0
             for l in tmp_lectures:
@@ -97,19 +87,16 @@ class Chart_course_vision:
                     if not s[-1] in users:
                         users.append(s[-1])
 
-                body.append([self.dm.get_lecture_name(l), len(users)])
+                val_x.append(self.dm.get_lecture_name(l))
+                val_y.append(len(users))
+
                 if len(users)>max_user:
                     max_user = len(users)
 
-            option_x = dict()
-            if max_user < 10:
-                option_x['major_unit'] = 1
+            # option_x = dict()
+            # if max_user < 10:
+            #     option_x['unit'] = 1
 
-            self.em.write_head_table(head)
-            self.em.write_body_table(body)
-
-            c_x, c_y = self.em.get_cursors()
-
-            self.em.print_bar_chart("ver", (c_x_i+1,c_x-1), (c_y, c_y+1), "%s%s" %(sheet, c), "Utenti per lezione - %s" %(label_period), "numero utenti", "lezione", c_x_i, c_y+3, option_x)
+            chart_printer.print_bar_chart(val_x, val_y, "Utenti per lezione(%d) - %s" %(c, label_period), "numero utenti", "lezione", {}, path_output_course)
         #--
         return

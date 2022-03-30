@@ -53,3 +53,33 @@ def print_isto_chart(x, y, title, label_x, label_y, axis_y_options, path_output)
     plt.subplots_adjust(bottom=0.5, wspace=0.01)
 
     plt.savefig("%s/%s.png" %(path_output,title), bbox_inches='tight')
+
+def print_bar_chart(x, y, title, label_x, label_y, axis_y_options, path_output):
+    #plt.subplots(figsize=(50*CM, 10.3*CM))
+    fig = plt.figure(dpi=128, figsize=(17,90))
+    plt.barh(x, y)
+    plt.margins(x=0)
+    ax = plt.gca()
+
+    plt.title(title, size = 20)
+    plt.xlabel(label_x, size = 20)
+    plt.ylabel(label_y, size = 20)
+    plt.xticks(size = 20)
+    plt.yticks(size = 20)
+
+    #-- axis_y_options
+    if "min" in axis_y_options.keys():
+        plt.ylim(bottom=axis_y_options["min"])
+    if "max" in axis_y_options.keys():
+        plt.ylim(top=axis_y_options["max"])
+    #--
+
+    plt.subplots_adjust(bottom=0.5, wspace=0.01)
+
+    every_nth = 5
+    for n, label in enumerate(ax.xaxis.get_ticklabels()):
+        if n % every_nth != 0:
+            label.set_visible(False)
+
+    plt.savefig("%s/%s.png" %(path_output,title), bbox_inches='tight')
+    #plt.show()

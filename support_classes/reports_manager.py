@@ -300,8 +300,7 @@ class Reports_manager:
     def print_lectures_events(self, id_course, period, label_period):
 
         c_lectures_events = chart_lectures_events.Chart_lectures_events(self.dm)
-        workbook = c_lectures_events.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, workbook, "lectures_events_%s" %(label_period))
+        c_lectures_events.compute_print(id_course, label_period, period)
         return
 
     """
