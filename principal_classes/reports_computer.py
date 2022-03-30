@@ -70,8 +70,8 @@ class Reports_computer:
         bookmarks_pdf = self.first_period_info(f, id_course)
         total_bookmarks.append(bookmarks_pdf)
 
-        #bookmarks_pdf = self.second_period_info(f, id_course)
-        #total_bookmarks.append(bookmarks_pdf)
+        bookmarks_pdf = self.second_period_info(f, id_course)
+        total_bookmarks.append(bookmarks_pdf)
 
         #bookmarks_pdf = self.lectures_info(f, id_course)
         #total_bookmarks.append(bookmarks_pdf)
@@ -228,12 +228,12 @@ class Reports_computer:
 
             self.rm.print_session_day_distribution(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
-            md_file.write("<img src=\"%s/day_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+            md_file.write("<img src=\"%s//Sessioni per giornata - secondo periodo.png\"/> <br/> \n" %(self.path_imgs))
             bookmarks[1].append(("grafico numero sessioni (verso il tempo)", cur_page))
 
             self.rm.print_session_hours_distribution(id_course, second_period, "secondo periodo")
             md_file.write("**Grafico con il numero di sessioni (verso orario della giornata)** \n")
-            md_file.write("<img src=\"%s/hours_distribution_secondo periodo/chart1.png\"/> <br/> \n" %(self.path_imgs))
+            md_file.write("<img src=\"%s/Sessioni attive per orario - secondo periodo.png\"/> <br/> \n" %(self.path_imgs))
             bookmarks[1].append(("grafico numero sessioni (verso orario della giornata)", cur_page))
 
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
@@ -243,7 +243,7 @@ class Reports_computer:
             md_file.write("**Grafico con il numero di eventi per lezione (eventi di salto o ricerca)** \n")
             bookmarks[1].append(("grafico numero eventi per lezione", cur_page))
             for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)):
-                md_file.write("<img src=\"%s/lectures_events_secondo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
+                md_file.write("<img src=\"%s/Eventi per lezione(%d) - secondo periodo.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, c, "%"))
                 md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
                 cur_page += 1
 
@@ -251,7 +251,7 @@ class Reports_computer:
             md_file.write("**Grafico con la distribuzione della copertura** \n")
             bookmarks[1].append(("grafico numero utenti per lezione", cur_page))
             for c in range(math.ceil(len(self.dm.get_lectures_by_course(id_course))/config.N_LECTURES_PER_CHART)):
-                md_file.write("<img src=\"%s/course_vision_secondo periodo/chart%d.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, (c+1), "%"))
+                md_file.write("<img src=\"%s/Utenti per lezione(%d) - secondo periodo.png\" width=\"80%s\"/> <br/> \n" %(self.path_imgs, c, "%"))
                 md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")
                 cur_page += 1
 
