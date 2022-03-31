@@ -3,6 +3,7 @@ import math
 import datetime
 
 import config
+import utility.chart_printer as chart_printer
 
 class Charts_lectures_average_speed:
 
@@ -29,59 +30,41 @@ class Charts_lectures_average_speed:
                 nome file excel in cui salvati i grafici
     """
     def compute_print(self, id_course):
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
-        workbook_name = "average_speed_%s.xlsx" %(self.dm.get_course_name(id_course))
-        self.em.set_workbook(workbook_name, path_output_course)
+        val_x, val_y = self.compute_data(id_course)
 
-        self.compute_support("Supporto_grafici", id_course)
+        self.print_charts_average_speed(id_course, val_x, val_y, path_output_course)
 
-        self.print_charts_average_speed("Velocita_di_visione", "Supporto_grafici", id_course)
-
-        self.em.close_workbook()
-
-        return workbook_name
+        return
 
     """
         Calcolo e produzione del foglio di supporto per studio delle velocità
         medie di visione
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
             - id_course: str
                 corso di riferimento
     """
-    def compute_support(self, sheet, id_course):
+    def compute_data(self, id_course):
 
-        self.em.add_worksheet(sheet)
+        val_x = list(); val_y = list()
 
         for l in self.dm.get_lectures_by_course(id_course):
-
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60
 
             #-- calcolo velocità medie per lezione
             info_speed = self.compute_speed(l, self.dm.get_sessions_by_course_lecture(id_course, l))
             #--
 
             #-- scrittura elementi
-            head = [[str(datetime.timedelta(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)]]
-            body = [[]]
+            val_x.append([str(datetime.timedelta(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)])
+            val_y.append([])
 
-            for i,s in enumerate(info_speed):
-                tmp = ["" for _ in range(i)]
-                tmp.append(s); tmp.append(s)
-                body[0].extend(tmp)
-
-            self.em.write_head_table(head)
-            self.em.write_body_table(body)
+            for s in info_speed:
+                val_y[-1].append(s)
             #--
 
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = config.TIME_UNIT
-        return
+        return val_x, val_y
 
     """
         Calcolo medie di velocità
@@ -134,43 +117,32 @@ class Charts_lectures_average_speed:
         Stampa i grafici delle medie di velocità
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
-            - support_sheet: str
-                nome foglio in cui presenti dati per grafici
-
             - id_course: str
                 corso di riferimento
     """
-    def print_charts_average_speed(self, sheet, support_sheet, id_course):
+    def print_charts_average_speed(self, id_course, val_x, val_y, path_output_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = 10*60
 
-            if i==0:
-                self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
-            else:
-                self.em.add_worksheet("%s%d" %(sheet,i))
-
-            x = [i*2, (i*2)+1]
-            y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
-
-            #- inserimento dei skip
-            c_y=0
-            # spazi bianchi
-            s=0
-            while s<math.ceil(self.dm.get_lecture_duration(l)/self.UNIT):
-                y_s = c_y; y_e = c_y+s+1
-                y.append((y_s, y_e))
-
-                c_y += s+2
-                s += 1
+            # x = [i*2, (i*2)+1]
+            # y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
+            #
+            # #- inserimento dei skip
+            # c_y=0
+            # # spazi bianchi
+            # s=0
+            # while s<math.ceil(self.dm.get_lecture_duration(l)/self.UNIT):
+            #     y_s = c_y; y_e = c_y+s+1
+            #     y.append((y_s, y_e))
+            #
+            #     c_y += s+2
+            #     s += 1
 
             title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
-            self.em.print_line_chart_speed(x, y, support_sheet, title, "minutaggio", "livello di velocità", 1, 1, {"max":4, "min":0, 'major_unit':1})
+            chart_printer.print_speed_chart(val_x[i], val_y[i], title, "minutaggio", "livello di velocità", {"max":4, "min":0, 'major_unit':1}, path_output_course, "Velocita_lezione_%d"%(i))
 
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = config.TIME_UNIT

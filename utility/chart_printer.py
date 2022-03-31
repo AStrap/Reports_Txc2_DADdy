@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
+import time
 
 CM = 1/2.54
 
-def print_line_chart(x, y, title, label_x, label_y, axis_y_options, path_output):
+def print_line_chart(x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
     #plt.subplots(figsize=(50*CM, 10.3*CM))
     fig = plt.figure(dpi=128, figsize=(17,4))
     plt.plot(x, y)
@@ -12,6 +13,7 @@ def print_line_chart(x, y, title, label_x, label_y, axis_y_options, path_output)
     plt.title(title)
     plt.xlabel(label_x)
     plt.ylabel(label_y)
+    plt.grid()
 
     #-- axis_y_options
     if "min" in axis_y_options.keys():
@@ -28,10 +30,11 @@ def print_line_chart(x, y, title, label_x, label_y, axis_y_options, path_output)
         if n % every_nth != 0:
             label.set_visible(False)
 
-    plt.savefig("%s/%s.png" %(path_output,title), bbox_inches='tight')
+    plt.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+    plt.close()
     #plt.show()
 
-def print_isto_chart(x, y, title, label_x, label_y, axis_y_options, path_output):
+def print_isto_chart(x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
     #plt.subplots(figsize=(50*CM, 10.3*CM))
     fig = plt.figure(dpi=128, figsize=(17,4))
     plt.bar(x, y)
@@ -41,6 +44,7 @@ def print_isto_chart(x, y, title, label_x, label_y, axis_y_options, path_output)
     plt.title(title)
     plt.xlabel(label_x)
     plt.ylabel(label_y)
+    plt.grid(axis = 'y')
 
     #-- axis_y_options
     if "min" in axis_y_options.keys():
@@ -52,13 +56,14 @@ def print_isto_chart(x, y, title, label_x, label_y, axis_y_options, path_output)
     plt.xticks(rotation=270)
     plt.subplots_adjust(bottom=0.5, wspace=0.01)
 
-    plt.savefig("%s/%s.png" %(path_output,title), bbox_inches='tight')
+    plt.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+    plt.close()
 
-def print_bar_chart(x, y, title, label_x, label_y, axis_y_options, path_output):
+def print_bar_chart(x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
     #plt.subplots(figsize=(50*CM, 10.3*CM))
     fig = plt.figure(dpi=128, figsize=(17,90))
     plt.barh(x, y)
-    plt.margins(x=0)
+    plt.margins(y=0)
     ax = plt.gca()
 
     plt.title(title, size = 20)
@@ -66,6 +71,7 @@ def print_bar_chart(x, y, title, label_x, label_y, axis_y_options, path_output):
     plt.ylabel(label_y, size = 20)
     plt.xticks(size = 20)
     plt.yticks(size = 20)
+    plt.grid(axis = 'x')
 
     #-- axis_y_options
     if "min" in axis_y_options.keys():
@@ -81,5 +87,76 @@ def print_bar_chart(x, y, title, label_x, label_y, axis_y_options, path_output):
         if n % every_nth != 0:
             label.set_visible(False)
 
-    plt.savefig("%s/%s.png" %(path_output,title), bbox_inches='tight')
+    plt.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+    plt.close()
     #plt.show()
+
+def print_speed_chart(x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
+    fig = plt.figure(dpi=128, figsize=(17,4))
+    for i in range(len(x[:-1])):
+        plt.plot([x[i],x[i+1]], [y[i],y[i]], color='green')
+    plt.margins(x=0)
+    ax = plt.gca()
+
+    plt.title(title)
+    plt.xlabel(label_x)
+    plt.ylabel(label_y)
+    plt.grid()
+
+    #-- axis_y_options
+    if "min" in axis_y_options.keys():
+        plt.ylim(bottom=axis_y_options["min"])
+    if "max" in axis_y_options.keys():
+        plt.ylim(top=axis_y_options["max"])
+    #--
+
+    plt.xticks(rotation=270)
+    plt.subplots_adjust(bottom=0.5, wspace=0.01)
+
+    every_nth = 5
+    for n, label in enumerate(ax.xaxis.get_ticklabels()):
+        if n % every_nth != 0:
+            label.set_visible(False)
+
+    plt.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+    plt.close()
+
+def print_seek_chart(x, events, title, label_x, label_y, axis_y_options, path_output, name_file):
+    fig = plt.figure(dpi=128, figsize=(17,4))
+    for i in range(4):
+        for j,e in enumerate(events[i]):
+            if e > 0:
+                if i == 0:
+                    plt.plot(x[j], e, marker='s', color='red', fillstyle='full', linestyle='None')
+                elif i == 1:
+                    plt.plot(x[j], e, marker='o', color='green', fillstyle='full', linestyle='None')
+                elif i == 2:
+                    plt.plot(x[j], e, marker='D', color='blue', fillstyle='full', linestyle='None')
+                elif i == 3:
+                    plt.plot(x[j], e, marker='^', color='yellow', fillstyle='full', linestyle='None')
+    plt.margins(x=0)
+    ax = plt.gca()
+
+    plt.title(title)
+    plt.xlabel(label_x)
+    plt.xlim(right=x[-1])
+    plt.ylabel(label_y)
+    plt.grid()
+
+    #-- axis_y_options
+    if "min" in axis_y_options.keys():
+        plt.ylim(bottom=axis_y_options["min"])
+    if "max" in axis_y_options.keys():
+        plt.ylim(top=axis_y_options["max"])
+    #--
+
+    plt.xticks(rotation=270)
+    plt.subplots_adjust(bottom=0.5, wspace=0.01)
+
+    every_nth = 5
+    for n, label in enumerate(ax.xaxis.get_ticklabels()):
+        if n % every_nth != 0:
+            label.set_visible(False)
+
+    plt.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+    plt.close()

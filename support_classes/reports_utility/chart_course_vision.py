@@ -36,7 +36,7 @@ class Chart_course_vision:
 
     """
     def compute_print(self, id_course, label_period, period):
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         self.compute_users_per_lecture(id_course, label_period, period, path_output_course)
 
@@ -97,6 +97,6 @@ class Chart_course_vision:
             # if max_user < 10:
             #     option_x['unit'] = 1
 
-            chart_printer.print_bar_chart(val_x, val_y, "Utenti per lezione(%d) - %s" %(c, label_period), "numero utenti", "lezione", {}, path_output_course)
+            chart_printer.print_bar_chart(val_x, val_y, "Utenti per lezione - %s" %(label_period), "numero utenti", "lezione", {}, path_output_course, "Utenti_lezioni(%d)_%s"%(c,label_period))
         #--
         return

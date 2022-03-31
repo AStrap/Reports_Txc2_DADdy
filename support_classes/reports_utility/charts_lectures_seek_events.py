@@ -3,6 +3,7 @@ import math
 import datetime
 
 import config
+import utility.chart_printer as chart_printer
 
 class Charts_lectures_seek_events:
 
@@ -28,27 +29,19 @@ class Charts_lectures_seek_events:
     """
     def compute_print(self, id_course):
 
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
-        workbook_name = "lectures_seek_events_%s.xlsx" %(self.dm.get_course_name(id_course))
-        self.em.set_workbook(workbook_name, path_output_course)
+        info_events = self.compute_data(id_course)
 
-        info_events = self.compute_support("Supporto_grafici", id_course)
+        self.print_charts_seeks(id_course, info_events, path_output_course)
 
-        self.print_charts_average_speed("Seek_eventi", "Supporto_grafici", id_course, info_events)
-
-        self.em.close_workbook()
-
-        return workbook_name
+        return
 
     """
         Calcolo e produzione del foglio di supporto per studio della tipologia
         e numero di eventi che puntano ad uno specifico minutaggio
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
             - id_course: str
                 corso di riferimento
 
@@ -56,9 +49,7 @@ class Charts_lectures_seek_events:
             - r_info_events: list()
                 informazioni riguardo eventi di salto usati
     """
-    def compute_support(self, sheet, id_course):
-
-        self.em.add_worksheet(sheet)
+    def compute_data(self, id_course):
 
         r_info_events = list()
         for l in self.dm.get_lectures_by_course(id_course):
@@ -69,23 +60,6 @@ class Charts_lectures_seek_events:
             #-- calcolo velocità medie per lezione
             info_events = self.compute_seek_events(l, self.dm.get_sessions_by_course_lecture(id_course, l))
             r_info_events.append(info_events)
-            #--
-
-            #-- scrittura elementi
-            head = [[str(datetime.timedelta(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)]]
-            self.em.write_head_table(head)
-
-            for i,type_seek in enumerate(info_events):
-                body = [[]]
-
-                for j,m in enumerate(type_seek):
-                    if m != 0:
-                        tmp = ["" for _ in range(j)]; tmp.append(m)
-                        body[0].extend(tmp)
-
-                self.em.write_body_table(body)
-
-            self.em.add_row(1)
             #--
 
             if self.dm.get_lecture_duration(l)>10000:
@@ -190,25 +164,13 @@ class Charts_lectures_seek_events:
             - info_events: list()
                 informazioni sulle eventi di salto utilizzati
     """
-    def print_charts_average_speed(self, sheet, support_sheet, id_course, info_events):
+    def print_charts_seeks(self, id_course, info_events, path_output_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60
-
-            if i==0:
-                self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
-            else:
-                self.em.add_worksheet("%s%d" %(sheet,i))
-
-            x = [i*6, (i*6)+1, (i*6)+2, (i*6)+3, (i*6)+4, (i*6)+5]
-            y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
+            x = [str(datetime.timedelta(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)]
 
             title = "Numero eventi di salto temporale - %s" %(self.dm.get_lecture_name(l))
-            self.em.print_line_chart_seek_events(x, y, info_events[i], support_sheet, title, "minutaggio", "numero di eventi", 1, 1, {"min":0})
-
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = config.TIME_UNIT
+            chart_printer.print_seek_chart(x, info_events[i], title, "minutaggio", "numero di eventi", {"min":0}, path_output_course, "Seek_lezione_%s" %(i))
 
         return

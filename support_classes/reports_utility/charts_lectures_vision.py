@@ -3,6 +3,7 @@ import math
 
 import config
 import utility.time_date as time_date
+import utility.chart_printer as chart_printer
 
 class Charts_lectures_vision:
 
@@ -32,55 +33,41 @@ class Charts_lectures_vision:
                 nome file excel in cui salvati i grafici
     """
     def compute_print(self, id_course):
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
-        workbook_name = "copertura_visione_lezione_%s.xlsx" %(self.dm.get_course_name(id_course))
-        self.em.set_workbook(workbook_name, path_output_course)
+        val_x, val_y_vision, val_y_users = self.compute_data(id_course)
 
-        self.compute_support("Supporto_grafici", id_course)
+        self.compute_lecture_vision(id_course, val_x, val_y_vision, val_y_users, path_output_course)
 
-        self.compute_lecture_vision("Coperura di visione", "Supporto_grafici", id_course)
-
-        self.em.close_workbook()
-
-        return workbook_name
+        return
 
     """
         Calcolo e produzione del foglio di supporto per studio dei vari punti di
         interesse, in base a particolari criteri
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
             - id_course: str
                 corso di riferimento
     """
-    def compute_support(self, sheet, id_course):
-
-        self.em.add_worksheet(sheet)
+    def compute_data(self, id_course):
+        val_x = list(); val_y_vision = list(); val_y_users = list()
 
         for l in self.dm.get_lectures_by_course(id_course):
 
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = 10*60
 
+            val_x.append([str(time_date.seconds_hours(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)])
+
             #-- calcolo informazioni riguardo la visione
-            total_vision = self.compute_n_vision(id_course, l)
-            user_vision = self.compute_n_vision_users(id_course, l)
-            #--
-
-            #-- scrittura elementi
-            head = [[str(time_date.seconds_hours(seconds=i*self.UNIT)) for i in range(math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)+1)]]
-            body = [total_vision, user_vision]
-
-            self.em.write_head_table(head)
-            self.em.write_body_table(body)
+            val_y_vision.append(self.compute_n_vision(id_course, l))
+            val_y_users.append(self.compute_n_vision_users(id_course, l))
             #--
 
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = config.TIME_UNIT
-        return
+
+        return val_x, val_y_vision, val_y_users
 
     """
         Stampa i grafici delle distribuzione di visione
@@ -95,35 +82,30 @@ class Charts_lectures_vision:
             - id_course: str
                 corso di riferimento
     """
-    def compute_lecture_vision(self, sheet, support_sheet, id_course):
+    def compute_lecture_vision(self, id_course, val_x, val_y_vision, val_y_users, path_output_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = 10*60
 
-            if i==0:
-                self.em.add_worksheet_support_sheet("%s%d" %(sheet,i))
-            else:
-                self.em.add_worksheet("%s%d" %(sheet,i))
-
             ind_labels = i*2+i
             duration = math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)
-
 
             title = "Coperture di visone - %s" %(self.dm.get_lecture_name(l))
             if self.max_y > 20:
                 unit = 10
             else:
                 unit = 1
-            self.em.print_line_chart("oriz", (ind_labels,ind_labels+1), (0, duration), support_sheet, title, "minutaggio", "numero visioni", 1, 1, {'max':self.max_y, 'min':0, 'major_unit':unit})
+            chart_printer.print_line_chart(val_x[i], val_y_vision[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0, 'major_unit':unit}, path_output_course, "Visioni_lezione_%d"%(i))
 
             title = "Coperture di visone univoca per utente - %s" %(self.dm.get_lecture_name(l))
             if self.max_y2 > 20:
                 unit = 10
             else:
                 unit = 1
-            self.em.print_line_chart("oriz", (ind_labels,ind_labels+2), (0, duration), support_sheet, title, "minutaggio", "numero visioni", 1, 14, {'max':self.max_y2, 'min':0, 'major_unit':unit})
+
+            chart_printer.print_line_chart(val_x[i], val_y_users[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0, 'major_unit':unit}, path_output_course, "Visioni_unic_lezione_%d"%(i))
 
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = config.TIME_UNIT

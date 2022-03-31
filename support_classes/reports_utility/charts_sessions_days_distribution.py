@@ -66,7 +66,7 @@ class Charts_sessions_days_distribution:
             val_x.append(day)
             val_y.append(len(self.dm.get_sessions_by_course_days(id_course, [day])))
 
-        chart_printer.print_line_chart(val_x, val_y, "Sessioni per giornata - %s" %(label_period), "giornata", "numero sessioni", {'min':0}, path_output_course)
+        chart_printer.print_line_chart(val_x, val_y, "Sessioni per giornata - %s" %(label_period), "giornata", "numero sessioni", {'min':0}, path_output_course, "Sessioni_giorni_%s" %(label_period))
         #--
         return
 
@@ -137,7 +137,7 @@ class Charts_sessions_days_distribution:
 
         days = [i for i in range(1, self.days_max+2)]
         val_x = list(); val_y = list()
-        
+
         for i,d in enumerate(days):
             tot = 0
             n_sessions = 0
@@ -151,6 +151,6 @@ class Charts_sessions_days_distribution:
         #--
 
         #-- stampa del grafico
-        chart_printer.print_line_chart(val_x, val_y, "Sessioni per giornata dalla pubblicazione - %s" %(label_period), "giornata", "numero sessioni", {'min':0}, path_output_course)
+        chart_printer.print_line_chart(val_x, val_y, "Sessioni per giornata dalla pubblicazione - %s" %(label_period), "giornata", "numero sessioni", {'min':0}, path_output_course, "Sessioni_pubblicazione_%s" %(label_period))
 
         return

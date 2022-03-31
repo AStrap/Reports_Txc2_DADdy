@@ -33,7 +33,7 @@ class Chart_sessions_hours_distribution:
                 nome file excel dove sono salvati i grafici
     """
     def compute_print(self, id_course, label_period, period):
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         #-- giorni presenti nel periodo
         days_period = time_date.get_days_by_period(period)
@@ -83,6 +83,6 @@ class Chart_sessions_hours_distribution:
                 hours += 3600
                 time = time+1 if time<23 else 0
 
-        chart_printer.print_isto_chart(val_x, val_y, "Sessioni attive per orario - %s" %(label_period), "orario", "numero sessioni", {'min':0}, path_output_course)
+        chart_printer.print_isto_chart(val_x, val_y, "Sessioni attive per orario - %s" %(label_period), "orario", "numero sessioni", {'min':0}, path_output_course, "Sessioni_orario_%s" %(label_period))
         #--
         return

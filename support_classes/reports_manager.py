@@ -304,21 +304,6 @@ class Reports_manager:
         return
 
     """
-        Stampa grafico riguardo alla velocità media di visione di una lezione
-
-        Parametri:
-            - id_course: str
-                corso di riferimento
-    """
-    def print_lectures_average_speed(self, id_course):
-
-        c_charts_lectures_average_speed = charts_lectures_average_speed.Charts_lectures_average_speed(self.dm)
-        workbook = c_charts_lectures_average_speed.compute_print(id_course)
-        self.save_chart(id_course, workbook, "lecture_average_speed")
-
-        return
-
-    """
         Stampa grafico riguardo la copertura di visione della lezione
 
         Parametri:
@@ -328,8 +313,21 @@ class Reports_manager:
     def print_lectures_vision(self, id_course):
 
         c_charts_lectures_vision = charts_lectures_vision.Charts_lectures_vision(self.dm)
-        workbook = c_charts_lectures_vision.compute_print(id_course)
-        self.save_chart(id_course, workbook, "lecture_vision")
+        c_charts_lectures_vision.compute_print(id_course)
+
+        return
+
+    """
+        Stampa grafico riguardo alla velocità media di visione di una lezione
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+    """
+    def print_lectures_average_speed(self, id_course):
+
+        c_charts_lectures_average_speed = charts_lectures_average_speed.Charts_lectures_average_speed(self.dm)
+        c_charts_lectures_average_speed.compute_print(id_course)
 
         return
 
@@ -343,8 +341,7 @@ class Reports_manager:
     def print_lectures_seek_events(self, id_course):
 
         c_charts_lectures_seek_events = charts_lectures_seek_events.Charts_lectures_seek_events(self.dm)
-        workbook = c_charts_lectures_seek_events.compute_print(id_course)
-        self.save_chart(id_course, workbook, "lecture_seek_events")
+        c_charts_lectures_seek_events.compute_print(id_course)
 
         return
 
@@ -358,49 +355,6 @@ class Reports_manager:
     def print_user_agent_info(self, id_course):
 
         c_chart_user_agents = chart_user_agents.Chart_user_agents(self.dm)
-        workbook = c_chart_user_agents.compute_print(id_course)
-        self.save_chart(id_course, workbook, "user_agent")
-
-        return
-
-    #--------------------------------------------------------------------------
-    """
-        Salvataggio grafici come immagini
-
-        Parametri:
-            - id_course: str
-                corso di riferimento
-
-            - workbook_name: str
-                nome del file excel da esportare i grafici
-
-            - sub_path: str
-                path nella cartella img
-    """
-    def save_chart(self, id_course, workbook_name, sub_path):
-        path = "%s\\%s-%s\\img" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
-        try:
-            os.mkdir(path)
-        except:
-            pass
-        path = "%s\\%s\\" %(path, sub_path)
-        try:
-            os.mkdir(path)
-        except:
-            pass
-
-        app = Dispatch("Excel.Application")
-        workbook_file_name = "%s\\%s-%s\\%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course), workbook_name)
-        workbook = app.Workbooks.Open(Filename=workbook_file_name)
-
-        app.DisplayAlerts = False
-
-        i = 1
-        for sheet in workbook.Worksheets:
-            for chartObject in sheet.ChartObjects():
-                chartObject.Chart.Export("%s//chart"%(path) + str(i) + ".png")
-                i += 1
-
-        workbook.Close(SaveChanges=False, Filename=workbook_file_name)
+        c_chart_user_agents.compute_print(id_course)
 
         return

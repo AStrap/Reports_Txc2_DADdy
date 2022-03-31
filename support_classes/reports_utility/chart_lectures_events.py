@@ -35,7 +35,7 @@ class Chart_lectures_events:
                 nome file excel dove sono salvati i grafici
     """
     def compute_print(self, id_course, label_period, period):
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         self.compute_events_per_lecture(id_course, label_period, period, path_output_course)
         return
@@ -100,6 +100,6 @@ class Chart_lectures_events:
             #option_x = dict()
             #if max_events < 10:
             #    option_x['major_unit'] = 1
-            chart_printer.print_bar_chart(val_x, val_y, "Eventi per lezione(%d) - %s" %(c, label_period), "numero eventi", "lezione", {}, path_output_course)
+            chart_printer.print_bar_chart(val_x, val_y, "Eventi per lezione - %s" %(label_period), "numero eventi", "lezione", {}, path_output_course, "Eventi_lezioni(%d)_%s"%(c, label_period))
             #--
         return
