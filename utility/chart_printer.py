@@ -1,5 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import time
 
 class Chart_printer:
@@ -9,14 +10,15 @@ class Chart_printer:
         return
 
     def print_line_chart(self, x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
-        fig = plt.figure(dpi=128, figsize=(17,4))
-        plt.plot(x, y)
-        plt.margins(x=0)
+
+        fig = plt.figure(figsize=(17,4))
+        plt.plot(x, y, color='green')
+
         ax = plt.gca()
 
-        plt.title(title)
-        plt.xlabel(label_x)
-        plt.ylabel(label_y)
+        plt.title(title, size=14, fontweight="bold")
+        plt.xlabel(label_x, size=12, fontweight="bold")
+        plt.ylabel(label_y, size=12, fontweight="bold")
         plt.grid()
 
         #-- axis_y_options
@@ -26,13 +28,17 @@ class Chart_printer:
             plt.ylim(top=axis_y_options["max"])
         #--
 
-        plt.xticks(rotation=270)
+        plt.xticks(size=10, rotation=270)
+        plt.xticks(np.arange(0, len(x), max(1, int(len(x)/10))))
         plt.subplots_adjust(bottom=0.5, wspace=0.01)
 
-        every_nth = 5
-        for n, label in enumerate(ax.xaxis.get_ticklabels()):
-            if n % every_nth != 0:
-                label.set_visible(False)
+
+        # every_nth = max(1, int(len(x)/10))
+        # for n, label in enumerate(ax.xaxis.get_ticklabels()):
+        #     if n % every_nth != 0:
+        #         label.set_visible(False)
+
+        plt.margins(x=0)
 
         fig.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
         plt.draw()
@@ -41,7 +47,7 @@ class Chart_printer:
 
     def print_isto_chart(self, x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
         #plt.subplots(figsize=(50*CM, 10.3*CM))
-        fig = plt.figure(dpi=128, figsize=(17,4))
+        fig = plt.figure(figsize=(17,4))
         plt.bar(x, y)
         plt.margins(x=0)
         ax = plt.gca()
@@ -68,7 +74,7 @@ class Chart_printer:
 
     def print_bar_chart(self, x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
         #plt.subplots(figsize=(50*CM, 10.3*CM))
-        fig = plt.figure(dpi=128, figsize=(17,90))
+        fig = plt.figure(figsize=(17,90))
         plt.barh(x, y)
         plt.margins(y=0)
         ax = plt.gca()
@@ -100,7 +106,7 @@ class Chart_printer:
         plt.close("all")
 
     def print_speed_chart(self, x, y, title, label_x, label_y, axis_y_options, path_output, name_file):
-        fig = plt.figure(dpi=128, figsize=(17,4))
+        fig = plt.figure(figsize=(17,4))
         for i in range(len(x[:-1])):
             plt.plot([x[i],x[i+1]], [y[i],y[i]], color='green')
         plt.margins(x=0)
@@ -132,7 +138,7 @@ class Chart_printer:
         plt.close("all")
 
     def print_seek_chart(self, min, events, title, label_x, label_y, axis_y_options, path_output, name_file):
-        fig = plt.figure(dpi=128, figsize=(17,4))
+        fig = plt.figure(figsize=(17,4))
         x = [[] for _ in range(4)]; y = [[] for _ in range(4)]
         for i in range(4):
             for j,e in enumerate(events[i]):

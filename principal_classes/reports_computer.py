@@ -162,11 +162,11 @@ class Reports_computer:
 
         self.rm.print_session_day_distribution(id_course, first_period, "primo periodo")
         md_file.write("**Grafico con il numero di sessioni (verso il tempo)** \n")
-        md_file.write("<img src=\"%s/Sessioni_giorni_primo periodo.png\"/> <br/> \n" %(self.path_imgs))
+        md_file.write("> <img src=\"%s/Sessioni_giorni_primo periodo.png\"/> <br/> \n \n" %(self.path_imgs))
         bookmarks[1].append(("grafico numero sessioni (verso il tempo)", cur_page))
 
         md_file.write("**Grafico con il numero di sessioni (verso data visualizzazione &#8722; data caricamento)** \n")
-        md_file.write("<img src=\"%s/Sessioni_pubblicazione_primo periodo.png\"/> <br/> \n" %(self.path_imgs))
+        md_file.write("> <img src=\"%s/Sessioni_pubblicazione_primo periodo.png\"/> <br/> \n \n" %(self.path_imgs))
         bookmarks[1].append(("grafico numero sessioni (verso data visualizzazione - data caricamento)", cur_page))
 
         self.rm.print_session_hours_distribution(id_course, first_period, "primo periodo")
