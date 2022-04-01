@@ -25,8 +25,8 @@ def main():
     #--
 
     #-- creazione cartelle output
-    #for c in dm.get_courses():
-    for c in ["32812"]:
+    for c in dm.get_courses():
+    #for c in ["32812"]:
         try:
             os.mkdir("%s\\%s-%s" %(PATH_OUTPUT, c, dm.get_course_name(c)))
         except:
@@ -41,8 +41,8 @@ def main():
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm)
 
-    #for i,id_course in enumerate(dm.get_courses()):
-    for i,id_course in enumerate(["32812"]):
+    for i,id_course in enumerate(dm.get_courses()):
+    #for i,id_course in enumerate(["32555"]):
         rc.compute_print(id_course)
         print("---")
         print("Creato report: %s - %s" %(id_course, dm.get_course_name(id_course)))

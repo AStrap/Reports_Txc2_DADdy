@@ -100,6 +100,8 @@ class Chart_lectures_events:
             #option_x = dict()
             #if max_events < 10:
             #    option_x['major_unit'] = 1
-            chart_printer.print_bar_chart(val_x, val_y, "Eventi per lezione - %s" %(label_period), "numero eventi", "lezione", {}, path_output_course, "Eventi_lezioni(%d)_%s"%(c, label_period))
+            cp = chart_printer.Chart_printer()
+            cp.print_bar_chart(val_x, val_y, "Eventi per lezione - %s" %(label_period), "numero eventi", "lezione", {}, path_output_course, "Eventi_lezioni(%d)_%s"%(c, label_period))
+            del cp
             #--
         return

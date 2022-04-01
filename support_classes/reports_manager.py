@@ -15,7 +15,6 @@ import support_classes.reports_utility.chart_course_vision as chart_course_visio
 import support_classes.reports_utility.charts_lectures_average_speed as charts_lectures_average_speed
 import support_classes.reports_utility.charts_lectures_vision as charts_lectures_vision
 import support_classes.reports_utility.charts_lectures_seek_events as charts_lectures_seek_events
-import support_classes.reports_utility.chart_user_agents as chart_user_agents
 
 class Reports_manager:
 

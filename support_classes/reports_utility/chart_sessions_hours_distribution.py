@@ -82,7 +82,8 @@ class Chart_sessions_hours_distribution:
                 val_y[time] += 1
                 hours += 3600
                 time = time+1 if time<23 else 0
-
-        chart_printer.print_isto_chart(val_x, val_y, "Sessioni attive per orario - %s" %(label_period), "orario", "numero sessioni", {'min':0}, path_output_course, "Sessioni_orario_%s" %(label_period))
+        cp = chart_printer.Chart_printer()
+        cp.print_isto_chart(val_x, val_y, "Sessioni attive per orario - %s" %(label_period), "orario", "numero sessioni", {'min':0}, path_output_course, "Sessioni_orario_%s" %(label_period))
+        del cp
         #--
         return

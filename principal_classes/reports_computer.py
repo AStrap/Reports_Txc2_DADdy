@@ -5,6 +5,7 @@ import math
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from pathlib import Path
 import fitz
+import gc
 
 import support_classes.reports_manager as reports_manager
 
@@ -99,6 +100,7 @@ class Reports_computer:
             os.remove("%s.pdf"%(name_file))
             #--
 
+        gc.collect
         return
 
     """
@@ -285,20 +287,31 @@ class Reports_computer:
         cur_page += 1
 
         i = 0
+        for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
+            try:
+                os.mkdir("%s\\%s-%s\\lezioni" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
+            except:
+                pass
+        for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
+            gc.collect
+            try:
+                os.mkdir("%s\\%s-%s\\lezioni\\lezione_%d" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course), i))
+            except:
+                pass
         self.rm.print_lectures_vision(id_course)
         self.rm.print_lectures_average_speed(id_course)
         self.rm.print_lectures_seek_events(id_course)
         for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
             md_file.write("### %s \n" %(self.dm.get_lecture_name(id_lecture)))
             md_file.write("**grafico copertura di visione** \n")
-            md_file.write("<img src=\"%s/Visioni_lezione_%d.png\"/> <br/> \n" %(self.path_imgs, i))
+            md_file.write("<img src=\"%s/lezioni/lezione_%d/Visioni_lezione_%d.png\"/> <br/> \n" %(self.path_imgs, i, i))
             md_file.write("**grafico copertura di visione univoca per utente** \n")
-            md_file.write("<img src=\"%s/Visioni_unic_lezione_%d.png\"/> <br/> \n" %(self.path_imgs, i))
+            md_file.write("<img src=\"%s/lezioni/lezione_%d/Visioni_unic_lezione_%d.png\"/> <br/> \n" %(self.path_imgs, i, i))
             md_file.write("**grafico velocit&#224; media visualizzazione** \n")
-            md_file.write("<img src=\"%s/Velocita_lezione_%d.png\"/> <br/> \n" %(self.path_imgs, i))
+            md_file.write("<img src=\"%s/lezioni/lezione_%d/Velocita_lezione_%d.png\"/> <br/> \n" %(self.path_imgs, i, i))
             md_file.write("**grafico studio eventi di salto temporale** \n")
             md_file.write("<div><img src=\"../legend_seek_lectures.png\" width=\"70%s\"/> \n" %("%"))
-            md_file.write("<img src=\"%s/Seek_lezione_%d.png\"/></div> <br/> \n" %(self.path_imgs, i))
+            md_file.write("<img src=\"%s/lezioni/lezione_%d/Seek_lezione_%d.png\"/></div> <br/> \n" %(self.path_imgs, i, i))
             bookmarks[1].append(("grafici lezione: %s" %(self.dm.get_lecture_name(id_lecture)), cur_page))
 
             md_file.write("<div style=\"page-break-after: always;\"></div>\n\n")

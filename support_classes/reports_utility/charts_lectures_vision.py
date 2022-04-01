@@ -97,7 +97,9 @@ class Charts_lectures_vision:
                 unit = 10
             else:
                 unit = 1
-            chart_printer.print_line_chart(val_x[i], val_y_vision[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0, 'major_unit':unit}, path_output_course, "Visioni_lezione_%d"%(i))
+            cp = chart_printer.Chart_printer()
+            cp.print_line_chart(val_x[i], val_y_vision[i], title, "minutaggio", "numero visioni", {'max':self.max_y, 'min':0, 'major_unit':unit}, path_output_course, "lezioni\\lezione_%d\\Visioni_lezione_%d"%(i,i))
+            del cp
 
             title = "Coperture di visone univoca per utente - %s" %(self.dm.get_lecture_name(l))
             if self.max_y2 > 20:
@@ -105,7 +107,9 @@ class Charts_lectures_vision:
             else:
                 unit = 1
 
-            chart_printer.print_line_chart(val_x[i], val_y_users[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0, 'major_unit':unit}, path_output_course, "Visioni_unic_lezione_%d"%(i))
+            cp = chart_printer.Chart_printer()
+            cp.print_line_chart(val_x[i], val_y_users[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0, 'major_unit':unit}, path_output_course, "lezioni\\lezione_%d\\Visioni_unic_lezione_%d"%(i,i))
+            del cp
 
             if self.dm.get_lecture_duration(l)>10000:
                 self.UNIT = config.TIME_UNIT
