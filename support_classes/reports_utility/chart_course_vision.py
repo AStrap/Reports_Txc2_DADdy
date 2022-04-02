@@ -97,7 +97,7 @@ class Chart_course_vision:
             # if max_user < 10:
             #     option_x['unit'] = 1
             cp = chart_printer.Chart_printer()
-            cp.print_bar_chart(val_x, val_y, "Utenti per lezione - %s" %(label_period), "numero utenti", "lezione", {}, path_output_course, "Utenti_lezioni(%d)_%s"%(c,label_period))
+            cp.print_bar_chart(val_x, val_y, "Utenti per lezione - %s" %(label_period), "numero utenti", "lezione", {'max':max_user}, path_output_course, "Utenti_lezioni(%d)_%s"%(c,label_period))
             del cp
         #--
         return
