@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import signal,os
+import os
 
 import support_classes.data_manager as data_manager
 import principal_classes.reports_computer as reports_computer
@@ -12,6 +12,7 @@ def main():
     dm = data_manager.Data_manager()
     dm.load_data()
 
+    # lista corsi e lezioni di cui mancano le informazioni
     miss_courses, miss_lectures = dm.get_miss_info()
     if len(miss_courses)>0 or len(miss_lectures)>0:
         for c in miss_courses:
@@ -25,7 +26,7 @@ def main():
 
     #-- creazione cartelle output
     for c in dm.get_courses():
-    #for c in ["32812"]:
+    #for c in [""]:
         try:
             os.mkdir("%s\\%s-%s" %(PATH_OUTPUT, c, dm.get_course_name(c)))
         except:
@@ -40,8 +41,8 @@ def main():
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm)
 
-    for i,id_course in enumerate(dm.get_courses()):
-    #for i,id_course in enumerate(["32812"]):
+    #for i,id_course in enumerate(dm.get_courses()):
+    for i,id_course in enumerate(["32503"]):
         print("---%d su %d" %(i+1, len(dm.get_courses())))
         print("Calcolo report: %s - %s" %(id_course, dm.get_course_name(id_course)))
         rc.compute_print(id_course)

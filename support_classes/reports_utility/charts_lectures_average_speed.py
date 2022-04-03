@@ -2,8 +2,9 @@
 import math
 import datetime
 
+import support_classes.chart_printer as chart_printer
+
 import config
-import utility.chart_printer as chart_printer
 
 class Charts_lectures_average_speed:
 
@@ -119,34 +120,28 @@ class Charts_lectures_average_speed:
         Parametri:
             - id_course: str
                 corso di riferimento
+
+            - val_x: list()
+                lista unità di minutaggio
+
+            - val_y: list()
+                lista velocità media della porzione di minutaggio considerata
+
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
     def print_charts_average_speed(self, id_course, val_x, val_y, path_output_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60
-
-            # x = [i*2, (i*2)+1]
-            # y = [0, math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)]
-            #
-            # #- inserimento dei skip
-            # c_y=0
-            # # spazi bianchi
-            # s=0
-            # while s<math.ceil(self.dm.get_lecture_duration(l)/self.UNIT):
-            #     y_s = c_y; y_e = c_y+s+1
-            #     y.append((y_s, y_e))
-            #
-            #     c_y += s+2
-            #     s += 1
-
+            # if self.dm.get_lecture_duration(l)>10000:
+            #     self.UNIT = 10*60
             title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
             cp = chart_printer.Chart_printer()
-            cp.print_speed_chart(val_x[i], val_y[i], title, "minutaggio", "livello di velocità", {"max":4, "min":0, 'major_unit':1}, path_output_course, "lezioni\\lezione_%d\\Velocita_lezione_%d"%(i,i))
+            cp.print_speed_chart(val_x[i], val_y[i], title, "minutaggio", "livello di velocità", {"max":4, "min":0}, path_output_course, "lezioni\\lezione_%d\\Velocita_lezione_%d"%(i,i))
             del cp
 
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = config.TIME_UNIT
+            # if self.dm.get_lecture_duration(l)>10000:
+            #     self.UNIT = config.TIME_UNIT
 
         return

@@ -15,7 +15,6 @@ class Data_manager:
         #--
 
         #-pseodo DATABASE------------------------------------------------------
-
         # dizionario corsi     -  ID: [Nome, Docente, Primo appello, Secondo appello]
         self.courses = dict()
         # dizionario lezioni   -  ID: [Nome, Data_caricamento, durata, durata_turbo]
@@ -36,15 +35,12 @@ class Data_manager:
         self.miss_courses = list()
         self.miss_lectures = list()
         #----------------------------------------------------------------------
-
-
         return
 
     """
         Lettura e caricamento dei dati
     """
     def load_data(self):
-
         #-- lettura e caricamento dei dati
         self.dl.load_data()
         self.courses = self.dl.get_courses()
@@ -57,7 +53,6 @@ class Data_manager:
 
         self.miss_courses, self.miss_lectures = self.dl.get_miss_info()
         #--
-
         return
 
     """

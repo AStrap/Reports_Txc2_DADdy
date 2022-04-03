@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import support_classes.chart_printer as chart_printer
+
 import config
 import utility.time_date as time_date
-import utility.chart_printer as chart_printer
 
 class Chart_sessions_hours_distribution:
 
@@ -34,12 +35,7 @@ class Chart_sessions_hours_distribution:
     """
     def compute_print(self, id_course, label_period, period):
         path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
-
-        #-- giorni presenti nel periodo
-        days_period = time_date.get_days_by_period(period)
-        #--
-
-        self.compute_sessions_per_hours(id_course, label_period, period, days_period, path_output_course)
+        self.compute_sessions_per_hours(id_course, label_period, period, path_output_course)
 
         return
 
@@ -62,16 +58,22 @@ class Chart_sessions_hours_distribution:
             - days_period: list() (es. ["YYYY-MM-DD", "YYYY-MM-DD"])
                 giorni da cosiderare
 
+            - path_output_course: str
+                path output specifica per il corso considerato
+
     """
-    def compute_sessions_per_hours(self, id_course, label_period, period, days_period, path_output_course):
+    def compute_sessions_per_hours(self, id_course, label_period, period, path_output_course):
 
         #-- sessioni per giornata
+        days = time_date.get_days_by_period(period)
+        #--
 
+        #-- calcolo dati
         val_x = list()
         for h in range(24):
             val_x.append("[%d,%d)"%(h,h+1))
 
-        sessions = self.dm.get_sessions_by_course_days(id_course, days_period)
+        sessions = self.dm.get_sessions_by_course_days(id_course, days)
 
         val_y = [0 for _ in range(24)]
         for s in sessions:
@@ -82,6 +84,9 @@ class Chart_sessions_hours_distribution:
                 val_y[time] += 1
                 hours += 3600
                 time = time+1 if time<23 else 0
+        #--
+
+        #-- stampa grafico
         cp = chart_printer.Chart_printer()
         cp.print_isto_chart(val_x, val_y, "Sessioni attive per orario - %s" %(label_period), "orario", "numero sessioni", {'min':0}, path_output_course, "Sessioni_orario_%s" %(label_period))
         del cp

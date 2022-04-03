@@ -3,4 +3,4 @@ PyPDF2==1.26.0
 PyMuPDF==1.19.5
 pypiwin32==223
 pandas==1.4.0
-XlsxWriter==3.0.2
+matplotlib==3.5.1

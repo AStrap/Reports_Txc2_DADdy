@@ -235,7 +235,6 @@ class Reports_manager:
                 label come riferimento al periodo
     """
     def print_session_day_distribution(self, id_course, period, label_period):
-
         c_sessions_day_distribution = charts_sessions_days_distribution.Charts_sessions_days_distribution(self.dm)
         c_sessions_day_distribution.compute_print(id_course, label_period, period)
 

@@ -2,8 +2,9 @@
 import math
 import datetime
 
+import support_classes.chart_printer as chart_printer
+
 import config
-import utility.chart_printer as chart_printer
 
 class Charts_lectures_seek_events:
 
@@ -152,17 +153,14 @@ class Charts_lectures_seek_events:
         Stampa dei grafici delle medie di velocità
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
-            - support_sheet: str
-                nome foglio in cui presenti dati per grafici
-
             - id_course: str
                 corso di riferimento
 
             - info_events: list()
                 informazioni sulle eventi di salto utilizzati
+
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
     def print_charts_seeks(self, id_course, info_events, path_output_course):
 
@@ -174,5 +172,5 @@ class Charts_lectures_seek_events:
             cp = chart_printer.Chart_printer()
             cp.print_seek_chart(x, info_events[i], title, "minutaggio", "numero di eventi", {"min":0}, path_output_course, "lezioni\\lezione_%d\\Seek_lezione_%s" %(i,i))
             del cp
-            
+
         return

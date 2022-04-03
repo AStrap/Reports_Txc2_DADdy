@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import math
 
+import support_classes.chart_printer as chart_printer
+
 import config
 import utility.time_date as time_date
-import utility.chart_printer as chart_printer
 
 class Charts_lectures_vision:
 
@@ -27,10 +28,6 @@ class Charts_lectures_vision:
         Parametri:
             - id_course: str
                 corso di riferimento
-
-        Return:
-            - workbook_name: str
-                nome file excel in cui salvati i grafici
     """
     def compute_print(self, id_course):
         path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
@@ -73,25 +70,32 @@ class Charts_lectures_vision:
         Stampa i grafici delle distribuzione di visione
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
-            - support_sheet: str
-                nome foglio in cui presenti dati per grafici
-
             - id_course: str
                 corso di riferimento
+
+            - val_x: list
+                lista minutaggi della lezione
+
+            - val_y_vision: list
+                lista numero visioni per minutaggio
+
+            - val_y_users: list
+                lista numero utenti per minutaggio
+
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
     def compute_lecture_vision(self, id_course, val_x, val_y_vision, val_y_users, path_output_course):
 
         for i,l in enumerate(self.dm.get_lectures_by_course(id_course)):
 
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = 10*60
+            # if self.dm.get_lecture_duration(l)>10000:
+            #     self.UNIT = 10*60
+            #
+            # ind_labels = i*2+i
+            # duration = math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)
 
-            ind_labels = i*2+i
-            duration = math.ceil(self.dm.get_lecture_duration(l)/self.UNIT)
-
+            #-- stampa grafico visioni per minutaggio
             title = "Coperture di visone - %s" %(self.dm.get_lecture_name(l))
             if self.max_y > 20:
                 unit = 10
@@ -100,7 +104,9 @@ class Charts_lectures_vision:
             cp = chart_printer.Chart_printer()
             cp.print_line_chart(val_x[i], val_y_vision[i], title, "minutaggio", "numero visioni", {'max':self.max_y, 'min':0, 'major_unit':unit}, path_output_course, "lezioni\\lezione_%d\\Visioni_lezione_%d"%(i,i))
             del cp
+            #--
 
+            #-- stampa grafico utenti per minutaggio
             title = "Coperture di visone univoca per utente - %s" %(self.dm.get_lecture_name(l))
             if self.max_y2 > 20:
                 unit = 10
@@ -108,11 +114,12 @@ class Charts_lectures_vision:
                 unit = 1
 
             cp = chart_printer.Chart_printer()
-            cp.print_line_chart(val_x[i], val_y_users[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0, 'major_unit':unit}, path_output_course, "lezioni\\lezione_%d\\Visioni_unic_lezione_%d"%(i,i))
+            cp.print_line_chart(val_x[i], val_y_users[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0}, path_output_course, "lezioni\\lezione_%d\\Visioni_unic_lezione_%d"%(i,i))
             del cp
+            #--
 
-            if self.dm.get_lecture_duration(l)>10000:
-                self.UNIT = config.TIME_UNIT
+            # if self.dm.get_lecture_duration(l)>10000:
+            #     self.UNIT = config.TIME_UNIT
 
         return
 

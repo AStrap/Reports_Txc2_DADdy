@@ -2,9 +2,10 @@
 import math
 import calendar
 
+import support_classes.chart_printer as chart_printer
+
 import config
 import utility.time_date as time_date
-import utility.chart_printer as chart_printer
 
 class Charts_sessions_days_distribution:
 
@@ -25,21 +26,19 @@ class Charts_sessions_days_distribution:
             - id_course: str
                 corso di riferimento
 
-        Return:
-            - workbook_name: str
-                nome file excel in cui salvati i grafici
+            - label_period: str
+                label come riferimento al periodo considerato
+
+            - period: (str, str)
+                periodo di studio
     """
     def compute_print(self, id_course, label_period, period):
         path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
-        #-- giorni presenti nel periodo
-        days_period = time_date.get_days_by_period(period)
-        #--
-
-        self.compute_sessions_per_days(id_course, label_period, period, days_period, path_output_course)
+        self.compute_sessions_per_days(id_course, label_period, period, path_output_course)
 
         if label_period == "primo periodo":
-            self.compute_sessions_from_pubblication(id_course, label_period, period, days_period, path_output_course)
+            self.compute_sessions_from_pubblication(id_course, label_period, period, path_output_course)
 
         return
 
@@ -56,11 +55,16 @@ class Charts_sessions_days_distribution:
             - period: (str, str)
                 periodo di studio
 
-            - days_period: list() (es. ["YYYY-MM-DD", "YYYY-MM-DD"])
-                giorni da cosiderare
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
-    def compute_sessions_per_days(self, id_course, label_period, period, days_period, path_output_course):
+    def compute_sessions_per_days(self, id_course, label_period, period, path_output_course):
 
+        #-- giorni presenti nel periodo
+        days_period = time_date.get_days_by_period(period)
+        #--
+
+        #-- stampa grafico
         val_x = list(); val_y = list()
         for day in days_period:
             val_x.append(day)
@@ -87,8 +91,15 @@ class Charts_sessions_days_distribution:
 
             - days_period: list() (es. ["YYYY-MM-DD", "YYYY-MM-DD"])
                 giorni da cosiderare
+
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
-    def compute_sessions_from_pubblication(self, id_course, label_period, period, days_period, path_output_course):
+    def compute_sessions_from_pubblication(self, id_course, label_period, period, path_output_course):
+
+        #-- giorni presenti nel periodo
+        days_period = time_date.get_days_by_period(period)
+        #--
 
         y = int(period[1][:4]); m = int(period[1][5:7]); d = int(period[1][8:])
         if d == calendar.monthrange(y,m)[1]:
@@ -155,5 +166,6 @@ class Charts_sessions_days_distribution:
         cp = chart_printer.Chart_printer()
         cp.print_line_chart(val_x, val_y, "Sessioni per giornata dalla pubblicazione - %s" %(label_period), "giornata", "numero sessioni", {'min':0}, path_output_course, "Sessioni_pubblicazione_%s" %(label_period))
         del cp
-        
+        #--
+
         return

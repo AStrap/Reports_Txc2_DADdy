@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import math
 
+import support_classes.chart_printer as chart_printer
+
 import config
 import utility.time_date as time_date
-import utility.chart_printer as chart_printer
 
 class Chart_lectures_events:
 
@@ -29,15 +30,12 @@ class Chart_lectures_events:
 
             - period: (str, str)
                 periodo di studio
-
-        Return:
-            - workbook_name: str
-                nome file excel dove sono salvati i grafici
     """
     def compute_print(self, id_course, label_period, period):
         path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         self.compute_events_per_lecture(id_course, label_period, period, path_output_course)
+
         return
 
     """
@@ -56,9 +54,8 @@ class Chart_lectures_events:
             - period: (str, str)
                 periodo di studio
 
-        Return:
-            - workbook_name: str
-                nome file excel dove sono salvati i grafici
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
     def compute_events_per_lecture(self, id_course, label_period, period, path_output_course):
 
@@ -77,6 +74,7 @@ class Chart_lectures_events:
             else:
                 tmp_lectures = lectures[c*self.N_LECTURES_PER_CHART:]
 
+            #-- calcolo dati
             val_x = list(); val_y = list()
 
             max_events = 0
@@ -96,10 +94,9 @@ class Chart_lectures_events:
 
                 if n_events>max_events:
                     max_events = n_events
+            #--
 
-            #option_x = dict()
-            #if max_events < 10:
-            #    option_x['major_unit'] = 1
+            #-- stampa grafico
             cp = chart_printer.Chart_printer()
             cp.print_bar_chart(val_x, val_y, "Eventi per lezione - %s" %(label_period), "numero eventi", "lezione", {'max':max_events}, path_output_course, "Eventi_lezioni(%d)_%s"%(c, label_period))
             del cp
