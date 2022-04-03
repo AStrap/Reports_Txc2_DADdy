@@ -2,6 +2,8 @@
 import math
 import calendar
 
+import support_classes.chart_printer as chart_printer
+
 import config
 import utility.time_date as time_date
 
@@ -9,56 +11,41 @@ class Charts_sessions_days_distribution:
 
     PATH_OUTPUT = config.PATH_OUTPUT
 
-    def __init__(self, dm, em):
+    def __init__(self, dm):
         #-- data manager
         self.dm = dm
-        #--
-
-        #-- excel manager
-        self.em = em
         #--
 
         return
 
     """
         Calcolo e stampa grafici riguardo la distribuzioni di istanziamento
-        delle sessioni 
+        delle sessioni
 
         Parametri:
             - id_course: str
                 corso di riferimento
 
-        Return:
-            - workbook_name: str
-                nome file excel in cui salvati i grafici
+            - label_period: str
+                label come riferimento al periodo considerato
+
+            - period: (str, str)
+                periodo di studio
     """
     def compute_print(self, id_course, label_period, period):
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
-        workbook_name = "sessions_days_distribution_%s_%s.xlsx" %(label_period, self.dm.get_course_name(id_course))
-
-        self.em.set_workbook(workbook_name, path_output_course)
-
-        #-- giorni presenti nel periodo
-        days_period = time_date.get_days_by_period(period)
-        #--
-
-        self.compute_sessions_per_days("Sessioni_per_giornata", id_course, label_period, period, days_period)
+        self.compute_sessions_per_days(id_course, label_period, period, path_output_course)
 
         if label_period == "primo periodo":
-            self.compute_sessions_from_pubblication("Sessioni_da_pubblicazione", id_course, label_period, period, days_period)
+            self.compute_sessions_from_pubblication(id_course, label_period, period, path_output_course)
 
-        self.em.close_workbook()
-
-        return workbook_name
+        return
 
     """
         Calcolo e stampa delle informazioni riguardo al numero di sessioni per giornata
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
             - id_course: str
                 corso di riferimento
 
@@ -68,29 +55,23 @@ class Charts_sessions_days_distribution:
             - period: (str, str)
                 periodo di studio
 
-            - days_period: list() (es. ["YYYY-MM-DD", "YYYY-MM-DD"])
-                giorni da cosiderare
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
-    def compute_sessions_per_days(self, sheet, id_course, label_period, period, days_period):
+    def compute_sessions_per_days(self, id_course, label_period, period, path_output_course):
 
-        self.em.add_worksheet(sheet)
-        self.em.set_cursors(1, 1)
+        #-- giorni presenti nel periodo
+        days_period = time_date.get_days_by_period(period)
+        #--
 
-        #-- sessioni per giornata
-        c_x_i, c_y = self.em.get_cursors()
-
-        head = [["GIORNO", "NUMERO SESSIONI"]]
-        body = []
-
+        #-- stampa grafico
+        val_x = list(); val_y = list()
         for day in days_period:
-            body.append([day, len(self.dm.get_sessions_by_course_days(id_course, [day]))])
-
-        self.em.write_head_table(head)
-        self.em.write_body_table(body)
-
-        c_x, c_y = self.em.get_cursors()
-
-        self.em.print_line_chart("ver", (c_x_i+1,c_x-1), (c_y, c_y+1), sheet, "Sessioni per giornata - %s" %(label_period), "giornata", "numero sessioni", c_x_i, c_y+3, {'min':0})
+            val_x.append(day)
+            val_y.append(len(self.dm.get_sessions_by_course_days(id_course, [day])))
+        cp = chart_printer.Chart_printer()
+        cp.print_line_chart(val_x, val_y, "Sessioni per giornata - %s" %(label_period), "giornata", "numero sessioni", {'min':0}, path_output_course, "Sessioni_giorni_%s" %(label_period))
+        del cp
         #--
         return
 
@@ -99,9 +80,6 @@ class Charts_sessions_days_distribution:
         di ogni lezione e grafico
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
-
             - id_course: str
                 corso di riferimento
 
@@ -113,8 +91,15 @@ class Charts_sessions_days_distribution:
 
             - days_period: list() (es. ["YYYY-MM-DD", "YYYY-MM-DD"])
                 giorni da cosiderare
+
+            - path_output_course: str
+                path output specifica per il corso considerato
     """
-    def compute_sessions_from_pubblication(self, sheet, id_course, label_period, period, days_period):
+    def compute_sessions_from_pubblication(self, id_course, label_period, period, path_output_course):
+
+        #-- giorni presenti nel periodo
+        days_period = time_date.get_days_by_period(period)
+        #--
 
         y = int(period[1][:4]); m = int(period[1][5:7]); d = int(period[1][8:])
         if d == calendar.monthrange(y,m)[1]:
@@ -127,9 +112,6 @@ class Charts_sessions_days_distribution:
             d += 1
         last_date = "%d-%.2d-%.2dT%.2d:%.2d:%.2d.00" %(y,m,d,2,0,0)
         last_date = time_date.get_datetime(last_date)
-
-        self.em.add_worksheet(sheet)
-        self.em.set_cursors(1, 1)
 
         self.days_max = 0
 
@@ -165,12 +147,9 @@ class Charts_sessions_days_distribution:
                 lectures_sessions[l][days]+=1
         #--
 
-        #-- stampa della tabella
         days = [i for i in range(1, self.days_max+2)]
-        head = [["GIORNI DA PUBBLICAZIONE", "TOTALE SESSIONI"]]
-        body = []
-        c_x_i, c_y_i = self.em.get_cursors()
-        #media sessioni
+        val_x = list(); val_y = list()
+
         for i,d in enumerate(days):
             tot = 0
             n_sessions = 0
@@ -178,14 +157,15 @@ class Charts_sessions_days_distribution:
                 if lectures_sessions[l][i] > 0:
                     tot += lectures_sessions[l][i]
                     n_sessions += 1
-            body.append([d,tot])
 
-        self.em.write_head_table(head)
-        self.em.write_body_table(body)
+            val_x.append(d)
+            val_y.append(tot)
         #--
 
         #-- stampa del grafico
-        c_x, c_y = self.em.get_cursors()
-        self.em.print_line_chart("ver", (c_x_i+1,c_x-1), (c_y, c_y+1), sheet, "Sessioni per giornata dalla pubblicazione - %s" %(label_period), "giornata", "numero sessioni", c_x_i, c_y+3, {'min':0})
+        cp = chart_printer.Chart_printer()
+        cp.print_line_chart(val_x, val_y, "Sessioni per giornata dalla pubblicazione - %s" %(label_period), "giornata", "numero sessioni", {'min':0}, path_output_course, "Sessioni_pubblicazione_%s" %(label_period))
+        del cp
+        #--
 
         return

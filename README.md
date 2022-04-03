@@ -4,8 +4,7 @@
 ## Requisiti
 
  - Installazione packages tramite pip: `pip install -r requirements.txt`
- - Microsoft Office Excel
- - Non obbligatorio: https://github.com/BlueHatbRit/mdpdf (impostare flag MD_PDF:False se non usato)
+ - Non obbligatorio: installazione https://github.com/BlueHatbRit/mdpdf tramite node - npm (impostare flag MD_PDF:False nel file config.py, se non usato)
 
 ## Installazione
 
@@ -22,6 +21,8 @@
 4. Creazione file config.py (seguire esempio) e modifica di parametri:
 > - PATH_PRJ: path del progetto
 > - DATE_RANGE_STUDY: periodo di studio dei dati modificabile in qualsiasi giornata
+>
+> parametri che non necessitano modifiche:
 > - PATH_DATA: path della cartella "data" (default: stessa posizione main.py)
 > - PATH_COURSES_DATA: path del file "all_courses.csv" (default: posizione in "data/")
 > - PATH_LECTURES_DATA: path del file "all_lectures.csv" (default: posizione in "data/")
@@ -31,8 +32,6 @@
 > parametri che comportano modifica dei grafici:
 > - TIME_UNIT: unita di tempo di certi grafici a linea
 > - N_LECTURES_PER_CHART: numero di lezioni considerati da grafici a barre orizzontali
-> - DAY_PERIODS: periodi considerati di una giornato (non presente grafico)
-> - USER_AGENTS: dispositivi considerati (non presente grafico)
 
 ## Esecuzione
 `python main.py` (tempo di esecuzione di 25 minuti, ottobre-gennaio)

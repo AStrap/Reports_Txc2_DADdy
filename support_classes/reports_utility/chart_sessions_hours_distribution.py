@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import support_classes.chart_printer as chart_printer
+
 import config
 import utility.time_date as time_date
 
@@ -6,13 +8,9 @@ class Chart_sessions_hours_distribution:
 
     PATH_OUTPUT = config.PATH_OUTPUT
 
-    def __init__(self, dm, em):
+    def __init__(self, dm):
         #-- data manager
         self.dm = dm
-        #--
-
-        #-- excel manager
-        self.em = em
         #--
 
         return
@@ -34,24 +32,12 @@ class Chart_sessions_hours_distribution:
         Return:
             - workbook_name: str
                 nome file excel dove sono salvati i grafici
-
     """
     def compute_print(self, id_course, label_period, period):
-        path_output_course = "%s\\%s-%s\\" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        self.compute_sessions_per_hours(id_course, label_period, period, path_output_course)
 
-        workbook_name = "sessions_hours_distribution_%s_%s.xlsx" %(label_period, self.dm.get_course_name(id_course))
-
-        self.em.set_workbook(workbook_name, path_output_course)
-
-        #-- giorni presenti nel periodo
-        days_period = time_date.get_days_by_period(period)
-        #--
-
-        self.compute_sessions_per_hours("Sessioni_per_orario", id_course, label_period, period, days_period)
-
-        self.em.close_workbook()
-
-        return workbook_name
+        return
 
 
     """
@@ -59,8 +45,6 @@ class Chart_sessions_hours_distribution:
         ore del giorno
 
         Parametri:
-            - sheet: str
-                nome foglio su cui stampare i grafici
 
             - id_course: str
                 corso di riferimento
@@ -74,37 +58,37 @@ class Chart_sessions_hours_distribution:
             - days_period: list() (es. ["YYYY-MM-DD", "YYYY-MM-DD"])
                 giorni da cosiderare
 
-    """
-    def compute_sessions_per_hours(self, sheet, id_course, label_period, period, days_period):
+            - path_output_course: str
+                path output specifica per il corso considerato
 
-        self.em.add_worksheet(sheet)
-        self.em.set_cursors(1, 1)
+    """
+    def compute_sessions_per_hours(self, id_course, label_period, period, path_output_course):
 
         #-- sessioni per giornata
-        c_x_i, c_y = self.em.get_cursors()
+        days = time_date.get_days_by_period(period)
+        #--
 
-        head = [["ORARIO", "NUMERO SESSIONI"]]
-        body = []
-
+        #-- calcolo dati
+        val_x = list()
         for h in range(24):
-            body.append(["[%d,%d)"%(h,h+1),0])
+            val_x.append("[%d,%d)"%(h,h+1))
 
-        sessions = self.dm.get_sessions_by_course_days(id_course, days_period)
+        sessions = self.dm.get_sessions_by_course_days(id_course, days)
 
+        val_y = [0 for _ in range(24)]
         for s in sessions:
             time = int(s[1][11:13])
 
             hours = 0
             while hours<=s[5]:
-                body[time][1] += 1
+                val_y[time] += 1
                 hours += 3600
                 time = time+1 if time<23 else 0
+        #--
 
-        self.em.write_head_table(head)
-        self.em.write_body_table(body)
-
-        c_x, c_y = self.em.get_cursors()
-
-        self.em.print_isto_chart("ver", (c_x_i+1,c_x-1), (c_y, c_y+1), sheet, "Sessioni attive per orario - %s" %(label_period), "orario", "numero sessioni", c_x_i, c_y+3, {'min':0})
+        #-- stampa grafico
+        cp = chart_printer.Chart_printer()
+        cp.print_isto_chart(val_x, val_y, "Sessioni attive per orario - %s" %(label_period), "orario", "numero sessioni", {'min':0}, path_output_course, "Sessioni_orario_%s" %(label_period))
+        del cp
         #--
         return

@@ -15,21 +15,16 @@ import support_classes.reports_utility.chart_course_vision as chart_course_visio
 import support_classes.reports_utility.charts_lectures_average_speed as charts_lectures_average_speed
 import support_classes.reports_utility.charts_lectures_vision as charts_lectures_vision
 import support_classes.reports_utility.charts_lectures_seek_events as charts_lectures_seek_events
-import support_classes.reports_utility.chart_user_agents as chart_user_agents
 
 class Reports_manager:
 
     PATH_OUTPUT = config.PATH_OUTPUT
     DATE_RANGE_STUDY = config.DATE_RANGE_STUDY
 
-    def __init__(self, dm, em):
+    def __init__(self, dm):
 
         #-- data_manager
         self.dm = dm
-        #--
-
-        #-- excel_manager
-        self.em = em
         #--
 
         return
@@ -91,7 +86,6 @@ class Reports_manager:
 
         return c_lectures.compute_info_lectures(id_course)
 
-
     """
         Return intervalli di tempo dei due periodi
 
@@ -148,7 +142,6 @@ class Reports_manager:
                 users.append(s[-1])
 
         return users
-
 
     """
         Return sessioni dato id_corso e periodo di tempo
@@ -228,26 +221,6 @@ class Reports_manager:
 
     #- GRAFICI ----------------------------------------------------------------
     """
-        Stampa i grafici riguardo il numero di eventi per lezione
-
-        Parametri:
-            - id_course: str
-                corso di riferimento
-
-            - periodo: (str, str)
-                periodo di studio
-
-            - label_periodo: str
-                label come riferimento al periodo
-    """
-    def print_lectures_events(self, id_course, period, label_period):
-
-        c_lectures_events = chart_lectures_events.Chart_lectures_events(self.dm, self.em)
-        workbook = c_lectures_events.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, workbook, "lectures_events_%s" %(label_period))
-        return
-
-    """
         Stampa i grafici riguardo le sessioni distribuite per giorni e dalla
         data di pubblicazione di una lezione
 
@@ -262,10 +235,8 @@ class Reports_manager:
                 label come riferimento al periodo
     """
     def print_session_day_distribution(self, id_course, period, label_period):
-
-        c_sessions_day_distribution = charts_sessions_days_distribution.Charts_sessions_days_distribution(self.dm, self.em)
-        workbook = c_sessions_day_distribution.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, workbook, "day_distribution_%s" %(label_period))
+        c_sessions_day_distribution = charts_sessions_days_distribution.Charts_sessions_days_distribution(self.dm)
+        c_sessions_day_distribution.compute_print(id_course, label_period, period)
 
         return
 
@@ -285,9 +256,8 @@ class Reports_manager:
     """
     def print_session_hours_distribution(self, id_course, period, label_period):
 
-        c_sessions_hours_distribution = chart_sessions_hours_distribution.Chart_sessions_hours_distribution(self.dm, self.em)
-        workbook = c_sessions_hours_distribution.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, workbook, "hours_distribution_%s" %(label_period))
+        c_sessions_hours_distribution = chart_sessions_hours_distribution.Chart_sessions_hours_distribution(self.dm)
+        c_sessions_hours_distribution.compute_print(id_course, label_period, period)
 
         return
 
@@ -307,9 +277,41 @@ class Reports_manager:
     """
     def print_course_vision(self, id_course, period, label_period):
 
-        c_course_vision = chart_course_vision.Chart_course_vision(self.dm, self.em)
-        workbook = c_course_vision.compute_print(id_course, label_period, period)
-        self.save_chart(id_course, workbook, "course_vision_%s" %(label_period))
+        c_course_vision = chart_course_vision.Chart_course_vision(self.dm)
+        c_course_vision.compute_print(id_course, label_period, period)
+
+        return
+
+    """
+        Stampa i grafici riguardo il numero di eventi per lezione
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+
+            - periodo: (str, str)
+                periodo di studio
+
+            - label_periodo: str
+                label come riferimento al periodo
+    """
+    def print_lectures_events(self, id_course, period, label_period):
+
+        c_lectures_events = chart_lectures_events.Chart_lectures_events(self.dm)
+        c_lectures_events.compute_print(id_course, label_period, period)
+        return
+
+    """
+        Stampa grafico riguardo la copertura di visione della lezione
+
+        Parametri:
+            - id_course: str
+                corso di riferimento
+    """
+    def print_lectures_vision(self, id_course):
+
+        c_charts_lectures_vision = charts_lectures_vision.Charts_lectures_vision(self.dm)
+        c_charts_lectures_vision.compute_print(id_course)
 
         return
 
@@ -322,24 +324,8 @@ class Reports_manager:
     """
     def print_lectures_average_speed(self, id_course):
 
-        c_charts_lectures_average_speed = charts_lectures_average_speed.Charts_lectures_average_speed(self.dm, self.em)
-        workbook = c_charts_lectures_average_speed.compute_print(id_course)
-        self.save_chart(id_course, workbook, "lecture_average_speed")
-
-        return
-
-    """
-        Stampa grafico riguardo la copertura di visione della lezione
-
-        Parametri:
-            - id_course: str
-                corso di riferimento
-    """
-    def print_lectures_vision(self, id_course):
-
-        c_charts_lectures_vision = charts_lectures_vision.Charts_lectures_vision(self.dm, self.em)
-        workbook = c_charts_lectures_vision.compute_print(id_course)
-        self.save_chart(id_course, workbook, "lecture_vision")
+        c_charts_lectures_average_speed = charts_lectures_average_speed.Charts_lectures_average_speed(self.dm)
+        c_charts_lectures_average_speed.compute_print(id_course)
 
         return
 
@@ -352,9 +338,8 @@ class Reports_manager:
     """
     def print_lectures_seek_events(self, id_course):
 
-        c_charts_lectures_seek_events = charts_lectures_seek_events.Charts_lectures_seek_events(self.dm, self.em)
-        workbook = c_charts_lectures_seek_events.compute_print(id_course)
-        self.save_chart(id_course, workbook, "lecture_seek_events")
+        c_charts_lectures_seek_events = charts_lectures_seek_events.Charts_lectures_seek_events(self.dm)
+        c_charts_lectures_seek_events.compute_print(id_course)
 
         return
 
@@ -367,50 +352,7 @@ class Reports_manager:
     """
     def print_user_agent_info(self, id_course):
 
-        c_chart_user_agents = chart_user_agents.Chart_user_agents(self.dm, self.em)
-        workbook = c_chart_user_agents.compute_print(id_course)
-        self.save_chart(id_course, workbook, "user_agent")
-
-        return
-
-    #--------------------------------------------------------------------------
-    """
-        Salvataggio grafici come immagini
-
-        Parametri:
-            - id_course: str
-                corso di riferimento
-
-            - workbook_name: str
-                nome del file excel da esportare i grafici
-
-            - sub_path: str
-                path nella cartella img
-    """
-    def save_chart(self, id_course, workbook_name, sub_path):
-        path = "%s\\%s-%s\\img" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
-        try:
-            os.mkdir(path)
-        except:
-            pass
-        path = "%s\\%s\\" %(path, sub_path)
-        try:
-            os.mkdir(path)
-        except:
-            pass
-
-        app = Dispatch("Excel.Application")
-        workbook_file_name = "%s\\%s-%s\\%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course), workbook_name)
-        workbook = app.Workbooks.Open(Filename=workbook_file_name)
-
-        app.DisplayAlerts = False
-
-        i = 1
-        for sheet in workbook.Worksheets:
-            for chartObject in sheet.ChartObjects():
-                chartObject.Chart.Export("%s//chart"%(path) + str(i) + ".png")
-                i += 1
-
-        workbook.Close(SaveChanges=False, Filename=workbook_file_name)
+        c_chart_user_agents = chart_user_agents.Chart_user_agents(self.dm)
+        c_chart_user_agents.compute_print(id_course)
 
         return
