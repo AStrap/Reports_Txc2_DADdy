@@ -42,4 +42,4 @@ Le altre cartelle hanno una funzione di supporto
 
 ## Struttura
 
-<img src="https://github.com/AStrap/Reports_Txc2_DADdy/blob/main/utility/img/Prj_structure.jpg" alt="Struttura del progetto"/>
+<img src="https://github.com/AStrap/Reports_Txc2_DADdy/blob/main/utility/img/Struttura%20progetto.jpg" alt="Struttura del progetto"/>
