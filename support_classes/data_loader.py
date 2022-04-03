@@ -139,7 +139,7 @@ class Data_loader:
         #-- lettura informazioni
         for day in self.days:
             y = day[2:4]; m = day[5:7]
-            json_file = "%s\\%s-%s\\%s.json" %(path, y, m, day)
+            json_file = "%s/%s-%s/%s.json" %(path, y, m, day)
             try:
                 with open(json_file, 'r') as json_file:
                     sessions = json.load(json_file)

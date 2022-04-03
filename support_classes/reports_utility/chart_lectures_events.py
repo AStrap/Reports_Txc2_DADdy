@@ -32,7 +32,7 @@ class Chart_lectures_events:
                 periodo di studio
     """
     def compute_print(self, id_course, label_period, period):
-        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s/%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         self.compute_events_per_lecture(id_course, label_period, period, path_output_course)
 

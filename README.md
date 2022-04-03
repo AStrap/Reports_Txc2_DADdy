@@ -1,5 +1,5 @@
 # Reports_Txc2_DADdy
-  Windows - Python 3.9
+  Ubuntu20.04 - Python 3.9
 
 ## Requisiti
 
@@ -8,7 +8,7 @@
 
 ## Installazione
 
-1. Download ed estrazione progetto: https://github.com/AStrap/Reports_Txc2_DADdy.git
+1. Download ed estrarre progetto: https://github.com/AStrap/Reports_Txc2_DADdy.git
 
 2. Inserimento dei dati da elaborare (default: cartella "data" nella stessa posizione di "main.py")<br/>
 > Dati previsti:

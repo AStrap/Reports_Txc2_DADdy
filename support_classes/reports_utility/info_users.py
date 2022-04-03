@@ -39,7 +39,7 @@ class Info_users:
         users_info = list()
         #--
 
-        output_file = "%s\\%s-%s\\users_info.csv"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        output_file = "%s/%s-%s/users_info.csv"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
         output_csvfile = open(output_file, 'w', newline='')
         spamwriter = csv.writer(output_csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
@@ -284,7 +284,7 @@ class Info_users:
 
         users = list()
 
-        file_name = "%s\\%s-%s\\users_info.csv" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        file_name = "%s/%s-%s/users_info.csv" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         with open(file_name, 'r') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')

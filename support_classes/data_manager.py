@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-import config
+
 import support_classes.data_loader as data_loader
+
+import config
 
 """
     Gestione dei dati riguardo i corsi, le lezioni, le sessioni e gli utenti

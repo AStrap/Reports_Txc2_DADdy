@@ -66,7 +66,7 @@ class Chart_printer:
             plt.ylim(top=axis_y_options["max"])
         #--
 
-        fig.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+        fig.savefig("%s/%s.png" %(path_output,name_file), bbox_inches='tight')
         plt.draw(); plt.clf(); plt.close("all")
         return
 
@@ -126,7 +126,7 @@ class Chart_printer:
             plt.ylim(top=axis_y_options["max"])
         #--
 
-        fig.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+        fig.savefig("%s/%s.png" %(path_output,name_file), bbox_inches='tight')
         plt.draw(); plt.clf(); plt.close("all")
         return
 
@@ -195,7 +195,7 @@ class Chart_printer:
         plt.margins(y=0)
         #--
 
-        fig.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+        fig.savefig("%s/%s.png" %(path_output,name_file), bbox_inches='tight')
         plt.draw(); plt.clf(); plt.close("all")
         return
 
@@ -258,7 +258,7 @@ class Chart_printer:
             plt.ylim(top=axis_y_options["max"])
         #--
 
-        fig.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+        fig.savefig("%s/%s.png" %(path_output,name_file), bbox_inches='tight')
         plt.draw(); plt.clf(); plt.close("all")
         return
 
@@ -338,6 +338,6 @@ class Chart_printer:
             plt.ylim(top=axis_y_options["max"])
         #--
 
-        fig.savefig("%s\\%s.png" %(path_output,name_file), bbox_inches='tight')
+        fig.savefig("%s/%s.png" %(path_output,name_file), bbox_inches='tight')
         plt.draw(); plt.clf(); plt.close("all")
         return

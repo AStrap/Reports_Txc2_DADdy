@@ -30,7 +30,7 @@ class Charts_lectures_seek_events:
     """
     def compute_print(self, id_course):
 
-        path_output_course = "%s\\%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+        path_output_course = "%s/%s-%s" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         info_events = self.compute_data(id_course)
 

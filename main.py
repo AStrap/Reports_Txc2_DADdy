@@ -28,12 +28,12 @@ def main():
     for c in dm.get_courses():
     #for c in [""]:
         try:
-            os.mkdir("%s\\%s-%s" %(PATH_OUTPUT, c, dm.get_course_name(c)))
+            os.mkdir("%s/%s-%s" %(PATH_OUTPUT, c, dm.get_course_name(c)))
         except:
             pass
 
     try:
-        os.mkdir("%s\\_reports" %(PATH_OUTPUT))
+        os.mkdir("%s/_reports" %(PATH_OUTPUT))
     except:
         pass
     #--

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 
-from win32com.client import Dispatch
-
 import config
 import utility.time_date as time_date
 

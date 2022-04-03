@@ -47,9 +47,9 @@ class Reports_computer:
         #-- file markdown del report
         total_bookmarks = list()
         if config.MD_PDF:
-            name_file = "%s\\_reports\\%s-%s-tmp"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+            name_file = "%s/_reports/%s-%s-tmp"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
         else:
-            name_file = "%s\\_reports\\%s-%s"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
+            name_file = "%s/_reports/%s-%s"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course))
 
         f = open("%s.md" %(name_file), "w")
         f.write("# Report per il corso %s \n" %(self.dm.get_course_name(id_course)))
@@ -89,7 +89,7 @@ class Reports_computer:
 
         if config.MD_PDF:
             #-- md file to pdf
-            p = subprocess.Popen('cmd /k "mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
+            p = subprocess.Popen('mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm && exit' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
             p.wait()
 
             os.remove("%s.md"%(name_file))
@@ -289,13 +289,13 @@ class Reports_computer:
         i = 0
         for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
             try:
-                os.mkdir("%s\\%s-%s\\lezioni" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
+                os.mkdir("%s/%s-%s/lezioni" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
             except:
                 pass
         for i,id_lecture in enumerate(self.dm.get_lectures_by_course(id_course)):
             gc.collect
             try:
-                os.mkdir("%s\\%s-%s\\lezioni\\lezione_%d" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course), i))
+                os.mkdir("%s/%s-%s/lezioni/lezione_%d" %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course), i))
             except:
                 pass
         self.rm.print_lectures_vision(id_course)
