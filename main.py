@@ -41,8 +41,8 @@ def main():
     #-- stampa report per ogni classe
     rc = reports_computer.Reports_computer(dm)
 
-    #for i,id_course in enumerate(dm.get_courses()):
-    for i,id_course in enumerate(["32503"]):
+    for i,id_course in enumerate(dm.get_courses()):
+    #for i,id_course in enumerate(["32503"]):
         print("---%d su %d" %(i+1, len(dm.get_courses())))
         print("Calcolo report: %s - %s" %(id_course, dm.get_course_name(id_course)))
         rc.compute_print(id_course)
