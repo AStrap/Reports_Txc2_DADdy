@@ -1,6 +1,8 @@
 # Reports_Txc2_DADdy
-  Windows - Python 3.9
-
+  Windows10 - (testato in)Python 3.9
+  
+  Ubuntu20.04 (git checkout linux_version) - (testato in)Python 3.9
+ 
 ## Requisiti
 
  - Installazione packages tramite pip: `pip install -r requirements.txt`
@@ -18,16 +20,16 @@
 
 3. In caso di cambio posizione di output, ricordarsi di inserire anche l'immagine "output/legend_seek_lectures.png"
 
-4. Creazione file config.py (seguire esempio) e modifica di parametri:
+4. Creazione file config.py (seguire esempio) e necessaria modifica dei parametri:
 > - PATH_PRJ: path del progetto
 > - DATE_RANGE_STUDY: periodo di studio dei dati modificabile in qualsiasi giornata
+> - MD_PDF: flag che indica se eseguire la conversione dei file md (default: False)
 >
 > parametri che non necessitano modifiche:
 > - PATH_DATA: path della cartella "data" (default: stessa posizione main.py)
 > - PATH_COURSES_DATA: path del file "all_courses.csv" (default: posizione in "data/")
 > - PATH_LECTURES_DATA: path del file "all_lectures.csv" (default: posizione in "data/")
 > - PATH_OUTPUT: path per la stampa dei risultati (default: stessa posizione main.py)
-> - MD_PDF: flag che indica se eseguire la conversione dei file md (default: False)
 >
 > parametri che comportano modifica dei grafici:
 > - TIME_UNIT: unita di tempo di certi grafici a linea
