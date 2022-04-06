@@ -150,6 +150,7 @@ class Charts_lectures_vision:
 
             t_ses_pr = 0; t_lec_pr = 0
             for e in s[3]:
+
                 event = e[0]; t_ses = e[1]; t_lec = e[2]
                 if event in ["SL","KW"] and t_lec==0:
                     continue
@@ -162,6 +163,7 @@ class Charts_lectures_vision:
                             # controllo intervallo
                             while t_lec_pr<t_lec:
                                 tmp = round(t_lec_pr/self.UNIT)
+                                #print("%d %d" %(len(total_vision), t_lec))
                                 if tmp != cur_unit:
                                     total_vision[tmp] += 1
                                     cur_unit=tmp
