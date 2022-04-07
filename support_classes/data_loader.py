@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv
 import json
+import codecs
 
 import config
 import utility.time_date as time_date
@@ -108,24 +109,50 @@ class Data_loader:
 
         #-- lettura informazioni
         with open(file_lectures, 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
+            csv_reader = csv.reader(csv_file, delimiter=',', quotechar=None)
 
             for i_r,row in enumerate(csv_reader):
+                lectureUUID = row[0]
+                n_added_courses = 0
+                if row[1][0]!="\"":
+                    courses = row[1]
+                else:
+                    courses = [row[1][1:]]
+                    i=2
+                    while row[i][-1] != "\"":
+                        courses.append(row[i])
+                        n_added_courses+=1
+                        i+=1
+                    courses.append(row[i][:-1])
+                    n_added_courses+=1
+                insertedAt = row[2+n_added_courses]
+                title = row[3+n_added_courses]
+                if len(row)>6+n_added_courses:
+                    for i in range(len(row)+n_added_courses-6)[1:]:
+                        title = "%s,%s" %(title, row[3+n_added_courses+i])
+                    title = title[1:-1]
+
+                duration = row[-2]
+                turboDuration = row[-1]
                 if i_r == 0:
                     continue
 
-                if (time_date.cmp_dates(row[2][:10], self.days[-1]) <= 0) and (not row[1] in self.test_courses) and (not row[1] in self.ign_courses):
+                if (time_date.cmp_dates(insertedAt[:10], self.days[-1]) <= 0) and (not courses in self.test_courses) and (not courses in self.ign_courses):
 
                     lecture_name = ""
-                    for i,c in enumerate(row[3]):
+                    for i,c in enumerate(title):
                         if c.isupper():
-                            if i > 0 and row[3][i-1].islower():
+                            if i > 0 and title[i-1].islower():
                                 lecture_name += " "
                         lecture_name += c
-
-                    self.lectures[row[0]] = [lecture_name, row[2], int(row[4]), int(row[5])]
-                    if row[1] in self.courses.keys():
-                        self.courses_lectures[row[1]].append(row[0])
+                    self.lectures[lectureUUID] = [lecture_name, insertedAt, int(duration), int(turboDuration)]
+                    if type(courses) == list:
+                        for c in courses:
+                            if c in self.courses.keys():
+                                self.courses_lectures[c].append(lectureUUID)
+                    else:
+                        if courses in self.courses.keys():
+                            self.courses_lectures[courses].append(lectureUUID)
         #--
 
         return
@@ -141,8 +168,8 @@ class Data_loader:
             y = day[2:4]; m = day[5:7]
             json_file = "%s/%s-%s/%s.json" %(path, y, m, day)
             try:
-                with open(json_file, 'r') as json_file:
-                    sessions = json.load(json_file)
+                with open(json_file, 'r') as json_f:
+                    sessions = json.load(json_f)
                     for s in sessions:
                         id_session   = s["sessionId"]
                         id_course    = s["courseId"]
@@ -171,7 +198,7 @@ class Data_loader:
                             miss = True
                         if not uuid_lecture in self.lectures.keys():
                             if not uuid_lecture in self.miss_lectures:
-                                self.miss_lectures.append(id_lectures)
+                                self.miss_lectures.append(uuid_lecture)
                             miss = True
                         if miss:
                             continue
@@ -205,8 +232,15 @@ class Data_loader:
                         if not id_user in self.courses_users[id_course]:
                             self.courses_users[id_course].append(id_user)
                         #--
+
+                        #-- controllo durata lezione
+                        for e in events:
+                            if e[2]>self.lectures[uuid_lecture][2]:
+                                self.lectures[uuid_lecture][2] = e[2]
+                        #--
             except:
                 print("Mancata lettura: %s" %(json_file))
+            #except Exception as e: print(e)
         #--
         return
 
@@ -320,6 +354,7 @@ class Data_loader:
 
         turbo = False
         ignore_SK = False
+        time_turbo=0
         for i,e in enumerate(events):
             if e[0]=="SK" and ignore_SK:
                 ignore_SK = False
@@ -334,10 +369,14 @@ class Data_loader:
                     except:
                         pass
                 else:
-                    e[2] = round((e[2]*duration)/turbo_duration)
+                    if i>0:
+                        if e[0]!="T0" or e[2]!=time_turbo:
+                            if e[2]!=time_turbo:
+                                e[2] = round((e[2]*duration)/turbo_duration)
 
             if e[0]=="T1":
                 turbo = True
+                time_turbo = e[2]
 
                 tmp = i
                 while tmp < i+3 and tmp<len(events):

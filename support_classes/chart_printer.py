@@ -1,5 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import warnings
 import numpy as np
 import time
 
@@ -7,6 +8,7 @@ class Chart_printer:
 
     def __init__(self):
         matplotlib.use('Agg')
+        warnings.filterwarnings("ignore")
         return
 
     """

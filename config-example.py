@@ -4,7 +4,7 @@
 
 #--- path del progetto
 #-- DA MODIFICARE
-PATH_PRJ = "/home/user/"
+PATH_PRJ = "/home/user/Reports_Txc2_DADdy"
 #---
 
 #--- periodo di studio

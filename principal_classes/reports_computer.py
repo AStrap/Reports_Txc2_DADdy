@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import subprocess
 import math
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from pathlib import Path
@@ -88,8 +89,7 @@ class Reports_computer:
 
         if config.MD_PDF:
             #-- md file to pdf
-            os.system('mdpdf \"%s/_reports/%s-%s-tmp.md\"" --border=12mm' %(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)))
-
+            subprocess.run(["mdpdf","%s/_reports/%s-%s-tmp.md"%(self.PATH_OUTPUT, id_course, self.dm.get_course_name(id_course)),"--border=12mm"])
             os.remove("%s.md"%(name_file))
             #--
 

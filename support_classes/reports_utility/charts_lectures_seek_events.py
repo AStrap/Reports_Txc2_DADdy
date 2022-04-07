@@ -170,7 +170,7 @@ class Charts_lectures_seek_events:
 
             title = "Numero eventi di salto temporale - %s" %(self.dm.get_lecture_name(l))
             cp = chart_printer.Chart_printer()
-            cp.print_seek_chart(x, info_events[i], title, "minutaggio", "numero di eventi", {"min":0}, path_output_course, "lezioni\\lezione_%d\\Seek_lezione_%s" %(i,i))
+            cp.print_seek_chart(x, info_events[i], title, "minutaggio", "numero di eventi", {"min":0}, path_output_course, "lezioni/lezione_%d/Seek_lezione_%s" %(i,i))
             del cp
 
         return

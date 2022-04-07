@@ -102,7 +102,7 @@ class Charts_lectures_vision:
             else:
                 unit = 1
             cp = chart_printer.Chart_printer()
-            cp.print_line_chart(val_x[i], val_y_vision[i], title, "minutaggio", "numero visioni", {'max':self.max_y, 'min':0, 'major_unit':unit}, path_output_course, "lezioni\\lezione_%d\\Visioni_lezione_%d"%(i,i))
+            cp.print_line_chart(val_x[i], val_y_vision[i], title, "minutaggio", "numero visioni", {'max':self.max_y, 'min':0, 'major_unit':unit}, path_output_course, "lezioni/lezione_%d/Visioni_lezione_%d"%(i,i))
             del cp
             #--
 
@@ -114,7 +114,7 @@ class Charts_lectures_vision:
                 unit = 1
 
             cp = chart_printer.Chart_printer()
-            cp.print_line_chart(val_x[i], val_y_users[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0}, path_output_course, "lezioni\\lezione_%d\\Visioni_unic_lezione_%d"%(i,i))
+            cp.print_line_chart(val_x[i], val_y_users[i], title, "minutaggio", "numero visioni", {'max':self.max_y2, 'min':0}, path_output_course, "lezioni/lezione_%d/Visioni_unic_lezione_%d"%(i,i))
             del cp
             #--
 

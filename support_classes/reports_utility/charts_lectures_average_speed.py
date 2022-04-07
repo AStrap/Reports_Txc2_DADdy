@@ -138,7 +138,7 @@ class Charts_lectures_average_speed:
             #     self.UNIT = 10*60
             title = "Velocità media - %s" %(self.dm.get_lecture_name(l))
             cp = chart_printer.Chart_printer()
-            cp.print_speed_chart(val_x[i], val_y[i], title, "minutaggio", "livello di velocità", {"max":4, "min":0}, path_output_course, "lezioni\\lezione_%d\\Velocita_lezione_%d"%(i,i))
+            cp.print_speed_chart(val_x[i], val_y[i], title, "minutaggio", "livello di velocità", {"max":4, "min":0}, path_output_course, "lezioni/lezione_%d/Velocita_lezione_%d"%(i,i))
             del cp
 
             # if self.dm.get_lecture_duration(l)>10000:
