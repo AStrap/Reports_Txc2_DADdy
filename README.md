@@ -2,6 +2,8 @@
   Windows10 - (testato in)Python 3.9
   
   Ubuntu20.04 (git checkout linux_version) - (testato in)Python 3.9
+  
+  Versione excel - https://github.com/AStrap/Reports_Txc2_DADdy/tree/a97c4ffb51211d0ad905433e0b6ab6894c5400ba
  
 ## Requisiti
 
